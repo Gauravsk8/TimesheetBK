@@ -4,6 +4,7 @@ import com.example.timesheet.Repository.EmployeeRepository;
 import com.example.timesheet.Repository.RoleRepository;
 import com.example.timesheet.constants.errorCode;
 import com.example.timesheet.constants.errorMessage;
+import com.example.timesheet.dto.request.EmployeeRequestDto;
 import com.example.timesheet.exceptions.*;
 import com.example.timesheet.models.Employee;
 import com.example.timesheet.models.Role;
@@ -28,11 +29,11 @@ public class EmployeeService {
     private final KeycloakService keycloakService;
 
     @Transactional
-    public String createEmployee(Employee employee, String roleName) {
+    public String createEmployee(EmployeeRequestDto employeeRequestDto, String roleName) {
         try {
             // Check if employee already exists
-            if (employeeRepository.existsByEmailAndDeletedIsFalse(employee.getEmail())) {
-                String message = String.format(EMPLOYEE_ALREADY_EXISTS, employee.getEmail());
+            if (employeeRepository.existsByEmailAndDeletedIsFalse(employeeRequestDto.getEmail())) {
+                String message = String.format(EMPLOYEE_ALREADY_EXISTS, employeeRequestDto.getEmail());
                 throw new TimeSheetException(errorCode.CONFLICT_ERROR, message);
             }
 
@@ -41,20 +42,23 @@ public class EmployeeService {
                     .orElseThrow(() -> new TimeSheetException(errorCode.NOT_FOUND_ERROR, String.format(errorMessage.ROLE_NOT_FOUND, roleName)));
 
             // Create user in Keycloak (password will be handled by Keycloak)
-            String keycloakUserId = keycloakService.createUserWithRole(employee, role.getName());
+            String keycloakUserId = keycloakService.createUserWithRole(employeeRequestDto, role.getName());
+            Employee employee = new Employee();
 
-            // Save to database
+
+            employee.setEmail(employeeRequestDto.getEmail());
+            employee.setFirstName(employeeRequestDto.getFirstName());
+            employee.setLastName(employeeRequestDto.getLastName());
+            employee.setPassword(employeeRequestDto.getPassword());
             employee.setTenantId("one");
             employee.setKeycloakId(keycloakUserId);
             employee.setRoles(Collections.singleton(role));
             employee.setEnabled(true);
-            // Don't store the plain password in your database
-            //employee.setPassword(null); // or set to some placeholder
 
             Employee savedEmployee = employeeRepository.save(employee);
 
             if (savedEmployee.getId() == null) {
-                throw new TimeSheetException(errorCode.INTERNAL_SERVER_ERROR, EMPLOYEE_SAVE_FAILED);
+                throw new TimeSheetException(errorCode.TIMESHEET_SAVING_DATA_TO_DATABASE_FAILED, EMPLOYEE_SAVE_FAILED);
             }
 
             return String.format(EMPLOYEE_CREATION_SUCCESS, savedEmployee.getId());

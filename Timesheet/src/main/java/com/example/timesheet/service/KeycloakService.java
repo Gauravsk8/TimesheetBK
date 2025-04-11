@@ -1,6 +1,7 @@
 package com.example.timesheet.service;
 
 import com.example.timesheet.constants.errorCode;
+import com.example.timesheet.dto.request.EmployeeRequestDto;
 import com.example.timesheet.exceptions.TimeSheetException;
 import com.example.timesheet.models.Employee;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,7 +37,7 @@ public class KeycloakService {
     @Value("${keycloak.client-id}")
     private String clientId;
 
-    public String createUserWithRole(Employee employee, String roleName) {
+    public String createUserWithRole(EmployeeRequestDto employee, String roleName) {
         Response response = null;
         try {
             // 1. Verify admin connection
@@ -90,7 +91,7 @@ public class KeycloakService {
         }
     }
 
-    private UserRepresentation createUserRepresentation(Employee employee) {
+    private UserRepresentation createUserRepresentation(EmployeeRequestDto employee) {
         UserRepresentation user = new UserRepresentation();
         user.setUsername(employee.getEmail());
         user.setFirstName(employee.getFirstName());

@@ -2,6 +2,7 @@ package com.example.timesheet.controller;
 
 import com.example.timesheet.annotations.RequiresKeycloakAuthorization;
 import com.example.timesheet.config.KeycloakAuthorizationEnforcer;
+import com.example.timesheet.dto.request.EmployeeRequestDto;
 import com.example.timesheet.models.Employee;
 import com.example.timesheet.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -22,7 +23,7 @@ public class EmployeeController {
     @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
     public ResponseEntity<?> createEmployee(
             @RequestHeader("Authorization") String token,
-            @Valid @RequestBody Employee employee,
+            @Valid @RequestBody EmployeeRequestDto employee,
             @RequestParam String role) {
 
         String result = employeeService.createEmployee(employee, role);
