@@ -49,6 +49,9 @@ public class EmployeeService {
             employee.setEmail(employeeRequestDto.getEmail());
             employee.setFirstName(employeeRequestDto.getFirstName());
             employee.setLastName(employeeRequestDto.getLastName());
+            employee.setPhone(employeeRequestDto.getPhone());
+            employee.setEmployeeId(employeeRequestDto.getEmployeeId());
+
             employee.setPassword(employeeRequestDto.getPassword());
             employee.setTenantId("one");
             employee.setKeycloakId(keycloakUserId);
