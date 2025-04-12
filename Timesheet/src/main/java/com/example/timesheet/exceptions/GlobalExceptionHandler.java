@@ -64,16 +64,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
-        ErrorResponse response = ErrorResponse.builder()
-                .error_code(errorCode.VALIDATION_ERROR)
-                .message(ex.getMessage())
-                .property("")
-                .build();
+    public ResponseEntity<List<ErrorResponse>> handleConstraintViolation(ConstraintViolationException ex) {
+        List<ErrorResponse> errorResponses = ex.getConstraintViolations().stream()
+                .map(violation -> ErrorResponse.builder()
+                        .error_code(errorCode.VALIDATION_ERROR)
+                        .message(violation.getMessage())
+                        .property(violation.getPropertyPath().toString())
+                        .build())
+                .toList();
 
-        log.warn("Constraint violation: {}", response);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        log.warn("Constraint violations: {}", errorResponses);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponses);
     }
+
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleConflict(DataIntegrityViolationException ex) {
