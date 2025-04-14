@@ -4,23 +4,23 @@ import java.util.List;
 
 public interface EmployeeProjection {
 
-    public Long getId();
+     Long getId();
 
-    public String getFirstName();
+     String getFirstName();
 
-    public String getLastName();
+     String getLastName();
 
-    public String getEmployeeNumber();
+     String getEmployeeNumber();
 
-    public String getCity();
+     String getCity();
 
-    public String getState();
+     String getState();
 
-    public String getCountry();
+     String getCountry();
 
-    public String getEmail();
+     String getEmail();
 
-    public List<RoleProjection> getRoles();
+     List<RoleProjection> getRoles();
 
-    public boolean isEmailVerified();
+     boolean isEmailVerified();
 }

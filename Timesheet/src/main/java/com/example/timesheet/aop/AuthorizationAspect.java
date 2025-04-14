@@ -31,33 +31,36 @@ public class AuthorizationAspect {
     private final KeycloakAuthorizationEnforcer enforcer;
     private final HttpServletRequest request;
 
+    private static final String KEYCLOAK_PROTECTED = "keycloakProtectedMethods()";
+
+
     //Matches any method that is annotated with the @RequiresKeycloakAuthorization
     @Pointcut("@annotation(com.example.timesheet.annotations.RequiresKeycloakAuthorization)")
     public void keycloakProtectedMethods() {}
 
 
     //JoinPoint gives you method info like its name, parameters, etc.
-    @Before("keycloakProtectedMethods()")
+    @Before(KEYCLOAK_PROTECTED)
     public void logBefore(JoinPoint joinPoint) {
         logger.info("[BEFORE] Executing method: {}", joinPoint.getSignature());
     }
 
-    @After("keycloakProtectedMethods()")
+    @After(KEYCLOAK_PROTECTED)
     public void logAfter(JoinPoint joinPoint) {
         logger.info("[AFTER] Finished method: {}", joinPoint.getSignature());
     }
 
-    @AfterReturning(pointcut = "keycloakProtectedMethods()", returning = "result")
+    @AfterReturning(pointcut = KEYCLOAK_PROTECTED, returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
         logger.info("[AFTER RETURNING] Method: {} returned: {}", joinPoint.getSignature(), result);
     }
 
-    @AfterThrowing(pointcut = "keycloakProtectedMethods()", throwing = "ex")
+    @AfterThrowing(pointcut = KEYCLOAK_PROTECTED, throwing = "ex")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable ex) {
         logger.error("[EXCEPTION] Method: {} threw: {}", joinPoint.getSignature(), ex.getMessage(), ex);
     }
 
-    @Around("keycloakProtectedMethods()")
+    @Around(KEYCLOAK_PROTECTED)
     public Object authorizeAndProceed(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
@@ -69,11 +72,12 @@ public class AuthorizationAspect {
         Object[] args = joinPoint.getArgs();
         String token = null;
         for (Object arg : args) {
-            if (arg instanceof String && ((String) arg).startsWith("Bearer ")) {
-                token = (String) arg;
+            if (arg instanceof String s && s.startsWith("Bearer ")) {
+                token = s;
                 break;
             }
         }
+
 
         if (token == null) {
             throw new TimeSheetException(errorCode.MissingBearerToken, errorMessage.MISSING_BEARER_TOKEN);

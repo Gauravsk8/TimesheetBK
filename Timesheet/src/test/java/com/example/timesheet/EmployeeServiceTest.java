@@ -21,7 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class EmployeeServiceTest {
+ class EmployeeServiceTest {
+    private static final String ROLE_MANAGER = "MANAGER";
+    private static final String ROLE_USER = "USER";
 
     @InjectMocks
     private EmployeeService employeeService;
@@ -50,17 +52,17 @@ public class EmployeeServiceTest {
 
         Role role = new Role();
         role.setId(1L);
-        role.setName("MANAGER");
+        role.setName(ROLE_MANAGER);
 
         when(employeeRepository.existsByEmailAndDeletedIsFalse(employeeRequestDto.getEmail())).thenReturn(false);
-        when(roleRepository.findByNameIgnoreCase("MANAGER")).thenReturn(Optional.of(role));
-        when(keycloakService.createUserWithRole(employeeRequestDto, "MANAGER")).thenReturn("keycloak-id");
+        when(roleRepository.findByNameIgnoreCase(ROLE_MANAGER)).thenReturn(Optional.of(role));
+        when(keycloakService.createUserWithRole(employeeRequestDto, ROLE_MANAGER)).thenReturn("keycloak-id");
 
         Employee savedEmployee = new Employee();
         savedEmployee.setId(123L);
         when(employeeRepository.save(any(Employee.class))).thenReturn(savedEmployee);
 
-        String result = employeeService.createEmployee(employeeRequestDto, "MANAGER");
+        String result = employeeService.createEmployee(employeeRequestDto, ROLE_MANAGER);
         assertTrue(result.contains("Employee created successfully with ID: 123"));
     }
 
@@ -72,7 +74,7 @@ public class EmployeeServiceTest {
         when(employeeRepository.existsByEmailAndDeletedIsFalse(employeeRequestDto.getEmail())).thenReturn(true);
 
         TimeSheetException ex = assertThrows(TimeSheetException.class,
-                () -> employeeService.createEmployee(employeeRequestDto, "MANAGER"));
+                () -> employeeService.createEmployee(employeeRequestDto, ROLE_MANAGER));
 
         assertEquals(errorCode.CONFLICT_ERROR, ex.getErrorCode());
         assertTrue(ex.getMessage().contains("already exists"));
@@ -84,10 +86,10 @@ public class EmployeeServiceTest {
         employeeRequestDto.setEmail("new@example.com");
 
         when(employeeRepository.existsByEmailAndDeletedIsFalse(employeeRequestDto.getEmail())).thenReturn(false);
-        when(roleRepository.findByNameIgnoreCase("USER")).thenReturn(Optional.empty());
+        when(roleRepository.findByNameIgnoreCase(ROLE_USER)).thenReturn(Optional.empty());
 
         TimeSheetException ex = assertThrows(TimeSheetException.class,
-                () -> employeeService.createEmployee(employeeRequestDto, "USER"));
+                () -> employeeService.createEmployee(employeeRequestDto, ROLE_USER));
 
         assertEquals(errorCode.NOT_FOUND_ERROR, ex.getErrorCode());
         assertTrue(ex.getMessage().contains("not found"));
@@ -102,18 +104,18 @@ public class EmployeeServiceTest {
         employeeRequestDto.setLastName("Last");
 
         Role role = new Role();
-        role.setName("MANAGER");
+        role.setName(ROLE_MANAGER);
 
         when(employeeRepository.existsByEmailAndDeletedIsFalse(employeeRequestDto.getEmail())).thenReturn(false);
-        when(roleRepository.findByNameIgnoreCase("MANAGER")).thenReturn(Optional.of(role));
-        when(keycloakService.createUserWithRole(employeeRequestDto, "MANAGER")).thenReturn("k-id");
+        when(roleRepository.findByNameIgnoreCase(ROLE_MANAGER)).thenReturn(Optional.of(role));
+        when(keycloakService.createUserWithRole(employeeRequestDto, ROLE_MANAGER)).thenReturn("k-id");
 
         // Simulate save failure by returning employee with null ID
         Employee emptySaved = new Employee();
         when(employeeRepository.save(any(Employee.class))).thenReturn(emptySaved);
 
         TimeSheetException ex = assertThrows(TimeSheetException.class,
-                () -> employeeService.createEmployee(employeeRequestDto, "MANAGER"));
+                () -> employeeService.createEmployee(employeeRequestDto, ROLE_MANAGER));
 
         assertEquals(errorCode.TIMESHEET_SAVING_DATA_TO_DATABASE_FAILED, ex.getErrorCode());
         assertTrue(ex.getMessage().contains("Failed to save"));

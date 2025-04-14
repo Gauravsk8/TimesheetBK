@@ -79,7 +79,7 @@ public class BaseEntity implements Serializable {
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o){ return true; }
         if (o instanceof BaseEntity entity) {
             return Objects.equals(getNaturalId(), entity.getNaturalId());
         }

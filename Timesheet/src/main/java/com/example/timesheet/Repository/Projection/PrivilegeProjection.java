@@ -3,7 +3,7 @@ package com.example.timesheet.Repository.Projection;
 
 public interface PrivilegeProjection {
 
-    public Long getId();
+     Long getId();
 
-    public String getName();
+     String getName();
 }

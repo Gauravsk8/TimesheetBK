@@ -21,7 +21,7 @@ public class EmployeeController {
 
     @PostMapping("/create")
     @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
-    public ResponseEntity<?> createEmployee(
+    public ResponseEntity<String> createEmployee(
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody EmployeeRequestDto employee,
             @RequestParam String role) {

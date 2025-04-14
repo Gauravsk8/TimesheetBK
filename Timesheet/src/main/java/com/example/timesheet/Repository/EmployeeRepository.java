@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeRepository extends BaseRepository<Employee, String>, PagingAndSortingRepository<Employee, String>, QuerydslPredicateExecutor<Employee> {
-    public <T> T findByEmailAndDeletedIsFalse(String userName, Class<T> type);
-    public Optional<Employee> findByEmployeeIdAndDeletedIsFalse(String id);
-    public <T> T findByEmail(String userName, Class<T> type);
-    public Optional<Employee> findByEmailAndDeletedIsFalse(String email);
+     <T> T findByEmailAndDeletedIsFalse(String userName, Class<T> type);
+     Optional<Employee> findByEmployeeIdAndDeletedIsFalse(String id);
+     <T> T findByEmail(String userName, Class<T> type);
+     Optional<Employee> findByEmailAndDeletedIsFalse(String email);
     List<Employee> findAllByDeletedIsFalse();
-    public Employee findByPhoneAndDeletedIsFalse(String phone);
+     Employee findByPhoneAndDeletedIsFalse(String phone);
     //Update failed attempts
     List<Employee> findAllByRolesNameAndDeletedIsFalse(String role);
     @Transactional

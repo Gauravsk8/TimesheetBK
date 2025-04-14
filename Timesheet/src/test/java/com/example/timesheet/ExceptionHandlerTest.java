@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Import(NoSecurityConfig.class)
 class ExceptionHandlerTest {
+    private static final String JSON_PATH_ERROR_CODE = "$.error_code";
 
     @Autowired
     private MockMvc mockMvc;
@@ -25,7 +26,7 @@ class ExceptionHandlerTest {
     void testTimeSheetException() throws Exception {
         mockMvc.perform(get("/test/timesheet-exception"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error_code").value("TIMESHEET_NOT_FOUND_ERROR"));
+                .andExpect(jsonPath(JSON_PATH_ERROR_CODE).value("TIMESHEET_NOT_FOUND_ERROR"));
     }
 
     @Test
@@ -33,34 +34,34 @@ class ExceptionHandlerTest {
         mockMvc.perform(post("/test/validation-exception")
                         .param("name", "abc"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error_code").value("TIMESHEET_VALIDATION_ERROR"));
+                .andExpect(jsonPath(JSON_PATH_ERROR_CODE).value("TIMESHEET_VALIDATION_ERROR"));
     }
 
     @Test
     void testConstraintViolationException() throws Exception {
         mockMvc.perform(get("/test/constraint-violation"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error_code").value("TIMESHEET_VALIDATION_ERROR"));
+                .andExpect(jsonPath(JSON_PATH_ERROR_CODE).value("TIMESHEET_VALIDATION_ERROR"));
     }
 
     @Test
     void testDataConflictException() throws Exception {
         mockMvc.perform(get("/test/data-conflict"))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error_code").value("TIMESHEET_CONFLICT_ERROR"));
+                .andExpect(jsonPath(JSON_PATH_ERROR_CODE).value("TIMESHEET_CONFLICT_ERROR"));
     }
 
     @Test
     void testSecurityException() throws Exception {
         mockMvc.perform(get("/test/security"))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.error_code").value("TIMESHEET_FORBIDDEN_ERROR"));
+                .andExpect(jsonPath(JSON_PATH_ERROR_CODE).value("TIMESHEET_FORBIDDEN_ERROR"));
     }
 
     @Test
     void testGeneralException() throws Exception {
         mockMvc.perform(get("/test/general"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.error_code").value("TIMESHEET_INTERNAL_SERVER_ERROR"));
+                .andExpect(jsonPath(JSON_PATH_ERROR_CODE).value("TIMESHEET_INTERNAL_SERVER_ERROR"));
     }
 }
