@@ -1,12 +1,11 @@
 package com.example.timesheet;
 
+import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.Repository.EmployeeRepository;
 import com.example.timesheet.Repository.RoleRepository;
 import com.example.timesheet.client.IdentityServiceClient;
-import com.example.timesheet.constants.errorCode;
-import com.example.timesheet.constants.errorMessage;
+import com.example.common.constants.errorCode;
 import com.example.timesheet.dto.request.EmployeeRequestDto;
-import com.example.timesheet.exceptions.TimeSheetException;
 import com.example.timesheet.models.Employee;
 import com.example.timesheet.models.Role;
 import com.example.timesheet.service.EmployeeService;

@@ -1,8 +1,8 @@
 // src/test/java/com/example/timesheet/TestExceptionController.java
 package com.example.timesheet;
 
-import com.example.timesheet.constants.errorCode;
-import com.example.timesheet.exceptions.TimeSheetException;
+import com.example.common.constants.errorCode;
+import com.example.common.exceptions.TimeSheetException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.dao.DataIntegrityViolationException;

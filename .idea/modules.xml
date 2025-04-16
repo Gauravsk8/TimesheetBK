@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Timesheet.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Timesheet.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/TimesheetBK.iml" filepath="$PROJECT_DIR$/.idea/TimesheetBK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Identity-Management-Service/TimesheetBK.Identity-Management-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Identity-Management-Service/TimesheetBK.Identity-Management-Service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Timesheet/TimesheetBK.Timesheet.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Timesheet/TimesheetBK.Timesheet.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common-security/TimesheetBK.common-security.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common-security/TimesheetBK.common-security.main.iml" />
     </modules>
   </component>
 </project>

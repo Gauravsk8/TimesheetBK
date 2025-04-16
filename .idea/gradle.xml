@@ -4,11 +4,13 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Timesheet" />
-        <option name="gradleJvm" value="temurin-17" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Identity-Management-Service" />
             <option value="$PROJECT_DIR$/Timesheet" />
+            <option value="$PROJECT_DIR$/common-security" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,6 +1,6 @@
 package com.example.IdentityManagementService.Controller;
 
-import com.example.IdentityManagementService.annotations.RequiresKeycloakAuthorization;
+import com.example.common.annotations.RequiresKeycloakAuthorization;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

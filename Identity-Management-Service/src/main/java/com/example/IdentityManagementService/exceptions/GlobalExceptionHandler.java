@@ -1,8 +1,8 @@
 package com.example.IdentityManagementService.exceptions;
 
-import com.example.IdentityManagementService.constants.errorCode;
-import com.example.IdentityManagementService.constants.errorMessage;
-import com.example.IdentityManagementService.dto.ErrorResponse;
+import com.example.common.constants.errorCode;
+import com.example.common.constants.errorMessage;
+import com.example.common.dto.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +34,12 @@ public class GlobalExceptionHandler {
 
     private HttpStatus resolveHttpStatus(String errorCode) {
         return switch (errorCode) {
-            case com.example.IdentityManagementService.constants.errorCode.NOT_FOUND_ERROR -> HttpStatus.NOT_FOUND;
-            case com.example.IdentityManagementService.constants.errorCode.CONFLICT_ERROR -> HttpStatus.CONFLICT;
-            case com.example.IdentityManagementService.constants.errorCode.FORBIDDEN_ERROR -> HttpStatus.FORBIDDEN;
-            case com.example.IdentityManagementService.constants.errorCode.UNAUTHORIZED_ERROR -> HttpStatus.UNAUTHORIZED;
-            case com.example.IdentityManagementService.constants.errorCode.VALIDATION_ERROR -> HttpStatus.BAD_REQUEST;
-            case com.example.IdentityManagementService.constants.errorCode.INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR;
+            case com.example.common.constants.errorCode.NOT_FOUND_ERROR -> HttpStatus.NOT_FOUND;
+            case com.example.common.constants.errorCode.CONFLICT_ERROR -> HttpStatus.CONFLICT;
+            case com.example.common.constants.errorCode.FORBIDDEN_ERROR -> HttpStatus.FORBIDDEN;
+            case com.example.common.constants.errorCode.UNAUTHORIZED_ERROR -> HttpStatus.UNAUTHORIZED;
+            case com.example.common.constants.errorCode.VALIDATION_ERROR -> HttpStatus.BAD_REQUEST;
+            case com.example.common.constants.errorCode.INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR;
             default -> HttpStatus.BAD_REQUEST;
         };
     }

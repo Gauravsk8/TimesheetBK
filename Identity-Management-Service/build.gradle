@@ -64,6 +64,9 @@ dependencies {
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1'
 
+	implementation project(':common-security')
+
+
 	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'

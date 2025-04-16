@@ -1,7 +1,8 @@
 package com.example.timesheet.config;
 
-import com.example.timesheet.security.CustomAccessDeniedHandler;
-import com.example.timesheet.security.CustomEntryPoint;
+
+import com.example.common.security.CustomAccessDeniedHandler;
+import com.example.common.security.CustomEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -36,6 +37,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/employees/create").authenticated()
+                        .requestMatchers("/api/employees/timesheet-reminder").permitAll()
+                        .requestMatchers("/api/timesheets/submit/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

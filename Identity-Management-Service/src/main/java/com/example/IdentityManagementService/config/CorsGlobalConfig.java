@@ -1,4 +1,4 @@
-package com.example.timesheet.config;
+package com.example.IdentityManagementService.config;
 
 // In a separate config class or inside SecurityConfig.java
 import org.springframework.context.annotation.Bean;

@@ -32,7 +32,7 @@ public class Project extends BaseEntity{
     private Client client;
 
     @ManyToOne
-    @JoinColumn(name="employeeId",referencedColumnName = "employeeId",nullable = false)
+    @JoinColumn(name="manager_id",referencedColumnName = "employeeId",nullable = false)
     private Employee manager;
 
     @ManyToMany

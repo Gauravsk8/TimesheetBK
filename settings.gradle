@@ -1,0 +1,5 @@
+rootProject.name = 'TimesheetBK'
+
+include 'common-security'
+include 'Timesheet'
+include 'Identity-Management-Service'

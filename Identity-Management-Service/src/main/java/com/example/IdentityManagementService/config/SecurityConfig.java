@@ -1,7 +1,7 @@
 package com.example.IdentityManagementService.config;
 
-import com.example.IdentityManagementService.security.CustomAccessDeniedHandler;
-import com.example.IdentityManagementService.security.CustomEntryPoint;
+import com.example.common.security.CustomAccessDeniedHandler;
+import com.example.common.security.CustomEntryPoint;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

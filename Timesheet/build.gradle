@@ -8,7 +8,7 @@ plugins {
 	id 'org.sonarqube' version '4.4.1.3373'
 }
 
-group = 'com.example.timesheet'
+group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -39,6 +39,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+
+
 
 	// PostgreSQL driver
 	runtimeOnly 'org.postgresql:postgresql'
@@ -74,6 +77,10 @@ dependencies {
 
 	//validation
 	implementation 'javax.validation:validation-api:2.0.1.Final'
+	implementation project(':common-security')
+
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 
 
 

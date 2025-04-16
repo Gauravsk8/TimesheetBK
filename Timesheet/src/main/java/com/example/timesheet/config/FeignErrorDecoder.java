@@ -1,8 +1,8 @@
 package com.example.timesheet.config;
 
-import com.example.timesheet.constants.errorCode;
-import com.example.timesheet.dto.ErrorResponse;
-import com.example.timesheet.exceptions.TimeSheetException;
+import com.example.common.constants.errorCode;
+import com.example.common.dto.ErrorResponse;
+import com.example.common.exceptions.TimeSheetException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.Util;

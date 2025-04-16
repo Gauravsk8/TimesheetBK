@@ -1,7 +1,7 @@
 package com.example.IdentityManagementService;
 
 import com.example.IdentityManagementService.Service.KeycloakService;
-import com.example.IdentityManagementService.constants.errorCode;
+import com.example.common.constants.errorCode;
 import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
 import com.example.IdentityManagementService.exceptions.KeycloakException;
 import jakarta.ws.rs.core.Response;

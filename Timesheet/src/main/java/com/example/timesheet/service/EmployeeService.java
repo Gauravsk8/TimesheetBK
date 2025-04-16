@@ -1,11 +1,12 @@
 package com.example.timesheet.service;
 
+import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.Repository.EmployeeRepository;
 import com.example.timesheet.Repository.RoleRepository;
 import com.example.timesheet.TimesheetApplication;
 import com.example.timesheet.client.IdentityServiceClient;
-import com.example.timesheet.constants.errorCode;
-import com.example.timesheet.constants.errorMessage;
+import com.example.common.constants.errorCode;
+import com.example.common.constants.errorMessage;
 import com.example.timesheet.dto.request.EmployeeRequestDto;
 import com.example.timesheet.exceptions.*;
 import com.example.timesheet.models.Employee;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.example.timesheet.constants.errorMessage.*;
+import static com.example.common.constants.errorMessage.*;
 
 
 @Service

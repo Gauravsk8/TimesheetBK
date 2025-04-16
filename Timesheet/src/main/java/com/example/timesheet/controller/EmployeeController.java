@@ -1,6 +1,6 @@
 package com.example.timesheet.controller;
 
-import com.example.timesheet.annotations.RequiresKeycloakAuthorization;
+import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.timesheet.dto.request.EmployeeRequestDto;
 import com.example.timesheet.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -17,6 +17,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @PostMapping("/create")
+    @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
     public ResponseEntity<String> createEmployee(
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody EmployeeRequestDto employee,
@@ -25,4 +26,6 @@ public class EmployeeController {
         String result = employeeService.createEmployee(employee, role, token);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
+
+
 }

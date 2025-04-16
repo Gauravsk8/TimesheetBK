@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5ac3fdf0-da33-45fa-8617-a25f7d096e62" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gradle/8.13/checksums/checksums.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.13/fileChanges/last-build.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.13/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/checksums/checksums.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/checksums/md5-checksums.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/checksums/sha1-checksums.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/dependencies-accessors/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/fileChanges/last-build.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/8.4/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/vcs-1/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/Identity-Management-Service/TimesheetBK.Identity-Management-Service.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/Timesheet/TimesheetBK.Timesheet.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/common-security/TimesheetBK.common-security.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/MailService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.gradle/8.13/checksums/checksums.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.gradle/8.13/executionHistory/executionHistory.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.gradle/8.13/fileChanges/last-build.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.gradle/8.13/fileHashes/fileHashes.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.gradle/8.13/fileHashes/fileHashes.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.gradle/8.13/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.gradle/vcs-1/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/Main.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/annotations/RequiresKeycloakAuthorization.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/aop/AuthorizationAspect.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/config/KeycloakAuthorizationEnforcer.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/errorCode.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/errorMessage.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/dto/ErrorResponse$ErrorResponseBuilder.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/dto/ErrorResponse.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/exceptions/TimeSheetException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/security/CustomAccessDeniedHandler.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/security/CustomEntryPoint.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/reports/problems/problems-report.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/build/tmp/jar/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/settings.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/postgres-data/postmaster.pid" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/TimesheetBK.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/Timesheet.main.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakAdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/IdentityManagementServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/IdentityManagementServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/annotations/RequiresKeycloakAuthorization.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/aop/AuthorizationAspect.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/aop/AuthorizationAspect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/config/CorsGlobalConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/config/CorsGlobalConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/config/KeycloakAuthorizationEnforcer.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/config/KeycloakAuthorizationEnforcer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/constants/errorCode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/constants/errorMessage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/ErrorResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/exceptions/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/exceptions/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/security/CustomAccessDeniedHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/security/CustomEntryPoint.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/test/java/com/example/IdentityManagementService/KeycloakServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/test/java/com/example/IdentityManagementService/KeycloakServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/TimesheetApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/TimesheetApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/annotations/RequiresKeycloakAuthorization.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/annotations/RequiresKeycloakAuthorization.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/FeignErrorDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/FeignErrorDecoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/constants/errorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/errorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/constants/errorMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/errorMessage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/EmployeeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/EmployeeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/ErrorResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/dto/ErrorResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/exceptions/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/exceptions/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/exceptions/TimeSheetException.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/exceptions/TimeSheetException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/models/Project.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/models/Project.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/security/CustomAccessDeniedHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/security/CustomAccessDeniedHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/security/CustomEntryPoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/security/CustomEntryPoint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/EmployeeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/EmployeeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/test/java/com/example/timesheet/EmployeeServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/test/java/com/example/timesheet/EmployeeServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/test/java/com/example/timesheet/KeycloakServiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/test/java/com/example/timesheet/TestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/test/java/com/example/timesheet/TestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/1/pg_internal.init" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/1/pg_internal.init" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/1249" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/1249" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/1259" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/1259" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/1259_vm" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/1259_vm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16388" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16388" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16389" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16389" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16394" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16394" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16410" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16410" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16411" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16411" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16416" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16416" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16423" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16423" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16424" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16424" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16429" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16429" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16431" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16431" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16436" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16436" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16478" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16478" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16479" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16479" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16484" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16484" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16518" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16518" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16521" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16521" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16556" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16556" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16557" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16557" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16563" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16563" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16565" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16565" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16566" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16566" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16571" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16571" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16573" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16573" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16578" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16578" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16580" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16580" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16582" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16582" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16584" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16584" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16586" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16586" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16588" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16588" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16590" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16590" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16592" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16592" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16598" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16598" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16608" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16608" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16610" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16610" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16612" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16612" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16614" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16614" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/16616" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/16616" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2579" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2579" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2606" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2606" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2608" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2608" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2619" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2619" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2620" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2620" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2658" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2658" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2659" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2659" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2662" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2662" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2663" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2663" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2664" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2664" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2665" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2665" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2666" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2666" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2667" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2667" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2673" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2673" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2674" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2674" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2696" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2696" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2699" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2699" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2701" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2701" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/2702" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/2702" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/3455" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/3455" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/16384/pg_internal.init" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/16384/pg_internal.init" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/base/5/pg_internal.init" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/base/5/pg_internal.init" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/global/pg_control" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/global/pg_control" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/global/pg_internal.init" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/global/pg_internal.init" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/pg_stat/pgstat.stat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/pg_wal/000000010000000000000001" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/pg_wal/000000010000000000000001" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/postgres-data/pg_xact/0000" beforeDir="false" afterPath="$PROJECT_DIR$/postgres-data/pg_xact/0000" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/Timesheet">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/common-security">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/Timesheet">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/common-security">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/Identity-Management-Service">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2vZpynPFdTd9985iWVpEnTjWYpi" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.TimesheetApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Gradle.Build TimesheetBK.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.EmployeeServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.EmployeeServiceTest.testCreateEmployee_Success.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ExceptionHandlerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.IdentityManagementServiceApplicationTests.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.KeycloakServiceTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Timesheet [:TimesheetApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Timesheet [check].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Timesheet [jacocoTestReport].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Timesheet [sonar].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.TimesheetApplicationTests.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.TimesheetBK:Identity-Management-Service [:Identity-Management-Service:IdentityManagementServiceApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.TimesheetBK:common-security [:common-security:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;temurin-17&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/GauravShenoy/Documents/Training/TimesheetBK&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.annotationProcessors&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\GauravShenoy\Documents\Training\TimesheetBK\Identity-Management-Service\src\main\java\com\example\IdentityManagementService\exceptions" />
+      <recent name="C:\Users\GauravShenoy\Documents\Training\TimesheetBK\Timesheet\src\main\java\com\example\timesheet\dto\request" />
+      <recent name="C:\Users\GauravShenoy\Documents\Training\TimesheetBK\Identity-Management-Service\src\main\java\com\example\IdentityManagementService" />
+      <recent name="C:\Users\GauravShenoy\Documents\Training\TimesheetBK\Identity-Management-Service\src\main\java\com\example\IdentityManagementService\dto" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\GauravShenoy\Documents\Training\TimesheetBK\Identity-Management-Service\src\main\java\com\example\IdentityManagementService\dto\request" />
+      <recent name="C:\Users\GauravShenoy\Documents\Training\TimesheetBK\Identity-Management-Service\src\main\java\com\example\IdentityManagementService\Service" />
+      <recent name="C:\Users\GauravShenoy\Documents\Training\TimesheetBK\Identity-Management-Service\src\main\java\com\example\IdentityManagementService\config" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.TimesheetApplication">
+    <configuration name="IdentityManagementServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.IdentityManagementService.IdentityManagementServiceApplication" />
+      <module name="TimesheetBK.Identity-Management-Service.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.IdentityManagementService.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TimesheetApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="temurin-17" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="com.example.timesheet.TimesheetApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.timesheet.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EmployeeServiceTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":Timesheet:test" />
+            <option value="--tests" />
+            <option value="&quot;com.example.timesheet.EmployeeServiceTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="ExceptionHandlerTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":Timesheet:test" />
+            <option value="--tests" />
+            <option value="&quot;com.example.timesheet.ExceptionHandlerTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="IdentityManagementServiceApplicationTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":Identity-Management-Service:test" />
+            <option value="--tests" />
+            <option value="&quot;com.example.IdentityManagementService.IdentityManagementServiceApplicationTests&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.TimesheetApplication" />
+        <item itemvalue="Gradle.EmployeeServiceTest" />
+        <item itemvalue="Gradle.ExceptionHandlerTest" />
+        <item itemvalue="Application.IdentityManagementServiceApplication" />
+        <item itemvalue="Gradle.IdentityManagementServiceApplicationTests" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5ac3fdf0-da33-45fa-8617-a25f7d096e62" name="Changes" comment="" />
+      <created>1744362707819</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1744362707819</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/Timesheet/src/test/java/com/example/timesheet/ExceptionHandlerTest.java</url>
+          <line>25</line>
+          <properties class="com.example.timesheet.ExceptionHandlerTest" method="testTimeSheetException">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

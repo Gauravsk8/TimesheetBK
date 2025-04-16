@@ -1,6 +1,6 @@
 package com.example.IdentityManagementService.Service;
 
-import com.example.IdentityManagementService.constants.errorCode;
+import com.example.common.constants.errorCode;
 import com.example.IdentityManagementService.exceptions.KeycloakException;
 import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
 
@@ -27,7 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.IdentityManagementService.constants.errorMessage.*;
+import static com.example.common.constants.errorCode.KEYCLOAK_USER_CREATION_FAILED;
+import static com.example.common.constants.errorCode.ROLE_ASSIGNMENT_FAILED;
+import static com.example.common.constants.errorMessage.*;
 
 
 @Service
@@ -76,7 +78,7 @@ public class KeycloakService {
                 log.error("Role assignment failed, deleting user {}", userId);
                 usersResource.get(userId).remove();
                 throw new KeycloakException(
-                        errorCode.ROLE_ASSIGNMENT_FAILED,
+                        ROLE_ASSIGNMENT_FAILED,
                         "User created but role assignment failed. Rolled back user creation.",
                         e
                 );
@@ -162,17 +164,17 @@ public class KeycloakService {
 
                 if (errorDetail != null) {
                     throw new KeycloakException(
-                            errorCode.KEYCLOAK_USER_CREATION_FAILED,
+                            KEYCLOAK_USER_CREATION_FAILED,
                             KEYCLOAK_USER_CREATION_FAILED + ": " + errorDetail
                     );
                 }
                 throw new KeycloakException(
-                        errorCode.KEYCLOAK_USER_CREATION_FAILED,
+                        KEYCLOAK_USER_CREATION_FAILED,
                         KEYCLOAK_USER_CREATION_FAILED + ": " + errorBody
                 );
             } catch (IOException e) {
                 throw new KeycloakException(
-                        errorCode.KEYCLOAK_USER_CREATION_FAILED,
+                        KEYCLOAK_USER_CREATION_FAILED,
                         KEYCLOAK_USER_CREATION_FAILED + ": Unable to parse error response",
                         e
                 );
@@ -203,7 +205,7 @@ public class KeycloakService {
                     .add(Collections.singletonList(role));
         } catch (Exception e) {
             throw new KeycloakException(
-                    errorCode.ROLE_ASSIGNMENT_FAILED,
+                    ROLE_ASSIGNMENT_FAILED,
                     ROLE_ASSIGNMENT_FAILED + ": " + e.getMessage(),
                     e
             );

@@ -1,8 +1,10 @@
 package com.example.timesheet.exceptions;
 
-import com.example.timesheet.constants.errorCode;
-import com.example.timesheet.constants.errorMessage;
-import com.example.timesheet.dto.ErrorResponse;
+
+import com.example.common.constants.errorCode;
+import com.example.common.constants.errorMessage;
+import com.example.common.dto.ErrorResponse;
+import com.example.common.exceptions.TimeSheetException;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +12,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
@@ -35,12 +38,12 @@ public class GlobalExceptionHandler {
 
     private HttpStatus resolveHttpStatus(String errorCode) {
         return switch (errorCode) {
-            case com.example.timesheet.constants.errorCode.NOT_FOUND_ERROR -> HttpStatus.NOT_FOUND;
-            case com.example.timesheet.constants.errorCode.CONFLICT_ERROR -> HttpStatus.CONFLICT;
-            case com.example.timesheet.constants.errorCode.FORBIDDEN_ERROR -> HttpStatus.FORBIDDEN;
-            case com.example.timesheet.constants.errorCode.UNAUTHORIZED_ERROR -> HttpStatus.UNAUTHORIZED;
-            case com.example.timesheet.constants.errorCode.VALIDATION_ERROR -> HttpStatus.BAD_REQUEST;
-            case com.example.timesheet.constants.errorCode.INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR;
+            case com.example.common.constants.errorCode.NOT_FOUND_ERROR -> HttpStatus.NOT_FOUND;
+            case com.example.common.constants.errorCode.CONFLICT_ERROR -> HttpStatus.CONFLICT;
+            case com.example.common.constants.errorCode.FORBIDDEN_ERROR -> HttpStatus.FORBIDDEN;
+            case com.example.common.constants.errorCode.UNAUTHORIZED_ERROR -> HttpStatus.UNAUTHORIZED;
+            case com.example.common.constants.errorCode.VALIDATION_ERROR -> HttpStatus.BAD_REQUEST;
+            case com.example.common.constants.errorCode.INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR;
             default -> HttpStatus.BAD_REQUEST;
         };
     }
