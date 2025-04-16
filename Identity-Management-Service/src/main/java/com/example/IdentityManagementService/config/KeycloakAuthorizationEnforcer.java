@@ -1,4 +1,4 @@
-package com.example.timesheet.config;
+package com.example.IdentityManagementService.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

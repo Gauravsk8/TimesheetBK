@@ -1,4 +1,4 @@
-package com.example.timesheet.config;
+package com.example.IdentityManagementService.config;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;

@@ -2,22 +2,18 @@ package com.example.timesheet.config;
 
 import com.example.timesheet.security.CustomAccessDeniedHandler;
 import com.example.timesheet.security.CustomEntryPoint;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
-
     private final CustomEntryPoint customEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
@@ -27,46 +23,30 @@ public class SecurityConfig {
         this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
-    @Value("${keycloak.enabled:true}")
-    private boolean keycloakEnabled;
+    // Define JwtDecoder Bean
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        String issuerUri = "http://localhost:8080/realms/timesheet";  // Update with your Keycloak issuer URL
+        return JwtDecoders.fromIssuerLocation(issuerUri);
+    }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // CSRF is disabled because this application is stateless and uses JWT tokens in Authorization headers.
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**").permitAll()
-                        .requestMatchers("/secured").authenticated()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/employees/create").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
-                    .authenticationEntryPoint(customEntryPoint)
-                    .accessDeniedHandler(customAccessDeniedHandler)
+                        .authenticationEntryPoint(customEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .authenticationEntryPoint(customEntryPoint)
+                        .jwt(Customizer.withDefaults()) // The default decoder is now injected
                 );
 
-        if (keycloakEnabled) {
-            http.oauth2ResourceServer(oauth2 -> oauth2
-                    .authenticationEntryPoint(customEntryPoint)
-                    .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-            );
-
-        }
-
         return http.build();
-    }
-
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
-        converter.setAuthorityPrefix("ROLE_");
-        converter.setAuthoritiesClaimName("realm_access.roles");
-
-        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
-        jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
-
-        return jwtConverter;
     }
 }

@@ -1,9 +1,7 @@
 package com.example.timesheet.controller;
 
 import com.example.timesheet.annotations.RequiresKeycloakAuthorization;
-import com.example.timesheet.config.KeycloakAuthorizationEnforcer;
 import com.example.timesheet.dto.request.EmployeeRequestDto;
-import com.example.timesheet.models.Employee;
 import com.example.timesheet.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,19 +15,14 @@ import org.springframework.web.bind.annotation.*;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private final KeycloakAuthorizationEnforcer enforcer;
 
     @PostMapping("/create")
-    @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
     public ResponseEntity<String> createEmployee(
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody EmployeeRequestDto employee,
             @RequestParam String role) {
 
-        String result = employeeService.createEmployee(employee, role);
-
+        String result = employeeService.createEmployee(employee, role, token);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
-
 }
-

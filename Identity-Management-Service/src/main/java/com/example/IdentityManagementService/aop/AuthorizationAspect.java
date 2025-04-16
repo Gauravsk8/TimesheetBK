@@ -1,10 +1,10 @@
-package com.example.timesheet.aop;
+package com.example.IdentityManagementService.aop;
 
-import com.example.timesheet.annotations.RequiresKeycloakAuthorization;
-import com.example.timesheet.config.KeycloakAuthorizationEnforcer;
-import com.example.timesheet.constants.errorCode;
-import com.example.timesheet.constants.errorMessage;
-import com.example.timesheet.exceptions.TimeSheetException;
+import com.example.IdentityManagementService.annotations.RequiresKeycloakAuthorization;
+import com.example.IdentityManagementService.config.KeycloakAuthorizationEnforcer;
+import com.example.IdentityManagementService.constants.errorCode;
+import com.example.IdentityManagementService.constants.errorMessage;
+import com.example.IdentityManagementService.exceptions.KeycloakException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
@@ -17,8 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
-import static com.example.timesheet.constants.errorMessage.MISSING_BEARER_TOKEN;
-import static com.example.timesheet.constants.errorMessage.UNAUTHORIZED_ACCESS;
+import static com.example.IdentityManagementService.constants.errorMessage.UNAUTHORIZED_ACCESS;
 
 
 @Aspect
@@ -80,7 +79,7 @@ public class AuthorizationAspect {
 
 
         if (token == null) {
-            throw new TimeSheetException(errorCode.MissingBearerToken, errorMessage.MISSING_BEARER_TOKEN);
+            throw new KeycloakException(errorCode.MissingBearerToken, errorMessage.MISSING_BEARER_TOKEN);
         }
 
         boolean authorized = enforcer.isAuthorized(token, resource, scope);
