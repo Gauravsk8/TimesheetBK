@@ -13,7 +13,7 @@ import java.util.Map;
 
 @FeignClient(
         name = "IdentityServiceClient",
-        url = "${identity.service.url}",
+        url = "${identity.service.url:http://localhost:8091}",
         configuration = FeignClientConfig.class
 )
 public interface IdentityServiceClient {

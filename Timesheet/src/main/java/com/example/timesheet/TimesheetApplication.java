@@ -10,7 +10,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients(basePackages = "com.example.Timesheet.client")
 @SpringBootApplication(scanBasePackages = {
 		"com.example.timesheet",
-		"com.example.common"      // shared module's security package
+		"com.example.common",     // shared module's security package
+		"com.timesheet.audit"
 })
 @EnableScheduling
 public class TimesheetApplication {

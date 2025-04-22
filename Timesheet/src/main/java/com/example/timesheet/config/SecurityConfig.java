@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/employees/create").authenticated()
                         .requestMatchers("/api/employees/timesheet-reminder").permitAll()
-                        .requestMatchers("/api/timesheets/submit/*").permitAll()
+                        .requestMatchers("/api/timesheets/submit/*").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

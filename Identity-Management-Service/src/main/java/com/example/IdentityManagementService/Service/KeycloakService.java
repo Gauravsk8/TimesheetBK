@@ -47,26 +47,26 @@ public class KeycloakService {
     public String createUserWithRole(EmployeeRequestDto employee, String roleName) {
         Response response = null;
         try {
-            // 1. Verify admin connection first
+            //  Verify admin connection first
             verifyAdminConnection();
 
             RealmResource realmResource = keycloakAdmin.realm(realm);
 
-            // 2. Check if role exists BEFORE creating user
+            //  Check if role exists BEFORE creating user
             RoleRepresentation role = verifyRoleExists(roleName, realmResource);
 
-            // 3. Check for existing user
+            //  Check for existing user
             checkExistingUser(employee.getEmail(), realmResource);
 
-            // 4. Create user representation
+            //  Create user representation
             UserRepresentation user = createUserRepresentation(employee);
 
-            // 5. Create user in Keycloak
+            //  Create user in Keycloak
             UsersResource usersResource = realmResource.users();
             response = usersResource.create(user);
             handleCreateUserResponse(response);
 
-            // 6. Get created user ID
+            //  Get created user ID
             String userId = extractUserIdFromResponse(response);
 
             try {

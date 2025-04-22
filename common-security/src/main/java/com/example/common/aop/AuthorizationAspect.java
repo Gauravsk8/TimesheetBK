@@ -68,19 +68,14 @@ public class AuthorizationAspect {
         String resource = annotation.resource();
         String scope = annotation.scope();
 
-        Object[] args = joinPoint.getArgs();
-        String token = null;
-        for (Object arg : args) {
-            if (arg instanceof String s && s.startsWith("Bearer ")) {
-                token = s;
-                break;
-            }
-        }
+        String authHeader = request.getHeader("Authorization");
 
-
-        if (token == null) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new TimeSheetException(errorCode.MissingBearerToken, errorMessage.MISSING_BEARER_TOKEN);
         }
+
+        String token = authHeader.substring(7);
+
 
         boolean authorized = enforcer.isAuthorized(token, resource, scope);
         if (!authorized) {

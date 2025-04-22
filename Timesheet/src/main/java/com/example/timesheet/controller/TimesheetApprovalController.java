@@ -1,6 +1,7 @@
 package com.example.timesheet.controller;
 
 
+import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.timesheet.service.TimesheetApprovalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ public class TimesheetApprovalController {
     private final TimesheetApprovalService timesheetApprovalService;
 
     @PostMapping("/submit/{weeklyTimeSheetId}")
+    @RequiresKeycloakAuthorization(resource = "timesheetsubmit", scope = "submit")
     public ResponseEntity<String> submitWeeklyTimesheet(@PathVariable Long weeklyTimeSheetId) {
         try {
             timesheetApprovalService.submitWeeklyTimesheet(weeklyTimeSheetId);
