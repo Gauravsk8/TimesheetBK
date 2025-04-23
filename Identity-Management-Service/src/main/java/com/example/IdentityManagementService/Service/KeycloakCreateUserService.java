@@ -182,4 +182,9 @@ public class KeycloakCreateUserService {
         return realmResource.users().get(id).toRepresentation();
     }
 
+    public List<UserRepresentation> getAllUsers() {
+        RealmResource realmResource = keycloakAdmin.realm(realm);
+        return realmResource.users().list();
+    }
+
 }

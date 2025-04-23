@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/secured").authenticated()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/timesheet/create-user").authenticated()
+                        .requestMatchers("/timesheet/User/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
