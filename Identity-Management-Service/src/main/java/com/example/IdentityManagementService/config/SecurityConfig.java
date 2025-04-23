@@ -39,8 +39,12 @@ public class SecurityConfig {
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/secured").authenticated()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/identity/create-user").permitAll()
+                        .requestMatchers("/timesheet/create-user").authenticated()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                     .authenticationEntryPoint(customEntryPoint)

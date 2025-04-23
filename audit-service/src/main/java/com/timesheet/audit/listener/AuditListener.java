@@ -19,7 +19,7 @@ public class AuditListener {
 
     @PostConstruct
     public void init() {
-        log.info("✅ AuditListener is active and waiting for messages...");
+        log.info(" AuditListener is active and waiting for messages...");
     }
 
 

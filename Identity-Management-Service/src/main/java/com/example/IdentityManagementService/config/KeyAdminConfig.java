@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
 @Configuration
-public class KeyCloakConfig {
+public class KeyAdminConfig {
 
     @Value("${keycloak.auth-server-url}")
     private String serverUrl;
@@ -21,11 +21,7 @@ public class KeyCloakConfig {
 
     @Value("${keycloak.admin.client-secret}")
     private String adminClientSecret;
-    @Value("${keycloak.admin.username}")
-    private String adminUsername;
 
-    @Value("${keycloak.admin.password}")
-    private String adminPassword;
 
     @Bean
     public Keycloak keycloakAdmin() {

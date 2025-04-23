@@ -26,6 +26,7 @@ public class errorMessage {
 
     // === Keycloak Errors ===
     public static final String MALFORMED_BEARER_TOKEN = "Access Token is Expired or Malformed";
+    public static final String USERID_EXTRACTION_FAILED = "Failed To Extract User Id";
 
 
     private errorMessage() {}

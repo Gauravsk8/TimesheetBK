@@ -1,13 +1,10 @@
 package com.example.timesheet.client;
 
 import com.example.timesheet.config.FeignClientConfig;
-import com.example.timesheet.dto.request.EmployeeRequestDto;
+import com.example.timesheet.dto.request.UserIdentityDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -17,10 +14,11 @@ import java.util.Map;
         configuration = FeignClientConfig.class
 )
 public interface IdentityServiceClient {
-    @PostMapping("/api/identity/create-user")
-    ResponseEntity<Map<String, String>> createKeycloakUser(
-            @RequestHeader("Authorization") String token,
-            @RequestBody EmployeeRequestDto dto,
-            @RequestParam String role
-    );
+
+    @GetMapping("/timesheet/get-user-by-username/{username}")
+    ResponseEntity<UserIdentityDto> getUserByUsername(@PathVariable("username") String username);
+
+    @GetMapping("/timesheet/get-user-by-id/{id}")
+    ResponseEntity<UserIdentityDto> getUserById(@PathVariable("id") String id);
+
 }

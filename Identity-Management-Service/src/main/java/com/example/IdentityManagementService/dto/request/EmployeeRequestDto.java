@@ -10,6 +10,9 @@ import lombok.*;
 @AllArgsConstructor
 public class EmployeeRequestDto {
 
+    @NotBlank(message = "Username is EmployeeCode- required")
+    private String username;
+
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
     private String email;
@@ -20,14 +23,9 @@ public class EmployeeRequestDto {
     @NotBlank(message = "Last name is required")
     private String lastName;
 
-    @NotBlank(message = "Password is required")
-    private String password;
 
-    @NotBlank(message = "Phone is required")
-    private String phone;
-
-    @NotBlank(message = "Employee ID is required")
-    private String employeeId;
+    @NotBlank(message = "EmployeeType is required")
+    private String EmployeeType;
 
 
 }
