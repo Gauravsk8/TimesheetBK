@@ -41,7 +41,7 @@ public class KeycloakAdminController {
             @RequestHeader("Authorization") String token,
             @RequestBody UserRoleAssignRequestDto requestDto
     ) {
-        keycloakAssignRoleService.assignRealmRoles(requestDto.getUserId(), requestDto.getRoles());
+        keycloakAssignRoleService.assignRealmRoles(requestDto.getUsername(), requestDto.getRoles());
         return ResponseEntity.ok("Roles assigned successfully");
     }
 

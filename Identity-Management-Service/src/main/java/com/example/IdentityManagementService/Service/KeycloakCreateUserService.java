@@ -108,7 +108,12 @@ public class KeycloakCreateUserService {
 
         Map<String, List<String>> attributes = new HashMap<>();
         attributes.put("source", List.of("timesheet-app"));
-        attributes.put("employeeType", List.of(employee.getEmployeeType())); // Optional: store EmployeeType
+
+        String employeeType = (employee.getEmployeeType() == null || employee.getEmployeeType().isBlank())
+                ? "Employee"
+                : employee.getEmployeeType();
+        attributes.put("EmployeeType", List.of(employeeType));
+
         user.setAttributes(attributes);
 
 

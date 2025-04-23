@@ -16,7 +16,6 @@ public class ProjectAssignmentService {
 
     private final UserProjectAssignmentRepository assignmentRepo;
     private final IdentityServiceClient identityServiceClient;
-    private final UserIdentityDto userIdentityDto;
 
     public UserProjectAssignment assignProjectToUser(String userId, Long projectId) {
         if (assignmentRepo.existsByUserIdAndProjectId(userId, projectId)) {
