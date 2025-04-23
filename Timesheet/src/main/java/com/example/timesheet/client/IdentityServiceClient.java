@@ -15,10 +15,10 @@ import java.util.Map;
 )
 public interface IdentityServiceClient {
 
-    @GetMapping("/timesheet/get-user-by-username/{username}")
-    ResponseEntity<UserIdentityDto> getUserByUsername(@PathVariable("username") String username);
+    @GetMapping("/timesheet/employeeCode/{employeeCode}")
+    ResponseEntity<UserIdentityDto> getUserByUsername(@PathVariable("employeeCode") String employeeCode);
 
-    @GetMapping("/timesheet/get-user-by-id/{id}")
+    @GetMapping("/timesheet/Id/{id}")
     ResponseEntity<UserIdentityDto> getUserById(@PathVariable("id") String id);
 
 }

@@ -45,21 +45,21 @@ public class KeycloakAdminController {
             @RequestHeader("Authorization") String token,
             @RequestBody UserRoleAssignRequestDto requestDto
     ) {
-        keycloakAssignRoleService.assignRealmRoles(requestDto.getUsername(), requestDto.getRoles());
+        keycloakAssignRoleService.assignRealmRoles(requestDto.getEmployeeCode(), requestDto.getRoles());
         return ResponseEntity.ok("Roles assigned successfully");
     }
 
 
-    @GetMapping("User/Username/{username}")
-    public ResponseEntity<Map<String, String>> getUserByUsername(@PathVariable String username) {
-        var user = keycloakAdminService.getUserByUsername(username);
+    @GetMapping("User/employeeCode/{employeeCode}")
+    public ResponseEntity<Map<String, String>> getUserByemployeeCode(@PathVariable String employeeCode) {
+        var user = keycloakAdminService.getUserByemployeeCode(employeeCode);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
 
         Map<String, String> response = new HashMap<>();
         response.put("keycloakUserId", user.getId());
-        response.put("username", user.getUsername());
+        response.put("employeeCode", user.getUsername());
         response.put("firstname", user.getFirstName());
         response.put("lastname", user.getLastName());
         response.put("email", user.getEmail());
@@ -75,7 +75,7 @@ public class KeycloakAdminController {
 
         Map<String, String> response = new HashMap<>();
         response.put("keycloakUserId", user.getId());
-        response.put("username", user.getUsername());
+        response.put("employeeCode", user.getUsername());
         response.put("firstname", user.getFirstName());
         response.put("lastname", user.getLastName());
         response.put("email", user.getEmail());
@@ -91,7 +91,7 @@ public class KeycloakAdminController {
         for (UserRepresentation user : users) {
             Map<String, String> userMap = new HashMap<>();
             userMap.put("keycloakUserId", user.getId());
-            userMap.put("username", user.getUsername());
+            userMap.put("employeeCode", user.getUsername());
             userMap.put("firstname", user.getFirstName());
             userMap.put("lastname", user.getLastName());
             userMap.put("email", user.getEmail());
@@ -101,9 +101,9 @@ public class KeycloakAdminController {
         return ResponseEntity.ok(response);
     }
     @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
-    @GetMapping("/User/{username}/assigned-roles")
-    public ResponseEntity<List<String>> getUserAssignedRealmRoles(@PathVariable String username) {
-        List<String> roles = keycloakAssignRoleService.getAssignedRealmRoles(username);
+    @GetMapping("/User/{employeeCode}/assigned-roles")
+    public ResponseEntity<List<String>> getUserAssignedRealmRoles(@PathVariable String employeeCode) {
+        List<String> roles = keycloakAssignRoleService.getAssignedRealmRoles(employeeCode);
         return ResponseEntity.ok(roles);
     }
 
