@@ -2,6 +2,8 @@ package com.example.IdentityManagementService.Service;
 
 import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
 import com.example.IdentityManagementService.exceptions.KeycloakException;
+import com.example.common.audit.AuditEvent;
+import com.example.common.audit.AuditKafkaProducer;
 import com.example.common.constants.errorCode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,9 +16,12 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +35,7 @@ import static com.example.common.constants.errorMessage.*;
 public class KeycloakCreateUserService {
 
     private final Keycloak keycloakAdmin;
+    private final AuditKafkaProducer auditKafkaProducer;
 
     @Value("${keycloak.realm}")
     private String realm;
@@ -53,7 +59,32 @@ public class KeycloakCreateUserService {
 
             handleCreateUserResponse(response);
 
-            return extractUserIdFromResponse(response);
+            String userId = extractUserIdFromResponse(response);
+            try {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String actor = authentication != null ? authentication.getName() : "unknown";
+
+                Map<String, Object> auditDetails = new HashMap<>();
+                auditDetails.put("createdUserId", userId);
+                auditDetails.put("username", employee.getUsername());
+                auditDetails.put("email", employee.getEmail());
+                auditDetails.put("firstName", employee.getFirstName());
+                auditDetails.put("lastName", employee.getLastName());
+                auditDetails.put("employeeType", employee.getEmployeeType());
+                auditDetails.put("createdBy", actor);
+
+                AuditEvent event = new AuditEvent(
+                        "identity-management-service",
+                        actor,
+                        "CreateUser",
+                        Instant.now(),
+                        auditDetails
+                );
+                auditKafkaProducer.sendAudit(event);
+            } catch (Exception ex) {
+                log.error("Audit Kafka send failed", ex);
+            }
+            return userId;
         } catch (KeycloakException e) {
             log.error("Keycloak error: {}", e.getMessage());
             throw e;
@@ -76,18 +107,9 @@ public class KeycloakCreateUserService {
     }
 
     private void checkExistingUser(String email, String username, RealmResource realmResource) {
-        // Check for existing user by email
-        List<UserRepresentation> existingUsersByEmail = realmResource.users().search(email, true);
-        if (!existingUsersByEmail.isEmpty()) {
-            throw new KeycloakException(
-                    errorCode.CONFLICT_ERROR,
-                    String.format(KEYCLOAK_USER_ALREADY_EXISTS, email)
-            );
-        }
-
         // Check for existing user by username
-        List<UserRepresentation> existingUsersByUsername = realmResource.users().search(username, true);
-        for (UserRepresentation user : existingUsersByUsername) {
+        List<UserRepresentation> usersByUsername = realmResource.users().search(username, 0, 1, true);
+        for (UserRepresentation user : usersByUsername) {
             if (user.getUsername().equalsIgnoreCase(username)) {
                 throw new KeycloakException(
                         errorCode.CONFLICT_ERROR,
@@ -95,7 +117,19 @@ public class KeycloakCreateUserService {
                 );
             }
         }
+
+        // Check for existing user by email
+        List<UserRepresentation> allUsers = realmResource.users().list(); // optionally paginate for performance
+        for (UserRepresentation user : allUsers) {
+            if (user.getEmail() != null && user.getEmail().equalsIgnoreCase(email)) {
+                throw new KeycloakException(
+                        errorCode.CONFLICT_ERROR,
+                        String.format(KEYCLOAK_USER_ALREADY_EXISTS, email)
+                );
+            }
+        }
     }
+
 
 
     private UserRepresentation createUserRepresentation(EmployeeRequestDto employee) {

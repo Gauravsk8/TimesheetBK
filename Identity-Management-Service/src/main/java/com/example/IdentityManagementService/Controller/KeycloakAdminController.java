@@ -3,6 +3,7 @@ package com.example.IdentityManagementService.Controller;
 import com.example.IdentityManagementService.Service.KeycloakAssignRoleService;
 import com.example.IdentityManagementService.dto.request.UserRoleAssignRequestDto;
 import com.example.common.annotations.RequiresKeycloakAuthorization;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class KeycloakAdminController {
     @PostMapping("/create-user")
     public ResponseEntity<Map<String, String>> createUser(
             @RequestHeader("Authorization") String token,
-            @RequestBody EmployeeRequestDto dto
+            @Valid @RequestBody EmployeeRequestDto dto
     ) {
         String userId = keycloakAdminService.createUser(dto);
         Map<String, String> response = new HashMap<>();
@@ -98,6 +99,20 @@ public class KeycloakAdminController {
         }
 
         return ResponseEntity.ok(response);
+    }
+    @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
+    @GetMapping("/User/{username}/assigned-roles")
+    public ResponseEntity<List<String>> getUserAssignedRealmRoles(@PathVariable String username) {
+        List<String> roles = keycloakAssignRoleService.getAssignedRealmRoles(username);
+        return ResponseEntity.ok(roles);
+    }
+
+
+    @GetMapping("/Users/by-roles")
+    @RequiresKeycloakAuthorization(resource = "employee",scope =  "testscope")
+    public ResponseEntity<List<String>> getUsersByRoles(@RequestParam List<String> roles) {
+        List<String> users = keycloakAssignRoleService.getUsersByRoles(roles);
+        return ResponseEntity.ok(users);
     }
 
 }

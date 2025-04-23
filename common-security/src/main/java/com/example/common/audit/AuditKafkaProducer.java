@@ -14,9 +14,7 @@ public class AuditKafkaProducer {
     @Value("${audit.topic.name:audit-trail-topic}")
     private String auditTopic;
 
-    public String sendAudit(AuditEvent event) {
-        System.out.println("hasan and gaurav is loging "+event.toString());
+    public void sendAudit(AuditEvent event) {
         kafkaTemplate.send(auditTopic, event);
-        return "hasan and gaurav is logging";
     }
 }

@@ -8,11 +8,14 @@ public class errorMessage {
     // === Employee Errors ===
     public static final String EMPLOYEE_ALREADY_EXISTS = "Employee with email already exists";
     public static final String EMPLOYEE_SAVE_FAILED = "Failed to save employee to database";
-    public static final String EMPLOYEE_CREATION_SUCCESS = "Employee created successfully with ID: %s";
     public static final String EMPLOYEE_CREATION_FAILED_LOG = "Error creating employee";
+    public static final String ROLE_ALREADY_ASSIGNED = "Role Already Assigned ";
+
 
     // === Role Errors ===
-    public static final String ROLE_NOT_FOUND = "Role not found";
+    public static final String ROLE_NOT_FOUND = "Role not found ";
+    public static final String ROLE_ASSIGN_FAILED = "Role assign Failed";
+
     public static final String USER_NOT_FOUND = "User not found";
 
     // === Validation & General Errors ===

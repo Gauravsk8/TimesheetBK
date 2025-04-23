@@ -27,4 +27,18 @@ public class kafkaAuditConfig {
                 .replicas(1)
                 .build();
     }
+    /*
+    @Bean
+    public ProducerFactory<String, AuditEvent> producerFactory() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092"); // Update if needed
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
+
+    @Bean
+    public KafkaTemplate<String, AuditEvent> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
+    } */
 }
