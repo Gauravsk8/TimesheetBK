@@ -27,7 +27,7 @@ public class SecurityConfig {
     // Define JwtDecoder Bean
     @Bean
     public JwtDecoder jwtDecoder() {
-        String issuerUri = "http://localhost:8080/realms/timesheet";  // Update with your Keycloak issuer URL
+        String issuerUri = "http://localhost:8084/realms/timesheet";  // Update with your Keycloak issuer URL
         return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 
