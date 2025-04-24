@@ -49,7 +49,7 @@ public class KeycloakCreateUserService {
             RealmResource realmResource = keycloakAdmin.realm(realm);
 
             //check user exist
-            checkExistingUser(employee.getEmail(), employee.getUsername(), realmResource);
+            checkExistingUser(employee.getEmail(), employee.getEmployeeCode(), realmResource);
 
             UserRepresentation user = createUserRepresentation(employee);
 
@@ -66,7 +66,7 @@ public class KeycloakCreateUserService {
 
                 Map<String, Object> auditDetails = new HashMap<>();
                 auditDetails.put("createdUserId", userId);
-                auditDetails.put("username", employee.getUsername());
+                auditDetails.put("username", employee.getEmployeeCode());
                 auditDetails.put("email", employee.getEmail());
                 auditDetails.put("firstName", employee.getFirstName());
                 auditDetails.put("lastName", employee.getLastName());
@@ -74,7 +74,7 @@ public class KeycloakCreateUserService {
                 auditDetails.put("createdBy", actor);
 
                 AuditEvent event = new AuditEvent(
-                        "identity-management-service",
+                        "create-user-service",
                         actor,
                         "CreateUser",
                         Instant.now(),
@@ -106,14 +106,14 @@ public class KeycloakCreateUserService {
         }
     }
 
-    private void checkExistingUser(String email, String username, RealmResource realmResource) {
-        // Check for existing user by username
-        List<UserRepresentation> usersByUsername = realmResource.users().search(username, 0, 1, true);
-        for (UserRepresentation user : usersByUsername) {
-            if (user.getUsername().equalsIgnoreCase(username)) {
+    private void checkExistingUser(String email, String employeeCode, RealmResource realmResource) {
+        // Check for existing user by employeeCode
+        List<UserRepresentation> usersByemployeeCode = realmResource.users().search(employeeCode, 0, 1, true);
+        for (UserRepresentation user : usersByemployeeCode) {
+            if (user.getUsername().equalsIgnoreCase(employeeCode)) {
                 throw new KeycloakException(
                         errorCode.CONFLICT_ERROR,
-                        String.format(KEYCLOAK_USER_ALREADY_EXISTS, username)
+                        String.format(KEYCLOAK_USER_ALREADY_EXISTS, employeeCode)
                 );
             }
         }
@@ -134,7 +134,7 @@ public class KeycloakCreateUserService {
 
     private UserRepresentation createUserRepresentation(EmployeeRequestDto employee) {
         UserRepresentation user = new UserRepresentation();
-        user.setUsername(employee.getUsername());
+        user.setUsername(employee.getEmployeeCode());
         user.setFirstName(employee.getFirstName());
         user.setLastName(employee.getLastName());
         user.setEmail(employee.getEmail());
@@ -202,11 +202,11 @@ public class KeycloakCreateUserService {
         }
     }
 
-    public UserRepresentation getUserByUsername(String username) {
+    public UserRepresentation getUserByemployeeCode(String employeeCode) {
         RealmResource realmResource = keycloakAdmin.realm(realm);
-        List<UserRepresentation> users = realmResource.users().search(username, true);
+        List<UserRepresentation> users = realmResource.users().search(employeeCode, true);
         return users.stream()
-                .filter(u -> u.getUsername().equalsIgnoreCase(username))
+                .filter(u -> u.getUsername().equalsIgnoreCase(employeeCode))
                 .findFirst()
                 .orElse(null);
     }

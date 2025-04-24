@@ -1,13 +1,20 @@
 package com.example.timesheet.dto.request;
 
-import lombok.*;
+import lombok.Data;
+
+import java.sql.Timestamp;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ProjectDto {
-    private Long id;
-    private String name;
-    private String costCenter;
+    private String projectCode;
+    private String title;
+    private String description;
+    private String owner;
+    private Timestamp startDate;
+    private Timestamp endDate;
+    private Long clientId;
+    private String costCenterCode;
+    private String managerId;
+    private String allocatedHours;
 }
+

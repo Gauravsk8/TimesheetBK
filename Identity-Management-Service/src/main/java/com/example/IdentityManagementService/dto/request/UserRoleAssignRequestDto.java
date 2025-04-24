@@ -11,8 +11,8 @@ import java.util.List;
 @Setter
 public class UserRoleAssignRequestDto {
 
-    @NotEmpty(message = "Username is required")
-    private String username;
+    @NotEmpty(message = "employeeCode is required")
+    private String employeeCode;
 
     @NotEmpty(message = "At least one role must be provided")
     private List<String> roles;

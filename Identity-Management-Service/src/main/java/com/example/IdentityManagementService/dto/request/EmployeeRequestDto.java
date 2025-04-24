@@ -11,7 +11,7 @@ import lombok.*;
 public class EmployeeRequestDto {
 
     @NotBlank(message = "Username is EmployeeCode- required")
-    private String username;
+    private String employeeCode;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")

@@ -9,5 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserIdentityDto {
     private String keycloakUserId;
-    private String username;
+    private String employeeCode;
+    private String firstName;
+    private String lastName;
 }

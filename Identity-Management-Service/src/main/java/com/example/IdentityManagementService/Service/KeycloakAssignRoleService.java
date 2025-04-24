@@ -38,16 +38,16 @@ public class KeycloakAssignRoleService {
     @Value("${keycloak.realm}")
     private String realm;
 
-    public void assignRealmRoles(String username, List<String> roles) {
+    public void assignRealmRoles(String employeeCode, List<String> roles) {
         RealmResource realmResource = keycloakAdmin.realm(realm);
 
-        // Search for user by username
-        List<UserRepresentation> users = realmResource.users().search(username);
+        // Search for user by employeeCode
+        List<UserRepresentation> users = realmResource.users().search(employeeCode);
         if (users.isEmpty()) {
-            throw new KeycloakException(NOT_FOUND_ERROR, USER_NOT_FOUND + " " + username);
+            throw new KeycloakException(NOT_FOUND_ERROR, USER_NOT_FOUND + " " + employeeCode);
         }
 
-        // Assuming username is unique, use the first user found
+        // Assuming employeeCode is unique, use the first user found
         UserRepresentation userRepresentation = users.get(0);
         String userId = userRepresentation.getId();
         UserResource userResource = realmResource.users().get(userId);
@@ -75,9 +75,9 @@ public class KeycloakAssignRoleService {
         // Get the UserResource and assign roles
         try {
             userResource.roles().realmLevel().add(roleRepresentations);
-            log.info("Assigned roles {} to user {}", roles, username);
+            log.info("Assigned roles {} to user {}", roles, employeeCode);
         } catch (Exception e) {
-            throw new KeycloakException(NOT_FOUND_ERROR, ROLE_ASSIGNMENT_FAILED + username);
+            throw new KeycloakException(NOT_FOUND_ERROR, ROLE_ASSIGNMENT_FAILED + employeeCode);
         }
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -86,11 +86,11 @@ public class KeycloakAssignRoleService {
             Map<String, Object> details = new HashMap<>();
             details.put("assignedRoles", roles);
             details.put("userId", userId);
-            details.put("Username", username);
+            details.put("employeeCode", employeeCode);
             details.put("assignedBy", actor);
 
             AuditEvent event = new AuditEvent(
-                    "identity-management-service",
+                    "Role-Assign-service",
                     actor,
                     "AssignRealmRoles",
                     Instant.now(),
@@ -103,15 +103,15 @@ public class KeycloakAssignRoleService {
         }
     }
 
-    public List<String> getAssignedRealmRoles(String username) {
+    public List<String> getAssignedRealmRoles(String employeeCode) {
         RealmResource realmResource = keycloakAdmin.realm(realm);
 
-        // Find user by username
-        List<UserRepresentation> users = realmResource.users().search(username, true);
+        // Find user by employeeCode
+        List<UserRepresentation> users = realmResource.users().search(employeeCode, true);
         if (users.isEmpty()) {
             throw new KeycloakException(
                     NOT_FOUND_ERROR,
-                    USER_NOT_FOUND + username
+                    USER_NOT_FOUND + employeeCode
             );
         }
 
