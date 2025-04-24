@@ -1,6 +1,7 @@
 package com.example.IdentityManagementService.Controller;
 
 import com.example.IdentityManagementService.Service.KeycloakAssignRoleService;
+import com.example.IdentityManagementService.dto.request.UserIdentityDto;
 import com.example.IdentityManagementService.dto.request.UserRoleAssignRequestDto;
 import com.example.common.annotations.RequiresKeycloakAuthorization;
 import jakarta.validation.Valid;
@@ -51,20 +52,22 @@ public class KeycloakAdminController {
 
 
     @GetMapping("User/employeeCode/{employeeCode}")
-    public ResponseEntity<Map<String, String>> getUserByemployeeCode(@PathVariable String employeeCode) {
+    public ResponseEntity<UserIdentityDto> getUserByemployeeCode(@PathVariable String employeeCode) {
         var user = keycloakAdminService.getUserByemployeeCode(employeeCode);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
 
-        Map<String, String> response = new HashMap<>();
-        response.put("keycloakUserId", user.getId());
-        response.put("employeeCode", user.getUsername());
-        response.put("firstname", user.getFirstName());
-        response.put("lastname", user.getLastName());
-        response.put("email", user.getEmail());
-        return ResponseEntity.ok(response);
+        UserIdentityDto dto = new UserIdentityDto();
+        dto.setKeycloakUserId(user.getId());
+        dto.setEmployeeCode(user.getUsername());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+
+        return ResponseEntity.ok(dto);
     }
+
 
     @GetMapping("User/Id/{id}")
     public ResponseEntity<Map<String, String>> getUserById(@PathVariable String id) {

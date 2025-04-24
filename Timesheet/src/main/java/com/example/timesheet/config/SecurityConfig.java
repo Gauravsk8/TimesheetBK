@@ -36,10 +36,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/employees/create").authenticated()
-                        .requestMatchers("/api/employees/timesheet-reminder").permitAll()
-                        .requestMatchers("/api/timesheets/submit/*").authenticated()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customEntryPoint)

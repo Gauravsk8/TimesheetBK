@@ -15,8 +15,8 @@ import java.util.Map;
 )
 public interface IdentityServiceClient {
 
-    @GetMapping("/timesheet/employeeCode/{employeeCode}")
-    ResponseEntity<UserIdentityDto> getUserByUsername(@PathVariable("employeeCode") String employeeCode);
+    @GetMapping("/timesheet/User/employeeCode/{employeeCode}")
+    ResponseEntity<UserIdentityDto> getUserByemployeeCode(@PathVariable("employeeCode") String employeeCode);
 
     @GetMapping("/timesheet/Id/{id}")
     ResponseEntity<UserIdentityDto> getUserById(@PathVariable("id") String id);
