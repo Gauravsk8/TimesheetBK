@@ -26,8 +26,9 @@ public class KeycloakAdminController {
     private final KeycloakAssignRoleService keycloakAssignRoleService;
 
     //Create User
-    @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
-    @PostMapping("/create-user")
+
+    @PostMapping("/admin/create-user")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<Map<String, String>> createUser(
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody EmployeeRequestDto dto
@@ -40,8 +41,8 @@ public class KeycloakAdminController {
     }
 
 
-    @PostMapping("/assign-roles")
-    @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
+    @PostMapping("/admin/assign-roles")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> assignRoles(
             @RequestHeader("Authorization") String token,
             @RequestBody UserRoleAssignRequestDto requestDto
@@ -51,7 +52,8 @@ public class KeycloakAdminController {
     }
 
 
-    @GetMapping("User/employeeCode/{employeeCode}")
+    @GetMapping("/admin/User/employeeCode/{employeeCode}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<UserIdentityDto> getUserByemployeeCode(@PathVariable String employeeCode) {
         var user = keycloakAdminService.getUserByemployeeCode(employeeCode);
         if (user == null) {
@@ -69,7 +71,8 @@ public class KeycloakAdminController {
     }
 
 
-    @GetMapping("User/Id/{id}")
+    @GetMapping("/admin/User/Id/{id}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<Map<String, String>> getUserById(@PathVariable String id) {
         var user = keycloakAdminService.getUserById(id);
         if (user == null) {
@@ -85,8 +88,8 @@ public class KeycloakAdminController {
         return ResponseEntity.ok(response);
     }
 
-    @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
-    @GetMapping("/users")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    @GetMapping("/admin/users")
     public ResponseEntity<List<Map<String, String>>> getAllUsers(@RequestHeader("Authorization") String token) {
         List<UserRepresentation> users = keycloakAdminService.getAllUsers();
         List<Map<String, String>> response = new ArrayList<>();
@@ -103,16 +106,16 @@ public class KeycloakAdminController {
 
         return ResponseEntity.ok(response);
     }
-    @RequiresKeycloakAuthorization(resource = "employee", scope = "testscope")
-    @GetMapping("/User/{employeeCode}/assigned-roles")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    @GetMapping("/admin/User/{employeeCode}/assigned-roles")
     public ResponseEntity<List<String>> getUserAssignedRealmRoles(@PathVariable String employeeCode) {
         List<String> roles = keycloakAssignRoleService.getAssignedRealmRoles(employeeCode);
         return ResponseEntity.ok(roles);
     }
 
 
-    @GetMapping("/Users/by-roles")
-    @RequiresKeycloakAuthorization(resource = "employee",scope =  "testscope")
+    @GetMapping("/admin/Users/by-roles")
+    @RequiresKeycloakAuthorization(resource = "Admin",scope =  "Adminscope")
     public ResponseEntity<List<String>> getUsersByRoles(@RequestParam List<String> roles) {
         List<String> users = keycloakAssignRoleService.getUsersByRoles(roles);
         return ResponseEntity.ok(users);

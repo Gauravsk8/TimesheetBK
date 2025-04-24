@@ -36,11 +36,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**").permitAll()
-                        .requestMatchers("/secured").authenticated()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/timesheet/create-user").authenticated()
-                        .requestMatchers("/timesheet/User/**").permitAll()
+                        .requestMatchers("/timesheet/admin/.*").authenticated()
+                        .requestMatchers("/timesheet/User/.*").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

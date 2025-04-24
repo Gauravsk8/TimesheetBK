@@ -1,5 +1,6 @@
 package com.example.timesheet.controller;
 
+import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.timesheet.dto.reponse.ProjectResponseDto;
 import com.example.timesheet.dto.reponse.ProjectWithEmployeesDto;
 import com.example.timesheet.dto.request.AssignEmployeesDto;
@@ -17,32 +18,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Project")
+@RequestMapping("/timesheet")
 @RequiredArgsConstructor
 public class ProjectManagementController {
 
     private final ProjectManagementService projectManagementService;
 
-    @PostMapping("/clients")
+    @PostMapping("/admin/clients")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> createClient(@RequestBody ClientDto clientDto) {
         String response = projectManagementService.createClient(clientDto);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/clients")
+    @GetMapping("/admin/clients")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<List<Clients>> getAllClients() {
         List<Clients> response = projectManagementService.getAllClients();
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/clients/{id}")
+    @GetMapping("/admin/clients/{id}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<Clients> getClientById(@PathVariable Long id) {
         return projectManagementService.getClientById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/clients/{id}")
+    @PutMapping("/admin/clients/{id}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<Clients> updateClient(@PathVariable Long id, @RequestBody ClientDto clientDto) {
         try {
             Clients updatedClient = projectManagementService.updateClient(id, clientDto);
@@ -52,17 +57,20 @@ public class ProjectManagementController {
         }
     }
 
-    @PostMapping("/cost-centers")
+    @PostMapping("/admin/cost-centers")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<CostCenter> createCostCenter(@RequestBody CostCenterDto dto) {
         return ResponseEntity.ok(projectManagementService.createCostCenter(dto));
     }
 
-    @GetMapping("/cost-centers")
+    @GetMapping("/admin/cost-centers")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<List<CostCenter>> getAllCostCenters() {
         return ResponseEntity.ok(projectManagementService.getAllCostCenters());
     }
 
-    @GetMapping("/cost-centers/{code}")
+    @GetMapping("/admin/cost-centers/{code}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<CostCenter> getCostCenterByCode(@PathVariable String code) {
         try {
             return ResponseEntity.ok(projectManagementService.getCostCenterByCode(code));
@@ -71,7 +79,8 @@ public class ProjectManagementController {
         }
     }
 
-    @PutMapping("/cost-centers/{code}")
+    @PutMapping("/admin/cost-centers/{code}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<CostCenter> updateCostCenter(@PathVariable String code, @RequestBody CostCenterDto dto) {
         try {
             return ResponseEntity.ok(projectManagementService.updateCostCenter(code, dto));
@@ -80,13 +89,15 @@ public class ProjectManagementController {
         }
     }
 
-    @PostMapping("/createProject")
+    @PostMapping("/admin/createProject")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> createProjects(@RequestBody ProjectDto projectCreateRequest){
         String result=projectManagementService.createProject(projectCreateRequest);
         return ResponseEntity.ok().body(result);
     }
 
-    @PutMapping("/{code}")
+    @PutMapping("/admin/{code}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> updateProject(@PathVariable String code, @RequestBody ProjectDto dto) {
         try {
             return ResponseEntity.ok(projectManagementService.updateProject(code, dto));
@@ -95,40 +106,43 @@ public class ProjectManagementController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/admin/Project")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<List<ProjectResponseDto>> getAllProject() {
         return ResponseEntity.ok(projectManagementService.getAllProjects());
     }
 
-    @PostMapping("/assign")
+    @PostMapping("admin/Project/assign")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> assignEmployees(@RequestBody AssignEmployeesDto dto) {
         return ResponseEntity.ok(projectManagementService.assignEmployeesToProject(dto));
     }
 
-    @GetMapping("/{projectCode}/employees")
-    public ResponseEntity<List<ProjectEmployeeDto>> getAssignedEmployees(@PathVariable String projectCode) {
-        List<ProjectEmployeeDto> employees = projectManagementService.getEmployeesByProject(projectCode);
-        return ResponseEntity.ok(employees);
-    }
-
-    @DeleteMapping("/{projectCode}/employees/{employeeCode}")
-    public ResponseEntity<String> removeEmployeeFromProject(
-            @PathVariable String projectCode,
-            @PathVariable String employeeCode) {
-        projectManagementService.removeEmployeeFromProject(projectCode, employeeCode);
-        return ResponseEntity.ok("Employee removed from project successfully.");
-    }
-
-    @GetMapping("/{projectCode}/with-employees")
+    @GetMapping("/admin/{projectCode}/with-employees")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<ProjectWithEmployeesDto> getProjectWithEmployees(@PathVariable String projectCode) {
         ProjectWithEmployeesDto dto = projectManagementService.getProjectWithEmployees(projectCode);
         return ResponseEntity.ok(dto);
     }
 
-    @DeleteMapping("/{projectCode}")
+    @DeleteMapping("/admin/{projectCode}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> deleteProject(@PathVariable String projectCode) {
         projectManagementService.deleteProject(projectCode);
         return ResponseEntity.ok("Project with code " + projectCode + " has been deleted.");
+    }
+    @GetMapping("Project/{projectCode}/employees")
+    public ResponseEntity<List<ProjectEmployeeDto>> getAssignedEmployees(@PathVariable String projectCode) {
+        List<ProjectEmployeeDto> employees = projectManagementService.getEmployeesByProject(projectCode);
+        return ResponseEntity.ok(employees);
+    }
+
+    @DeleteMapping("/Project/{projectCode}/employees/{employeeCode}")
+    public ResponseEntity<String> removeEmployeeFromProject(
+            @PathVariable String projectCode,
+            @PathVariable String employeeCode) {
+        projectManagementService.removeEmployeeFromProject(projectCode, employeeCode);
+        return ResponseEntity.ok("Employee removed from project successfully.");
     }
 
 }
