@@ -1,13 +1,18 @@
 package com.example.common.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class KeycloakAuthorizationEnforcer {
@@ -27,31 +32,46 @@ public class KeycloakAuthorizationEnforcer {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public boolean isAuthorized(String token, String resource, String scope) {
-        String url = keycloakBaseUrl + "/realms/" + realm + "/protocol/openid-connect/token";
-
+        String url = String.format("%s/realms/%s/protocol/openid-connect/token",
+                keycloakBaseUrl, realm);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBearerAuth(token.replace("Bearer ", ""));
+        headers.set("Authorization", "Bearer " + token);
 
-        String body = "grant_type=urn:ietf:params:oauth:grant-type:uma-ticket" +
-                "&audience=" + clientId +
-                "&permission=" + resource + "#" + scope +
-                "&response_mode=decision";
-
-        HttpEntity<String> request = new HttpEntity<>(body, headers);
+        String encodedPermission = URLEncoder.encode(resource + "#" + scope, StandardCharsets.UTF_8);
+        String body = String.format(
+                "grant_type=urn:ietf:params:oauth:grant-type:uma-ticket" +
+                        "&audience=%s" +
+                        "&permission=%s" +
+                        "&response_mode=decision",
+                clientId, encodedPermission);
 
         try {
-            ResponseEntity<String> response = restTemplate.exchange(
+            ResponseEntity<Map> response = restTemplate.exchange(
                     url,
                     HttpMethod.POST,
-                    request,
-                    String.class
+                    new HttpEntity<>(body, headers),
+                    Map.class
             );
-            return response.getStatusCode() == HttpStatus.OK;
-        } catch (Exception e) {
+
+            // Successful response means authorized
+            if (response.getStatusCode() == HttpStatus.OK) {
+                log.debug("UMA Authorization successful for {}#{}", resource, scope);
+                return true;
+            }
+
+            // Check for RPT (Requesting Party Token) in response
+            if (response.getBody() != null && response.getBody().containsKey("access_token")) {
+                return true;
+            }
+
+            log.warn("UMA Authorization failed for {}#{}: {}", resource, scope, response.getBody());
+            return false;
+
+        } catch (HttpClientErrorException e) {
+            log.error("UMA Authorization error: {}", e.getResponseBodyAsString());
             return false;
         }
     }
 }
-

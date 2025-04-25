@@ -3,8 +3,10 @@ package com.example.timesheet.config;
 
 import com.example.common.security.CustomAccessDeniedHandler;
 import com.example.common.security.CustomEntryPoint;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -18,16 +20,20 @@ public class SecurityConfig {
     private final CustomEntryPoint customEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
+
     public SecurityConfig(CustomEntryPoint customEntryPoint,
                           CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.customEntryPoint = customEntryPoint;
         this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
+    @Value("${keycloak.enabled:true}")
+    private boolean keycloakEnabled;
+
     // Define JwtDecoder Bean
     @Bean
     public JwtDecoder jwtDecoder() {
-        String issuerUri = "http://localhost:8084/realms/timesheet";  // Update with your Keycloak issuer URL
+        String issuerUri = "http://localhost:8080/realms/timesheet";
         return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 
@@ -35,7 +41,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authorize -> authorize
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/timesheet/admin/.*").hasAuthority("SCOPE_Adminscope")
+                        .requestMatchers("/timesheet/Project/.*").permitAll()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exception -> exception

@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-@EnableFeignClients(basePackages = "com.example.IdentityManagementService.client") // 👈 This is key!
+@EnableFeignClients(basePackages = "com.example.IdentityManagementService.client")
 
 @EnableAspectJAutoProxy
 @SpringBootApplication(scanBasePackages = {
