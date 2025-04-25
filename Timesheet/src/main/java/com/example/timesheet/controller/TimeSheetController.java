@@ -1,8 +1,12 @@
 package com.example.timesheet.controller;
 
+import com.example.timesheet.dto.response.ShiftDetailsResponse;
+import com.example.timesheet.dto.request.ApproveWithManagerOverWriteRequest;
 import com.example.timesheet.dto.request.DailyTimeSheetRequest;
+import com.example.timesheet.dto.request.UserIdentityDto;
 import com.example.timesheet.dto.request.WeeklyTimeSheetRequest;
 import com.example.timesheet.dto.response.WeeklyTimeSheetResponse;
+import com.example.timesheet.enums.TimeSheetStatus;
 import com.example.timesheet.service.TimeSheetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,19 +22,19 @@ import java.util.List;
 public class TimeSheetController {
 
     private final TimeSheetService timeSheetService;
-    @PostMapping("/enterDailyTimeSheet")
-    public ResponseEntity<String> enterDailyTimeSheet(@RequestBody DailyTimeSheetRequest dailyTimeSheetRequest){
-        String result=timeSheetService.enterOrUpdateDailyTimeSheet(dailyTimeSheetRequest);
+    @PostMapping("/daily")
+    public ResponseEntity<String> enterDailyTimeSheet(@RequestBody List<DailyTimeSheetRequest> dailyTimeSheetRequests){
+        String result=timeSheetService.enterOrUpdateDailyTimeSheet(dailyTimeSheetRequests);
         return  ResponseEntity.ok().body(result);
     }
 
-    @PostMapping("/enterWeeklyTimeSheet")
+    @PostMapping("/weekly")
     public ResponseEntity<String> enterWeeklyTimeSheet(@RequestBody WeeklyTimeSheetRequest weeklyTimeSheetRequest){
         String result=timeSheetService.weeklyTimeSheetEntry(weeklyTimeSheetRequest);
         return  ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/getWeeklyTimeSheetForAnEmployee")
+    @GetMapping("/weekly")
     public WeeklyTimeSheetResponse getWeeklyTimeSheetForAnEmployee(@RequestParam("employeeCode") String employeeCode,
                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekEndDate){
@@ -44,7 +48,7 @@ public class TimeSheetController {
         return timeSheetService.getWeeklyTimeSheetForAnEmployee(employeeCode,startTs,endTs);
     }
 
-    @GetMapping("/getWeeklyHoursSpent")
+    @GetMapping("/weekly/project-hours")
     public Long getWeeklyHoursSpent(@RequestParam("projectId") Long projectId,
                                     @RequestParam("employeeCode") String employeeCode,
                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
@@ -56,7 +60,7 @@ public class TimeSheetController {
         return  timeSheetService.getWeeklyHoursSpent(projectId,employeeCode,startTs,endTs);
     }
 
-    @GetMapping("/getWeeklyHoursSpent/{type}")
+    @GetMapping("/weekly/type-hours/{type}")
     public Long getWeeklyHoursSpent(@PathVariable("type") String type,
                                     @RequestParam("employeeCode") String employeeCode,
                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
@@ -67,4 +71,32 @@ public class TimeSheetController {
 
         return timeSheetService.getWeeklyHoursSpentByType(employeeCode,type,startTs,endTs);
     }
+
+    @GetMapping("/shift-details/{id}")
+    public ShiftDetailsResponse shiftDetailsOfEmployee(@PathVariable Long id){
+        return timeSheetService.shiftDetailsOfEmployee(id);
+    }
+
+    @GetMapping("/employees")
+    public List<UserIdentityDto> getAllEmployees(@RequestParam("managerCode")String managerCode){
+        return timeSheetService.getAllEmployees(managerCode);
+
+    }
+
+    @PostMapping("/approve/manager-approve")
+    public ResponseEntity<String> approvedByManager(@RequestParam("weeklyTimeSheetId") Long weeklyTimeSheetId,
+                                                    @RequestParam("managerCode") String managerCode){
+        String result=timeSheetService.approvedByManager(weeklyTimeSheetId,managerCode);
+        return  ResponseEntity.ok().body(result);
+    }
+
+    @PostMapping("/manager-review")
+    public ResponseEntity<String> approveWithManagerOverWrite(@RequestBody ApproveWithManagerOverWriteRequest approveWithManagerOverWriteRequest,
+                                                              @RequestParam("weeklyTimeSheetId") Long weeklyTimeSheetId ,
+                                                              @RequestParam("status")TimeSheetStatus status){
+        String result=timeSheetService.approveWithManagerOverWrite(approveWithManagerOverWriteRequest,weeklyTimeSheetId,status);
+        return  ResponseEntity.ok().body(result);
+    }
+
+
 }

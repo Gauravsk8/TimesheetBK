@@ -1,5 +1,6 @@
 package com.example.timesheet.models;
 
+import com.example.timesheet.enums.TimeSheetStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,5 +36,9 @@ public class WeeklyTimeSheet {
     private Long totalWorkingHours; // Computed field: Sum of project + training hours
     private Long totalIdleHours;    // Sum of idle + leave + holiday
 
+    @Enumerated(EnumType.STRING)
+    private TimeSheetStatus timeSheetStatus;
 
+    private String approvedBy;
+    private String commentsByManager;
 }

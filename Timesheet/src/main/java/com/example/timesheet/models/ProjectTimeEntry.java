@@ -22,4 +22,7 @@ public class ProjectTimeEntry{
     private DailyTimeSheet dailyTimeSheet;
     private Long projectId;
     private Long totalHoursSpent;
+
+    private boolean isTotalHoursSpentOnProjectModifiedByManager = false;
+
 }

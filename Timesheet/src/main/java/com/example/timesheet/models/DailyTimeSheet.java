@@ -40,6 +40,12 @@ public class DailyTimeSheet {
     private Long training;
     private Long totalHours;
 
+    private boolean isIdealModifiedByManager = false;
+    private boolean isHolidayModifiedByManager = false;
+    private boolean isLeaveModifiedByManager = false;
+    private boolean isTrainingModifiedByManager = false;
+    private boolean isTotalHoursModifiedByManager = false;
+
 
 
 }
