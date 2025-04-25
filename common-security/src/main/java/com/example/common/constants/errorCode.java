@@ -16,7 +16,10 @@ public class errorCode {
     public static final String KEYCLOAK_RESPONSE_PARSING_ERROR = "Keycloak response parsing error";
     public static String MissingBearerToken = "BEARER_TOKEN_MISSING";
     public static final String KEYCLOAK_CONNECTION_ERROR = "KEYCLOAK_CONNECTION_ERROR";
+    public static final String SAVE_ERROR="SAVING_DATA_ERROR";
 
+    public static final String ACCESS_DENIED="ACCESS_DENIED";
+    public static final String FAILED_TO_FETCH_DETAILS="Failed to fetch details";
 
     errorCode() {}
 }

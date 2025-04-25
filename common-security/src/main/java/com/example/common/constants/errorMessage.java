@@ -32,6 +32,14 @@ public class errorMessage {
     public static final String MALFORMED_BEARER_TOKEN = "Access Token is Expired or Malformed";
     public static final String USERID_EXTRACTION_FAILED = "Failed To Extract User Id";
 
-
+    public static final String ERROR_SAVING_DAILY_TIMESHEET="Error saving daily time sheet";
+    public static final String ACCESS_DENIED_TO_EDIT_TIMESHEET="Access denied to edit the time sheet since it is already approved by the manager";
+    public static final String UNEXPECTED_ERROR_WHILE_SAVING_DAILY_TIMESHEET="Unexpected error while saving daily time sheet";
+    public static final String DAILY_TIME_SHEETS_NOT_FOUND_FOR_EMPLOYEE_BETWEEN_THESE_DATES="Daily time sheets not found for this employee between these dates";
+    public static final String ERROR_SAVING_WEEKLY_TIMESHEET="Error saving weekly time sheet";
+    public static final String WEEKLY_TIME_SHEET_NOT_FOUND="Weekly time sheet not found";
+    public static final String DAILY_TIME_SHEET_NOT_FOUND_FOR_EMPLOYEE_WITHIN_DATES="Daily time sheets not found for this employee between these dates, unable to fetch weekly hours spent";
+    public static final String EMPLOYEES_NOT_FOUND_UNDER_THIS_MANAGER="No employees found under this manager";
+    public static final String ERROR_FETCHING_EMPLOYEE_DETAILS="Failed to fetch details for employee";
     private errorMessage() {}
 }
