@@ -1,3 +1,4 @@
 .gradle/
 postgres-data
+.idea/
 

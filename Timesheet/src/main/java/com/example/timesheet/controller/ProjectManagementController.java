@@ -138,6 +138,7 @@ public class ProjectManagementController {
     }
 
     @DeleteMapping("/Project/{projectCode}/employees/{employeeCode}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> removeEmployeeFromProject(
             @PathVariable String projectCode,
             @PathVariable String employeeCode) {

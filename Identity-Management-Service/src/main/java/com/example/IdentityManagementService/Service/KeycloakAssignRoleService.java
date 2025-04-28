@@ -172,5 +172,84 @@ public class KeycloakAssignRoleService {
         }
     }
 
+    // KeycloakAssignRoleService.java
+
+    public void deassignRealmRoles(String employeeCode, List<String> roles) {
+        RealmResource realmResource = keycloakAdmin.realm(realm);
+
+        // Search for user by employeeCode
+        List<UserRepresentation> users = realmResource.users().search(employeeCode);
+        if (users.isEmpty()) {
+            throw new KeycloakException(NOT_FOUND_ERROR, USER_NOT_FOUND + " " + employeeCode);
+        }
+
+        UserRepresentation userRepresentation = users.get(0);
+        String userId = userRepresentation.getId();
+        UserResource userResource = realmResource.users().get(userId);
+
+        List<RoleRepresentation> roleRepresentations = new ArrayList<>();
+        for (String roleName : roles) {
+            try {
+                RoleRepresentation role = realmResource.roles().get(roleName).toRepresentation();
+                roleRepresentations.add(role);
+            } catch (Exception e) {
+                throw new KeycloakException(NOT_FOUND_ERROR, ROLE_NOT_FOUND + roleName);
+            }
+        }
+
+        try {
+            userResource.roles().realmLevel().remove(roleRepresentations);
+            log.info("Deassigned roles {} from user {}", roles, employeeCode);
+        } catch (Exception e) {
+            throw new KeycloakException(NOT_FOUND_ERROR, "Role de-assignment failed for user " + employeeCode);
+        }
+
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String actor = authentication != null ? authentication.getName() : "unknown";
+
+            Map<String, Object> details = new HashMap<>();
+            details.put("deassignedRoles", roles);
+            details.put("userId", userId);
+            details.put("employeeCode", employeeCode);
+            details.put("deassignedBy", actor);
+
+            AuditEvent event = new AuditEvent(
+                    "Role-Deassign-service",
+                    actor,
+                    "DeassignRealmRoles",
+                    Instant.now(),
+                    details
+            );
+            auditKafkaProducer.sendAudit(event);
+
+        } catch (Exception ex) {
+            log.error("Audit Kafka send failed", ex);
+        }
+    }
+
+    public boolean hasProjectManagerRole(String employeeCode) {
+        RealmResource realmResource = keycloakAdmin.realm(realm);
+
+        List<UserRepresentation> users = realmResource.users().search(employeeCode);
+        if (users.isEmpty()) {
+            throw new KeycloakException(NOT_FOUND_ERROR, USER_NOT_FOUND + " " + employeeCode);
+        }
+
+        String userId = users.get(0).getId();
+
+        List<String> assignedRoles = realmResource.users()
+                .get(userId)
+                .roles()
+                .realmLevel()
+                .listEffective()
+                .stream()
+                .map(RoleRepresentation::getName)
+                .collect(Collectors.toList());
+
+        return assignedRoles.contains("ProjectManager");
+    }
+
+
 
 }
