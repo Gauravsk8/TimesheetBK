@@ -21,4 +21,7 @@ public interface IdentityServiceClient {
     @GetMapping("/timesheet/admin/User/Id/{id}")
     ResponseEntity<UserIdentityDto> getUserById(@PathVariable("id") String id);
 
+    @GetMapping("/timesheet/admin/User/{employeeCode}/has-project-manager-role")
+    ResponseEntity<Boolean> hasProjectManagerRole(@PathVariable("employeeCode") String employeeCode);
+
 }

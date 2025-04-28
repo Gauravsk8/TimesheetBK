@@ -221,4 +221,43 @@ public class KeycloakCreateUserService {
         return realmResource.users().list();
     }
 
+    public void updateUserProfile(String userId, EmployeeRequestDto employeeRequestDto) {
+        try {
+            RealmResource realmResource = keycloakAdmin.realm(realm);
+            UsersResource usersResource = realmResource.users();
+
+            UserRepresentation user = usersResource.get(userId).toRepresentation();
+
+            if (employeeRequestDto.getFirstName() != null) {
+                user.setFirstName(employeeRequestDto.getFirstName());
+            }
+            if (employeeRequestDto.getLastName() != null) {
+                user.setLastName(employeeRequestDto.getLastName());
+            }
+            if (employeeRequestDto.getEmail() != null) {
+                user.setEmail(employeeRequestDto.getEmail());
+            }
+
+            Map<String, List<String>> attributes = user.getAttributes();
+            if (attributes == null) {
+                attributes = new HashMap<>();
+            }
+            if (employeeRequestDto.getEmployeeType() != null) {
+                attributes.put("EmployeeType", List.of(employeeRequestDto.getEmployeeType()));
+            }
+            user.setAttributes(attributes);
+
+            usersResource.get(userId).update(user);
+
+        } catch (Exception e) {
+            log.error("Error updating user profile", e);
+            throw new KeycloakException(
+                    errorCode.KEYCLOAK_USER_UPDATE_FAILED,
+                    USER_UPDATE_FAILED + e.getMessage(),
+                    e
+            );
+        }
+    }
+
+
 }

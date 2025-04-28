@@ -3,11 +3,15 @@ package com.example.IdentityManagementService.Controller;
 import com.example.IdentityManagementService.Service.KeycloakAssignRoleService;
 import com.example.IdentityManagementService.dto.request.UserIdentityDto;
 import com.example.IdentityManagementService.dto.request.UserRoleAssignRequestDto;
+import com.example.IdentityManagementService.dto.request.UserRoleUpdateRequestDto;
 import com.example.common.annotations.RequiresKeycloakAuthorization;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.example.IdentityManagementService.Service.KeycloakCreateUserService;
 import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
@@ -40,6 +44,45 @@ public class KeycloakAdminController {
         return ResponseEntity.status(201).body(response);
     }
 
+    @PatchMapping("/my/edit-profile")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+    public ResponseEntity<String> editOwnProfile(
+            @RequestHeader("Authorization") String token,
+            @Valid @RequestBody EmployeeRequestDto dto
+    ) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userId = authentication.getName();
+
+            var user = keycloakAdminService.getUserById(userId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+
+            keycloakAdminService.updateUserProfile(user.getId(), dto);
+            return ResponseEntity.ok("Profile updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating profile: " + e.getMessage());
+        }
+    }
+
+
+    @PatchMapping("/admin/edit-profile/{employeeCode}")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    public ResponseEntity<String> editEmployeeProfile(
+            @RequestHeader("Authorization") String token,
+            @PathVariable String employeeCode,
+            @Valid @RequestBody EmployeeRequestDto dto
+    ) {
+        var user = keycloakAdminService.getUserByemployeeCode(employeeCode);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        keycloakAdminService.updateUserProfile(user.getId(), dto);
+        return ResponseEntity.ok("Employee profile updated successfully");
+    }
+
+
 
     @PostMapping("/admin/assign-roles")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
@@ -49,6 +92,28 @@ public class KeycloakAdminController {
     ) {
         keycloakAssignRoleService.assignRealmRoles(requestDto.getEmployeeCode(), requestDto.getRoles());
         return ResponseEntity.ok("Roles assigned successfully");
+    }
+
+    @PostMapping("/admin/update-roles")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    public ResponseEntity<String> updateUserRoles(
+            @RequestHeader("Authorization") String token,
+            @RequestBody UserRoleUpdateRequestDto requestDto
+    ) {
+        keycloakAssignRoleService.updateUserRoles(
+                requestDto.getEmployeeCode(),
+                requestDto.getRolesToAssign(),
+                requestDto.getRolesToRemove()
+        );
+        return ResponseEntity.ok("Roles updated successfully");
+    }
+
+
+    @GetMapping("/admin/User/{employeeCode}/has-project-manager-role")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    public ResponseEntity<Boolean> hasProjectManagerRole(@PathVariable String employeeCode) {
+        boolean hasRole = keycloakAssignRoleService.hasProjectManagerRole(employeeCode);
+        return ResponseEntity.ok(hasRole);
     }
 
 

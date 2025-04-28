@@ -41,5 +41,7 @@ public class errorMessage {
     public static final String DAILY_TIME_SHEET_NOT_FOUND_FOR_EMPLOYEE_WITHIN_DATES="Daily time sheets not found for this employee between these dates, unable to fetch weekly hours spent";
     public static final String EMPLOYEES_NOT_FOUND_UNDER_THIS_MANAGER="No employees found under this manager";
     public static final String ERROR_FETCHING_EMPLOYEE_DETAILS="Failed to fetch details for employee";
+    public static String USER_UPDATE_FAILED = "Failed To update User";
+
     private errorMessage() {}
 }
