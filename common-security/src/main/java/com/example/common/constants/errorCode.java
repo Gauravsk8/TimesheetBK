@@ -12,15 +12,17 @@ public class errorCode {
     public static final String UNAUTHORIZED_ERROR = "TIMESHEET_UNAUTHORIZED_ERROR";
     public static final String ROLE_ASSIGNMENT_FAILED = "ROLE_ASSIGNMENT_FAILED";
     public static final String KEYCLOAK_USER_CREATION_FAILED = "KEYCLOAK_USER_CREATION_FAILED";
-    public static final String TIMESHEET_SAVING_DATA_TO_DATABASE_FAILED = "SAVING_TO_DATABASE_FAILED";
-    public static final String KEYCLOAK_RESPONSE_PARSING_ERROR = "KEYCLOAK_RESPONSE_PARSING_ERROR";
-    public static final String KEYCLOAK_USER_UPDATE_FAILED = "KEYCLOAK_USER_UPDATE_FAILED";
+    public static final String TIMESHEET_SAVING_DATA_TO_DATABASE_FAILED = "Saving To Database Failed";
+    public static final String KEYCLOAK_RESPONSE_PARSING_ERROR = "Keycloak response parsing error";
     public static String MissingBearerToken = "BEARER_TOKEN_MISSING";
     public static final String KEYCLOAK_CONNECTION_ERROR = "KEYCLOAK_CONNECTION_ERROR";
     public static final String SAVE_ERROR="SAVING_DATA_ERROR";
 
     public static final String ACCESS_DENIED="ACCESS_DENIED";
-    public static final String FAILED_TO_FETCH_DETAILS="FAILE_TO_FETCH_DETAILS";
-
+    public static final String FAILED_TO_FETCH_DETAILS="Failed to fetch details";
+    public static final String INVALID_INPUT="Invalid input";
+    public static final String INVALID_MONTH_YEAR_FORMAT="Invalid month year format";
+    public static final String NOT_NULL="Not null";
     errorCode() {}
 }
+

@@ -3,10 +3,6 @@ package com.example.common.constants;
 public class errorMessage {
     public static final String MISSING_BEARER_TOKEN = "Missing Bearer token";
     public static final String UNAUTHORIZED_ACCESS = "User not authorized to access the resource";
-    public static final String ReportingManagerAssigned ="Reporting manager is assigned to employee";
-    public static final String ReportingManagerAssignedFAILED ="Failed To assign Reporting Manager to employee";
-
-
 
 
     // === Employee Errors ===
@@ -45,7 +41,23 @@ public class errorMessage {
     public static final String DAILY_TIME_SHEET_NOT_FOUND_FOR_EMPLOYEE_WITHIN_DATES="Daily time sheets not found for this employee between these dates, unable to fetch weekly hours spent";
     public static final String EMPLOYEES_NOT_FOUND_UNDER_THIS_MANAGER="No employees found under this manager";
     public static final String ERROR_FETCHING_EMPLOYEE_DETAILS="Failed to fetch details for employee";
-    public static String USER_UPDATE_FAILED = "Failed To update User";
+    public static final String MANAGER_CODE_OR_MONTH_YEAR_MUST_NOT_BE_NULL = "Manager code or month/year must not be null.";
+    public static final String EMPLOYEE_CODE_MUST_NOT_BE_NULL = "Employee code must not be null.";
+    public static final String WEEK_START_OR_END_DATE_MUST_NOT_BE_NULL = "Week start date or end date must not be null.";
+    public static final String EMPLOYEES_CAN_ONLY_VIEW_THEIR_TIMESHEET = "Employees can only view their own timesheet.";
+    public static final String UNEXPECTED_ERROR_FETCHING_TIME_SHEET = "An unexpected error occurred while fetching the timesheet.";
+    public static final String ERROR_CALCULATING_PROJECT_HOURS = "Error occurred while calculating project hours.";
+    public static final String ERROR_CALCULATING_HOURS_SPENT = "Error occurred while calculating hours spent.";
+    public static final String FAILED_TO_FETCH_EMPLOYEE_DETAILS = "Failed to fetch employee details.";
+    public static final String FAILED_TO_APPROVE_WEEKLY_TIMESHEET = "Failed to approve weekly timesheet.";
+    public static final String FAILED_TO_APPROVE_WEEKLY_TIMESHEET_WITH_MANAGER_OVERWRITE = "Failed to approve weekly timesheet with manager override.";
+    public static final String DAILY_TIME_SHEET_CANNOT_BE_NULL = "Daily timesheet cannot be null.";
+    public static final String ERROR_ADDING_DAILY_TIMESHEET = "Error occurred while adding daily timesheet.";
+    public static final String ERROR_ADDING_PROJECT_ENTRY = "Error occurred while adding project entry.";
+    public static final String TOTAL_PROJECT_HOURS_CANNOT_BE_NULL = "Total project hours cannot be null.";
+    public static final String NO_EMPLOYEES_FOUND_REPORTING_TO_THIS_MANAGER = "No employees found reporting to this manager.";
+    public static final String INVALID_MONTH_YEAR_FORMAT_MESSAGE = "Invalid month/year format. Expected format is MM-yyyy.";
+    public static final String NO_VALID_WEEKLY_RANGES_FOR_SELECTED_MONTH = "No valid weekly ranges found for the selected month.";
 
     private errorMessage() {}
 }

@@ -651,19 +651,19 @@ public class TimeSheetService {
         return total;
     }
 
-    private boolean checkIfUserIsManager(String employeeCode){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentEmployeeCode = authentication != null ? authentication.getName():"Error";
-        boolean isManager=false;
-        List<String> role=identityServiceClient.getAssignedRoles(currentEmployeeCode);
-        if(role.contains("MANAGER")){
-            isManager=true;
-        }
-        if(!isManager && !employeeCode.equals(currentEmployeeCode)){
-            throw new TimeSheetException(ACCESS_DENIED,"You can only view your time sheet");
-        }
-        return true;
-    }
+//    private boolean checkIfUserIsManager(String employeeCode){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String currentEmployeeCode = authentication != null ? authentication.getName():"Error";
+//        boolean isManager=false;
+//        List<String> role=identityServiceClient.getAssignedRoles(currentEmployeeCode);
+//        if(role.contains("MANAGER")){
+//            isManager=true;
+//        }
+//        if(!isManager && !employeeCode.equals(currentEmployeeCode)){
+//            throw new TimeSheetException(ACCESS_DENIED,"You can only view your time sheet");
+//        }
+//        return true;
+//    }
 
 
     public List<ManagerDashboardResponse> getManagerDashboardResponse(String managerCode, String monthYear) {
