@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -25,5 +26,9 @@ public class WeeklyTimeSheetResponse {
 
     private Long totalWorkingHours; // Computed field: Sum of project + training hours
     private Long totalIdleHours;    // Sum of idle + leave + holiday
+
+    private Map<Long,Long> projectHours;
+    private Map<String,Long> hoursMap;
+
 
 }

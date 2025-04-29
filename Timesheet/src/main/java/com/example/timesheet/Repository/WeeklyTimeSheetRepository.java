@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 public interface WeeklyTimeSheetRepository extends PagingAndSortingRepository<WeeklyTimeSheet, String>,  org.springframework.data.jpa.repository.JpaRepository<WeeklyTimeSheet, String>, QuerydslPredicateExecutor<WeeklyTimeSheet> {
     WeeklyTimeSheet findByWeekStartDate(Timestamp weekStartDate);
@@ -25,7 +26,12 @@ public interface WeeklyTimeSheetRepository extends PagingAndSortingRepository<We
 
     WeeklyTimeSheet findByWeekStartDateAndEmployeeCode(Timestamp weekStartDate, String employeeCode);
 
-    WeeklyTimeSheet findByEmployeeCodeAndWeekStartDateBetween(String employeeCode, Timestamp weekStartDate, Timestamp weekEndDate);
+    List<WeeklyTimeSheet> findByEmployeeCodeAndWeekStartDateBetween(String employeeCode, Timestamp weekStartDate, Timestamp weekEndDate);
 
+
+
+    //@Query("SELECT w FROM WeeklyTimeSheet w WHERE w.employeeCode = :employeeCode AND FUNCTION('DATE', w.weekStartDate) = :weekStartDate")
     WeeklyTimeSheet findByEmployeeCodeAndWeekStartDate(String employeeCode, Timestamp weekStartDate);
+
+    WeeklyTimeSheet findByEmployeeCode(String employeeCode);
 }
