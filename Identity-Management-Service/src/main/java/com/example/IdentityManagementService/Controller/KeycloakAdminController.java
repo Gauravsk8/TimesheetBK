@@ -37,14 +37,19 @@ public class KeycloakAdminController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody EmployeeRequestDto dto
     ) {
-        String userId = keycloakAdminService.createUser(dto);
+        Map<String, String> result = keycloakAdminService.createUser(dto);
+
         Map<String, String> response = new HashMap<>();
         response.put("message", "User created successfully");
-        response.put("keycloakUserId", userId);
+        response.put("keycloakUserId", result.get("userId"));
+
+        //response.put("temporaryPassword", result.get("temporaryPassword"));
+
         return ResponseEntity.status(201).body(response);
     }
 
-    @PatchMapping("/my/edit-profile")
+
+    @PatchMapping("/User/my/edit-profile")
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public ResponseEntity<String> editOwnProfile(
             @RequestHeader("Authorization") String token,

@@ -5,23 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ac3fdf0-da33-45fa-8617-a25f7d096e62" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/UserRoleUpdateRequestDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/EmailService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakAdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakAssignRoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakAssignRoleService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakCreateUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakCreateUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/EmployeeRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/EmployeeRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/EmployeeReportingManagerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/EmployeeReportingManagerRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/audit-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/audit-service/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/audit-service/src/main/java/com/timesheet/audit/model/AuditRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/audit-service/src/main/java/com/timesheet/audit/model/AuditRecord.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/audit-service/src/main/java/com/timesheet/audit/service/AuditStoreService.java" beforeDir="false" afterPath="$PROJECT_DIR$/audit-service/src/main/java/com/timesheet/audit/service/AuditStoreService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/audit-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/audit-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/errorCode.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/errorCode.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/errorMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/errorMessage.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/errorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/errorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/EmployeeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/EmployeeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/EmployeeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/EmployeeService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/errorMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/errorMessage.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -165,7 +160,7 @@
       <command value="gradle build" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.IdentityManagementServiceApplication">
+  <component name="RunManager" selected="Application.TimesheetApplication">
     <configuration name="AuditServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.timesheet.audit.AuditServiceApplication" />
       <module name="TimesheetBK.audit-service.main" />

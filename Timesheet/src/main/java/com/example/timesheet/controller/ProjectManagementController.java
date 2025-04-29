@@ -131,13 +131,9 @@ public class ProjectManagementController {
         projectManagementService.deleteProject(projectCode);
         return ResponseEntity.ok("Project with code " + projectCode + " has been deleted.");
     }
-    @GetMapping("Project/{projectCode}/employees")
-    public ResponseEntity<List<ProjectEmployeeDto>> getAssignedEmployees(@PathVariable String projectCode) {
-        List<ProjectEmployeeDto> employees = projectManagementService.getEmployeesByProject(projectCode);
-        return ResponseEntity.ok(employees);
-    }
 
-    @DeleteMapping("/Project/{projectCode}/employees/{employeeCode}")
+
+    @DeleteMapping("/admin/Project/{projectCode}/employees/{employeeCode}")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> removeEmployeeFromProject(
             @PathVariable String projectCode,
@@ -145,6 +141,13 @@ public class ProjectManagementController {
         projectManagementService.removeEmployeeFromProject(projectCode, employeeCode);
         return ResponseEntity.ok("Employee removed from project successfully.");
     }
+    @GetMapping("/Project/{projectCode}/employees")
+    public ResponseEntity<List<ProjectEmployeeDto>> getAssignedEmployees(@PathVariable String projectCode) {
+        List<ProjectEmployeeDto> employees = projectManagementService.getEmployeesByProject(projectCode);
+        return ResponseEntity.ok(employees);
+    }
+
+
 
 }
 

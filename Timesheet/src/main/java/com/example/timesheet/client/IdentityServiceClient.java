@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @FeignClient(
@@ -23,5 +24,9 @@ public interface IdentityServiceClient {
 
     @GetMapping("/timesheet/admin/User/{employeeCode}/has-project-manager-role")
     ResponseEntity<Boolean> hasProjectManagerRole(@PathVariable("employeeCode") String employeeCode);
+
+    @GetMapping("/timesheet/admin/Users/by-roles")
+    ResponseEntity<List<String>> getUsersByRoles(@RequestParam List<String> roles);
+
 
 }

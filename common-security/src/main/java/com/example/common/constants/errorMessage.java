@@ -3,6 +3,10 @@ package com.example.common.constants;
 public class errorMessage {
     public static final String MISSING_BEARER_TOKEN = "Missing Bearer token";
     public static final String UNAUTHORIZED_ACCESS = "User not authorized to access the resource";
+    public static final String ReportingManagerAssigned ="Reporting manager is assigned to employee";
+    public static final String ReportingManagerAssignedFAILED ="Failed To assign Reporting Manager to employee";
+
+
 
 
     // === Employee Errors ===
