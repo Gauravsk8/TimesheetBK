@@ -23,8 +23,13 @@ public interface IdentityServiceClient {
     @GetMapping("/timesheet/admin/User/Id/{id}")
     ResponseEntity<UserIdentityDto> getUserById(@PathVariable("id") String id);
 
-    @GetMapping("/timesheet/{employeeCode}/getAssignedRoles")
-    List<String> getAssignedRoles(@PathVariable("employeeCode") String employeeCode);
+
+    @GetMapping("/timesheet/admin/User/{employeeCode}/has-project-manager-role")
+    ResponseEntity<Boolean> hasProjectManagerRole(@PathVariable("employeeCode") String employeeCode);
+
+    @GetMapping("/timesheet/admin/Users/by-roles")
+    ResponseEntity<List<String>> getUsersByRoles(@RequestParam List<String> roles);
+
 
 
 }

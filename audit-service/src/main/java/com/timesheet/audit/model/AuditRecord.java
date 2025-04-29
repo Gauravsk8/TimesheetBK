@@ -19,7 +19,6 @@ public class AuditRecord {
     private String actor;
     private String action;
 
-    @Lob
     private String details;
 
     private Instant timestamp;

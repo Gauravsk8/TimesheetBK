@@ -1,6 +1,10 @@
 package com.example.timesheet.controller;
 
+
 import com.example.timesheet.dto.response.ManagerDashboardResponse;
+
+import com.example.common.annotations.RequiresKeycloakAuthorization;
+
 import com.example.timesheet.dto.response.ShiftDetailsResponse;
 import com.example.timesheet.dto.request.ApproveWithManagerOverWriteRequest;
 import com.example.timesheet.dto.request.DailyTimeSheetRequest;
@@ -20,22 +24,25 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@RestController
+@RestController("/timesheet")
 @RequiredArgsConstructor
 public class TimeSheetController {
 
     private final TimeSheetService timeSheetService;
-    @PostMapping("/daily")
+    @PostMapping("/Employee/daily")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public ResponseEntity<String> enterDailyTimeSheet(@RequestBody List<DailyTimeSheetRequest> dailyTimeSheetRequests){
         String result=timeSheetService.enterOrUpdateDailyTimeSheet(dailyTimeSheetRequests);
         return  ResponseEntity.ok().body(result);
     }
 
-    @PostMapping("/weekly")
+    @PostMapping("/Employee/weekly")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public ResponseEntity<String> enterWeeklyTimeSheet(@RequestBody WeeklyTimeSheetRequest weeklyTimeSheetRequest){
         String result=timeSheetService.weeklyTimeSheetEntry(weeklyTimeSheetRequest);
         return  ResponseEntity.ok().body(result);
     }
+
 
     @GetMapping("/dashboard/manager/{managerCode}")
     public List<ManagerDashboardResponse> getManagerDashboardResponse(@PathVariable("managerCode") String managerCode,
@@ -43,7 +50,11 @@ public class TimeSheetController {
         return timeSheetService.getManagerDashboardResponse(managerCode,monthYear);
     }
     @PreAuthorize("hasAuthority('SCOPE_view_timesheet') or hasAuthority('SCOPE_view_all_timesheets')")
-    @GetMapping("/weekly")
+
+
+    @GetMapping("/Employee/weekly")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+
     public WeeklyTimeSheetResponse getWeeklyTimeSheetForAnEmployee(@RequestParam("employeeCode") String employeeCode,
                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekEndDate){
@@ -60,7 +71,8 @@ public class TimeSheetController {
         return timeSheetService.getWeeklyTimeSheetForAnEmployee(employeeCode,startTs,endTs);
     }
 
-    @GetMapping("/weekly/project-hours")
+    @GetMapping("/Employee/weekly/project-hours")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public Long getWeeklyHoursSpent(@RequestParam("projectId") Long projectId,
                                     @RequestParam("employeeCode") String employeeCode,
                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
@@ -71,6 +83,7 @@ public class TimeSheetController {
 
         return  timeSheetService.getWeeklyHoursSpent(projectId,employeeCode,startTs,endTs);
     }
+
 
 //    @GetMapping("/weekly/type-hours/{type}")
 //    public Long getWeeklyHoursSpent(@PathVariable("type") String type,
@@ -88,6 +101,25 @@ public class TimeSheetController {
 //    public ShiftDetailsResponse shiftDetailsOfEmployee(@PathVariable Long id){
 //        return timeSheetService.shiftDetailsOfEmployee(id);
 //    }
+
+//    @GetMapping("/Employee/weekly/type-hours/{type}")
+//    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+//    public Long getWeeklyHoursSpent(@PathVariable("type") String type,
+//                                    @RequestParam("employeeCode") String employeeCode,
+//                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
+//                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekEndDate){
+//        LocalTime fixedTime = LocalTime.of(5, 30);
+//        Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(weekStartDate, fixedTime));
+//        Timestamp endTs = Timestamp.valueOf(LocalDateTime.of(weekEndDate, fixedTime));
+//
+//        return timeSheetService.getWeeklyHoursSpentByType(employeeCode,type,startTs,endTs);
+//    }
+
+//    @GetMapping("/Employee/shift-details/{id}")
+//    public ShiftDetailsResponse shiftDetailsOfEmployee(@PathVariable Long id){
+//        return timeSheetService.shiftDetailsOfEmployee(id);
+//    }
+
 
     @GetMapping("/employees")
     public List<UserIdentityDto> getAllEmployees(@RequestParam("managerCode")String managerCode){

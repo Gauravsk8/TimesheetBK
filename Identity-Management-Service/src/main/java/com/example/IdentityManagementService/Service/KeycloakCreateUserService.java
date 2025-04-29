@@ -25,6 +25,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.example.common.constants.errorCode.KEYCLOAK_USER_CREATION_FAILED;
 import static com.example.common.constants.errorMessage.*;
@@ -36,11 +37,12 @@ public class KeycloakCreateUserService {
 
     private final Keycloak keycloakAdmin;
     private final AuditKafkaProducer auditKafkaProducer;
+    private final EmailService emailService;
 
     @Value("${keycloak.realm}")
     private String realm;
 
-    public String createUser(EmployeeRequestDto employee) {
+    public Map<String, String> createUser(EmployeeRequestDto employee) {
         try {
             //To check Admin connection
             verifyAdminConnection();
@@ -60,6 +62,23 @@ public class KeycloakCreateUserService {
             handleCreateUserResponse(response);
 
             String userId = extractUserIdFromResponse(response);
+
+            String randomPassword = generateRandomPassword();
+
+            CredentialRepresentation passwordCred = new CredentialRepresentation();
+            passwordCred.setTemporary(true);
+            passwordCred.setType(CredentialRepresentation.PASSWORD);
+            passwordCred.setValue(randomPassword);
+
+            usersResource.get(userId).resetPassword(passwordCred);
+
+            String emailSubject = "Welcome to the Company Portal";
+            String emailBody = String.format(
+                    "Hello %s,\n\nYour account has been created.\nUsername: %s\nTemporary Password: %s\n\nPlease log in and change your password.",
+                    employee.getFirstName(), employee.getEmployeeCode(), randomPassword
+            );
+            emailService.sendEmail(employee.getEmail(), emailSubject, emailBody);
+
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String actor = authentication != null ? authentication.getName() : "unknown";
@@ -84,7 +103,10 @@ public class KeycloakCreateUserService {
             } catch (Exception ex) {
                 log.error("Audit Kafka send failed", ex);
             }
-            return userId;
+            Map<String, String> result = new HashMap<>();
+            result.put("userId", userId);
+            result.put("temporaryPassword", randomPassword);
+            return result;
         } catch (KeycloakException e) {
             log.error("Keycloak error: {}", e.getMessage());
             throw e;
@@ -93,6 +115,10 @@ public class KeycloakCreateUserService {
             throw new KeycloakException(KEYCLOAK_USER_CREATION_FAILED, KEYCLOAK_USER_CREATION_FAILED, e);
         }
     }
+    private String generateRandomPassword() {
+        return UUID.randomUUID().toString().substring(0, 8); // 8 chars random password
+    }
+
 
     private void verifyAdminConnection() {
         try {
@@ -220,5 +246,44 @@ public class KeycloakCreateUserService {
         RealmResource realmResource = keycloakAdmin.realm(realm);
         return realmResource.users().list();
     }
+
+    public void updateUserProfile(String userId, EmployeeRequestDto employeeRequestDto) {
+        try {
+            RealmResource realmResource = keycloakAdmin.realm(realm);
+            UsersResource usersResource = realmResource.users();
+
+            UserRepresentation user = usersResource.get(userId).toRepresentation();
+
+            if (employeeRequestDto.getFirstName() != null) {
+                user.setFirstName(employeeRequestDto.getFirstName());
+            }
+            if (employeeRequestDto.getLastName() != null) {
+                user.setLastName(employeeRequestDto.getLastName());
+            }
+            if (employeeRequestDto.getEmail() != null) {
+                user.setEmail(employeeRequestDto.getEmail());
+            }
+
+            Map<String, List<String>> attributes = user.getAttributes();
+            if (attributes == null) {
+                attributes = new HashMap<>();
+            }
+            if (employeeRequestDto.getEmployeeType() != null) {
+                attributes.put("EmployeeType", List.of(employeeRequestDto.getEmployeeType()));
+            }
+            user.setAttributes(attributes);
+
+            usersResource.get(userId).update(user);
+
+        } catch (Exception e) {
+            log.error("Error updating user profile", e);
+            throw new KeycloakException(
+                    errorCode.KEYCLOAK_USER_UPDATE_FAILED,
+                    USER_UPDATE_FAILED + e.getMessage(),
+                    e
+            );
+        }
+    }
+
 
 }

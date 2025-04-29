@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/timesheet/admin/.*").hasAuthority("SCOPE_Adminscope")
                         .requestMatchers("/timesheet/Project/.*").permitAll()
+                        .requestMatchers("/timesheet/Rmanager/.*").hasAuthority("SCOPE_RMscope")
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exception -> exception

@@ -24,7 +24,6 @@ public class EmployeeRequestDto {
     private String lastName;
 
 
-    @NotBlank(message = "EmployeeType is required")
     private String EmployeeType;
 
 
