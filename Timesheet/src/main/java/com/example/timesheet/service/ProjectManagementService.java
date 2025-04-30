@@ -36,7 +36,6 @@ public class ProjectManagementService {
     private final ProjectEmployeeRepository projectEmployeeRepository;
 
 
-
     public String createClient(ClientDto dto) {
         Clients client = new Clients();
         client.setName(dto.getName());
@@ -44,7 +43,7 @@ public class ProjectManagementService {
         client.setContactEmail(dto.getContactEmail());
         client.setAddress(dto.getAddress());
         Clients savedClient = clientsRepository.save(client);
-        return String.format("Client created %s",savedClient.getId());
+        return String.format("Client created %s", savedClient.getId());
     }
 
     public List<ClientResponseDto> getAllClients() {
@@ -61,17 +60,16 @@ public class ProjectManagementService {
     }
 
 
-
     public String updateClient(Long id, ClientDto dto) {
         Clients client = clientsRepository.findById(id)
-                .orElseThrow(() -> new TimeSheetException(errorCode.NOT_FOUND_ERROR,String.format(errorMessage.CLIENT_NOT_FOUND,id)));
+                .orElseThrow(() -> new TimeSheetException(errorCode.NOT_FOUND_ERROR, String.format(errorMessage.CLIENT_NOT_FOUND, id)));
 
         client.setName(dto.getName());
         client.setContactPerson(dto.getContactPerson());
         client.setContactEmail(dto.getContactEmail());
         client.setAddress(dto.getAddress());
         Clients savedClient = clientsRepository.save(client);
-        return String.format("Client updated %s",savedClient.getId());
+        return String.format("Client updated %s", savedClient.getId());
     }
 
     public Optional<ClientResponseDto> getClientById(Long id) {
@@ -95,8 +93,8 @@ public class ProjectManagementService {
                 .managerCode(dto.getManagerCode())
                 .build();
 
-        CostCenter saveCostCenter=costCenterRepository.save(costCenter);
-        return String.format("Cost Center created %s",saveCostCenter.getCode());
+        CostCenter saveCostCenter = costCenterRepository.save(costCenter);
+        return String.format("Cost Center created %s", saveCostCenter.getCode());
     }
 
     public List<CostCenterResponseDto> getAllCostCenters() {
@@ -136,8 +134,8 @@ public class ProjectManagementService {
         costCenter.setName(dto.getName());
         costCenter.setDescription(dto.getDescription());
         costCenter.setManagerCode(dto.getManagerCode());
-        CostCenter saveCostCenter=costCenterRepository.save(costCenter);
-        return String.format("Cost Center created %s",saveCostCenter.getCode());
+        CostCenter saveCostCenter = costCenterRepository.save(costCenter);
+        return String.format("Cost Center created %s", saveCostCenter.getCode());
 
     }
 
@@ -161,10 +159,9 @@ public class ProjectManagementService {
                         errorCode.NOT_FOUND_ERROR, // Error code for cost center not found
                         String.format(errorMessage.COST_CENTER_NOT_FOUND, dto.getCostCenterCode()) // Error message for cost center not found
                 ));
-        ResponseEntity<Boolean> managerRole=identityServiceClient.hasProjectManagerRole(dto.getManagerCode());
+        ResponseEntity<Boolean> managerRole = identityServiceClient.hasProjectManagerRole(dto.getManagerCode());
 
-        if(!managerRole.getBody())
-        {
+        if (!managerRole.getBody()) {
             throw new TimeSheetException(
                     errorCode.MANAGER_ROLE, // Assuming this is the error code
                     String.format(errorMessage.PROJECT_MANAGER_ROLE, dto.getManagerCode()) // Assuming you have this error message in your errorMessage class
@@ -183,7 +180,7 @@ public class ProjectManagementService {
         project.setManagerCode(dto.getManagerCode());
         project.setAllocated_hours(dto.getAllocatedHours());
 
-        Project savedProject=projectRepository.save(project);
+        Project savedProject = projectRepository.save(project);
 
         return "Project " + savedProject.getTitle() + " has been created";
     }
@@ -231,7 +228,7 @@ public class ProjectManagementService {
             project.setCostCenter(costCenter);
         }
 
-        Project updatedProject=projectRepository.save(project);
+        Project updatedProject = projectRepository.save(project);
 
         return "Project " + updatedProject.getTitle() + " has been updated";
     }
@@ -250,7 +247,12 @@ public class ProjectManagementService {
                 })
                 .map(emp -> {
                     ProjectEmployee pe = new ProjectEmployee();
-                    ResponseEntity<UserIdentityDto> user= identityServiceClient.getUserByemployeeCode(emp.getEmployeeCode());
+                    ResponseEntity<UserIdentityDto> user;
+                    try {
+                        user = identityServiceClient.getUserByemployeeCode(emp.getEmployeeCode());
+                    } catch (Exception e) {
+                        throw new TimeSheetException(errorCode.NOT_FOUND_ERROR, errorMessage.USER_NOT_FOUND + e.getMessage());
+                    }
                     String EmployeeKeycloakId = user.getBody().getKeycloakUserId();
                     pe.setId(new ProjectEmployeeId(projectCode, emp.getEmployeeCode()));
                     pe.setProject(project);
@@ -271,17 +273,19 @@ public class ProjectManagementService {
         List<ProjectEmployee> entities = projectEmployeeRepository.findByProject_ProjectCodeIgnoreCase(projectCode);
 
         return entities.stream().map(pe -> {
-            ProjectEmployeeDto dto = new ProjectEmployeeDto();
-            ResponseEntity<UserIdentityDto> user= identityServiceClient.getUserByemployeeCode(pe.getId().getEmployeeCode());
-            dto.setEmployeeCode(pe.getId().getEmployeeCode());
-            dto.setFirstName(user.getBody().getFirstName());
-            dto.setLastName(user.getBody().getLastName());
-            dto.setStartDate(pe.getStartDate());
-            dto.setEndDate(pe.getEndDate());
-            dto.setStatus(pe.getStatus());
-            return dto;
+            ResponseEntity<UserIdentityDto> user = identityServiceClient.getUserByemployeeCode(pe.getId().getEmployeeCode());
+
+            return ProjectEmployeeDto.builder()
+                    .employeeCode(pe.getId().getEmployeeCode())
+                    .firstName(user.getBody().getFirstName())
+                    .lastName(user.getBody().getLastName())
+                    .startDate(pe.getStartDate())
+                    .endDate(pe.getEndDate())
+                    .status(pe.getStatus())
+                    .build();
         }).toList();
     }
+
 
     public void removeEmployeeFromProject(String projectCode, String employeeCode) {
         ProjectEmployeeId id = new ProjectEmployeeId(projectCode, employeeCode);
@@ -290,7 +294,8 @@ public class ProjectManagementService {
             throw new TimeSheetException(
                     errorCode.NOT_FOUND_ERROR,  // Assuming this is the error code
                     String.format(errorMessage.ASSIGNMENT_NOT_FOUND, projectCode, employeeCode)  // Assuming this error message exists
-            );        }
+            );
+        }
 
         projectEmployeeRepository.deleteById(id);
     }
@@ -363,7 +368,7 @@ public class ProjectManagementService {
         projectEmployee.setStartDate(dto.getStartDate());
         projectEmployee.setEndDate(dto.getEndDate());
         projectEmployeeRepository.save(projectEmployee);
-        return String.format("Updated Employee %s in project %s",employeeCode,projectCode);
+        return String.format("Updated Employee %s in project %s", employeeCode, projectCode);
     }
 
     public List<ProjectDto> getProjectsByEmployeeCode(String employeeCode) {
@@ -389,7 +394,6 @@ public class ProjectManagementService {
     }
 
 
-
     private ProjectResponseDto mapToResponse(Project project) {
         return ProjectResponseDto.builder()
                 .projectCode(project.getProjectCode())
@@ -404,5 +408,44 @@ public class ProjectManagementService {
                 .allocatedHours(project.getAllocated_hours())
                 .build();
     }
+
+    public List<ProjectWithEmployeesDto> getProjectsWithEmployeesUnderManager(String managerCode) {
+        List<Project> projects = projectRepository.findByManagerCodeIgnoreCase(managerCode);
+
+        return projects.stream().map(project -> {
+
+            List<ProjectEmployeeDto> employeeDtos = project.getProjectEmployees().stream().map(pe -> {
+                String empCode = pe.getId().getEmployeeCode();
+
+                // Call identity service for user details
+                ResponseEntity<UserIdentityDto> userResponse = identityServiceClient.getUserByemployeeCode(empCode);
+                UserIdentityDto user = userResponse.getBody();
+
+                return ProjectEmployeeDto.builder()
+                        .employeeCode(empCode)
+                        .firstName(user != null ? user.getFirstName() : null)
+                        .lastName(user != null ? user.getLastName() : null)
+                        .startDate(pe.getStartDate())
+                        .endDate(pe.getEndDate())
+                        .status(pe.getStatus())
+                        .build();
+            }).collect(Collectors.toList());
+
+            return ProjectWithEmployeesDto.builder()
+                    .projectCode(project.getProjectCode())
+                    .title(project.getTitle())
+                    .description(project.getDescription())
+                    .owner(project.getOwner())
+                    .startDate(project.getStart_date())
+                    .endDate(project.getEnd_date())
+                    .managerCode(project.getManagerCode())
+                    .employees(employeeDtos)
+                    .build();
+
+        }).collect(Collectors.toList());
+    }
+
+
+
 
 }

@@ -2,10 +2,12 @@ package com.example.timesheet.dto.response;
 
 
 import com.example.timesheet.enums.EmployeeStatus;
+import lombok.Builder;
 import lombok.Data;
 import java.sql.Timestamp;
 
 @Data
+@Builder
 public class ProjectEmployeeDto {
     private String employeeCode;
     private String firstName;

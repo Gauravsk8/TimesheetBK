@@ -74,7 +74,7 @@ public class TimeSheetController {
 
     @GetMapping("/User/Employee/weekly/project-hours")
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
-    public Long getWeeklyHoursSpent(@RequestParam("projectId") Long projectId,
+    public Long getWeeklyHoursSpent(@RequestParam("projectCode") String projectCode,
                                     @RequestParam("employeeCode") String employeeCode,
                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekEndDate){
@@ -82,7 +82,7 @@ public class TimeSheetController {
         Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(weekStartDate, fixedTime));
         Timestamp endTs = Timestamp.valueOf(LocalDateTime.of(weekEndDate, fixedTime));
 
-        return  timeSheetService.getWeeklyHoursSpent(projectId,employeeCode,startTs,endTs);
+        return  timeSheetService.getWeeklyHoursSpent(projectCode ,employeeCode,startTs,endTs);
     }
 
 

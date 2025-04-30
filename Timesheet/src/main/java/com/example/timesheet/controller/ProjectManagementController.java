@@ -149,7 +149,7 @@ public class ProjectManagementController {
     }
 
     @PutMapping("/Project/{projectCode}/employee/{employeeCode}/")
-    public ResponseEntity<String> updateEmployee(
+    @RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")    public ResponseEntity<String> updateEmployeeSDED(
             @PathVariable String projectCode,
             @PathVariable String employeeCode,
             @RequestBody AssignEmployeesDto.EmployeeAssignment dto) {
@@ -158,14 +158,14 @@ public class ProjectManagementController {
         String response=projectManagementService.updateEmployee(projectCode, employeeCode, dto);
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/Projects/by-employee/{employeeCode}")
-    public ResponseEntity<List<ProjectDto>> getProjectsByEmployee(@PathVariable String employeeCode) {
+    @GetMapping("/Project/by-employee/{employeeCode}")
+    @RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")    public ResponseEntity<List<ProjectDto>> getProjectsByEmployee(@PathVariable String employeeCode) {
         List<ProjectDto> projects = projectManagementService.getProjectsByEmployeeCode(employeeCode);
         return ResponseEntity.ok(projects);
     }
 
     @PutMapping("/Project/{projectCode}/employee/{employeeCode}")
-    public ResponseEntity<String> updateEmployeeStatus(
+    @RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")    public ResponseEntity<String> updateEmployeeStatus(
             @PathVariable String projectCode,
             @PathVariable String employeeCode,
             @RequestParam String newStatus) {
@@ -173,6 +173,16 @@ public class ProjectManagementController {
         String response = projectManagementService.updateEmployeeStatus(projectCode, employeeCode, newStatus);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/Project/under-manager/{managerCode}")
+    @RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")
+    public ResponseEntity<List<ProjectWithEmployeesDto>> getProjectsUnderManager(
+            @PathVariable String managerCode) {
+
+        List<ProjectWithEmployeesDto> projects = projectManagementService.getProjectsWithEmployeesUnderManager(managerCode);
+        return ResponseEntity.ok(projects);
+    }
+
+
 
 }
 

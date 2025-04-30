@@ -16,12 +16,10 @@ import com.example.common.audit.AuditEvent;
 public class AuditListener {
 
     private final AuditStoreService auditStoreService;
-
     @PostConstruct
     public void init() {
         log.info(" AuditListener is active and waiting for messages...");
     }
-
 
     @KafkaListener(
             topics = "audit-trail-topic",

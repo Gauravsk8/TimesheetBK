@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/timesheet/admin/.*").authenticated()
                         .requestMatchers("/timesheet/User/.*").authenticated()
+                        .requestMatchers("/timesheet/Project/.*").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

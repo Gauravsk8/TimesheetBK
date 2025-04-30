@@ -12,6 +12,6 @@ import lombok.Setter;
 public class ProjectTimeSheetEntryResponse {
 
     protected Long id;
-    private Long projectId;
+    private String projectCode;
     private Long totalHoursSpent;
 }

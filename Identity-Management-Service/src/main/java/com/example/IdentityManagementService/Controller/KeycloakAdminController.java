@@ -43,8 +43,6 @@ public class KeycloakAdminController {
         response.put("message", "User created successfully");
         response.put("keycloakUserId", result.get("userId"));
 
-        //response.put("temporaryPassword", result.get("temporaryPassword"));
-
         return ResponseEntity.status(201).body(response);
     }
 
@@ -123,7 +121,6 @@ public class KeycloakAdminController {
 
 
     @GetMapping("/admin/User/employeeCode/{employeeCode}")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<UserIdentityDto> getUserByemployeeCode(@PathVariable String employeeCode) {
         var user = keycloakAdminService.getUserByemployeeCode(employeeCode);
         if (user == null) {
