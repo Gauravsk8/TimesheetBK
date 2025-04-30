@@ -1,11 +1,5 @@
 package com.example.timesheet.dto.response;
 
-import com.example.timesheet.models.ProjectTimeEntry;
-import com.example.timesheet.models.WeeklyTimeSheet;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

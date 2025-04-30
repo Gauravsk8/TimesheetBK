@@ -24,19 +24,20 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@RestController("/timesheet")
+@RestController
+@RequestMapping("/timesheet")
 @RequiredArgsConstructor
 public class TimeSheetController {
 
     private final TimeSheetService timeSheetService;
-    @PostMapping("/Employee/daily")
+    @PostMapping("/User/Employee/daily")
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public ResponseEntity<String> enterDailyTimeSheet(@RequestBody List<DailyTimeSheetRequest> dailyTimeSheetRequests){
         String result=timeSheetService.enterOrUpdateDailyTimeSheet(dailyTimeSheetRequests);
         return  ResponseEntity.ok().body(result);
     }
 
-    @PostMapping("/Employee/weekly")
+    @PostMapping("/User/Employee/weekly")
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public ResponseEntity<String> enterWeeklyTimeSheet(@RequestBody WeeklyTimeSheetRequest weeklyTimeSheetRequest){
         String result=timeSheetService.weeklyTimeSheetEntry(weeklyTimeSheetRequest);
@@ -52,7 +53,7 @@ public class TimeSheetController {
     @PreAuthorize("hasAuthority('SCOPE_view_timesheet') or hasAuthority('SCOPE_view_all_timesheets')")
 
 
-    @GetMapping("/Employee/weekly")
+    @GetMapping("/User/Employee/weekly")
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
 
     public WeeklyTimeSheetResponse getWeeklyTimeSheetForAnEmployee(@RequestParam("employeeCode") String employeeCode,
@@ -71,7 +72,7 @@ public class TimeSheetController {
         return timeSheetService.getWeeklyTimeSheetForAnEmployee(employeeCode,startTs,endTs);
     }
 
-    @GetMapping("/Employee/weekly/project-hours")
+    @GetMapping("/User/Employee/weekly/project-hours")
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public Long getWeeklyHoursSpent(@RequestParam("projectId") Long projectId,
                                     @RequestParam("employeeCode") String employeeCode,
@@ -127,7 +128,7 @@ public class TimeSheetController {
 
     }
 
-    @PostMapping("/approve/manager-approve")
+    @PostMapping("/approve/manager-approve/")
     public ResponseEntity<String> approvedByManager(@RequestParam("weeklyTimeSheetId") Long weeklyTimeSheetId,
                                                     @RequestParam("managerCode") String managerCode){
         String result=timeSheetService.approvedByManager(weeklyTimeSheetId,managerCode);

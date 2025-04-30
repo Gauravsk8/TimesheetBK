@@ -45,7 +45,7 @@ public class Project {
     private CostCenter costCenter;
 
     @Column
-    private String managerId;
+    private String managerCode;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProjectEmployee> projectEmployees = new HashSet<>();

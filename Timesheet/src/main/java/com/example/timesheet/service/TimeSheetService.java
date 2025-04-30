@@ -206,7 +206,7 @@ public class TimeSheetService {
             System.out.println("Week start date in timesheet service: " + weekStartDate);
 
             WeeklyTimeSheet weeklyTimeSheet = weeklyTimeSheetRepository
-                    .findByEmployeeCodeAndWeekStartDate(employeeCode, weekStartDate);
+                    .findByEmployeeCodeIgnoreCaseAndWeekStartDate(employeeCode, weekStartDate);
 
             if (weeklyTimeSheet == null) {
                 throw new TimeSheetException(NOT_FOUND_ERROR, WEEKLY_TIME_SHEET_NOT_FOUND + employeeCode);
@@ -260,7 +260,7 @@ public class TimeSheetService {
                 List<ProjectTimeEntry> projectEntries = projectTimeEntryRepository.findByDailyTimeSheetId(dailySheet.getId());
 
                 for (ProjectTimeEntry entry : projectEntries) {
-                    Long projectId = entry.getProjectId();
+                    Long projectId = entry.getProjectCode();
                     Long totalHours = entry.getTotalHoursSpent() != null ? entry.getTotalHoursSpent() : 0L;
                     projectHoursMap.put(projectId, projectHoursMap.getOrDefault(projectId, 0L) + totalHours);
                 }
@@ -289,7 +289,7 @@ public class TimeSheetService {
 
             for (DailyTimeSheet dailySheet : dailyTimeSheets) {
                 List<ProjectTimeEntry> projectEntries = projectTimeEntryRepository
-                        .findByDailyTimeSheetIdAndProjectId(dailySheet.getId(), projectId);
+                        .findByDailyTimeSheetIdAndProjectCode(dailySheet.getId(), projectId);
 
                 for (ProjectTimeEntry entry : projectEntries) {
                     totalHours += (entry.getTotalHoursSpent() != null ? entry.getTotalHoursSpent() : 0L);
@@ -451,7 +451,7 @@ public class TimeSheetService {
                             System.out.println("Old project hours:" + oldProjectHours);
 
                             for (ProjectTimeSheetEntryRequest projectTimeSheetEntryRequest : dailyTimeSheetRequest.getProjectTimeSheetEntryRequests()) {
-                                if (projectTimeEntry.getProjectId().equals(projectTimeSheetEntryRequest.getProjectId())) {
+                                if (projectTimeEntry.getProjectCode().equals(projectTimeSheetEntryRequest.getProjectCode())) {
                                     if (!projectTimeEntry.getTotalHoursSpent().equals(projectTimeSheetEntryRequest.getTotalHoursSpent())) {
                                         totalHours -= oldProjectHours;
                                         totalHours += projectTimeSheetEntryRequest.getTotalHoursSpent();
@@ -549,12 +549,12 @@ public class TimeSheetService {
             }
 
             // Set values for project time entry
-            entry.setProjectId(e.getProjectId());
+            entry.setProjectCode(e.getProjectCode());
             entry.setTotalHoursSpent(e.getTotalHoursSpent());
             entry.setDailyTimeSheet(savedDailyTimeSheet);
 
             // Log the successful addition
-            System.out.println("Successfully added ProjectTimeSheetEntry for project ID: " + e.getProjectId() + " with total hours: " + e.getTotalHoursSpent());
+            System.out.println("Successfully added ProjectTimeSheetEntry for project ID: " + e.getProjectCode() + " with total hours: " + e.getTotalHoursSpent());
 
         } catch (IllegalArgumentException ex) {
             // Log invalid argument exceptions
@@ -595,7 +595,7 @@ public class TimeSheetService {
                 if (entry != null) {
                     ProjectTimeSheetEntryResponse projectResponse = new ProjectTimeSheetEntryResponse();
                     projectResponse.setId(entry.getId());
-                    projectResponse.setProjectId(entry.getProjectId());
+                    projectResponse.setProjectId(entry.getProjectCode());
                     projectResponse.setTotalHoursSpent(entry.getTotalHoursSpent());
 
                     // Add to project responses list
@@ -723,15 +723,20 @@ public class TimeSheetService {
                 LocalTime fixedTime = LocalTime.of(5, 30);
                 Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(weekStart, fixedTime));
 
-                WeeklyTimeSheet timeSheet = weeklyTimeSheetRepository.findByEmployeeCodeAndWeekStartDate(
+                WeeklyTimeSheet timeSheet = weeklyTimeSheetRepository.findByEmployeeCodeIgnoreCaseAndWeekStartDate(
                         employee.getEmployeeCode(), startTs);
 
                 if (timeSheet == null) {
-                    throw new TimeSheetException(NOT_FOUND_ERROR, DAILY_TIME_SHEETS_NOT_FOUND_FOR_EMPLOYEE_BETWEEN_THESE_DATES +
-                            employee.getEmployeeCode() + "   " + weekStart);
+                    WeeklyTimeSheet timeSheet1=new WeeklyTimeSheet();
+                    timeSheet1.setTotalWorkingHours(0L);
+                    weeklyTimeSheets.add(timeSheet1);
+//                    throw new TimeSheetException(NOT_FOUND_ERROR, DAILY_TIME_SHEETS_NOT_FOUND_FOR_EMPLOYEE_BETWEEN_THESE_DATES +
+//                            employee.getEmployeeCode() + "   " + weekStart);
                 }
+                else {
 
-                weeklyTimeSheets.add(timeSheet);
+                    weeklyTimeSheets.add(timeSheet);
+                }
             }
 
             for (WeeklyTimeSheet tempTimeSheet : weeklyTimeSheets) {

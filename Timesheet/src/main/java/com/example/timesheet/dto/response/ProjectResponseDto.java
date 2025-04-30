@@ -1,4 +1,4 @@
-package com.example.timesheet.dto.reponse;
+package com.example.timesheet.dto.response;
 
 
 import lombok.Builder;
@@ -17,7 +17,7 @@ public class ProjectResponseDto {
     private Timestamp endDate;
     private String clientName;
     private String costCenterCode;
-    private String managerId;
+    private String managerCode;
     private String allocatedHours;
 }
 

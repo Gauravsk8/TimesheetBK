@@ -21,6 +21,6 @@ public class CostCenter {
 
     private String description;
 
-    private String managerId;
+    private String managerCode;
 
 }

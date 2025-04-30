@@ -13,7 +13,7 @@ public interface ProjectTimeEntryRepository extends PagingAndSortingRepository<P
 
 
 
-    List<ProjectTimeEntry> findByDailyTimeSheetIdAndProjectId(Long id, Long projectId);
+    List<ProjectTimeEntry> findByDailyTimeSheetIdAndProjectCode(Long id, Long projectId);
 
     List<ProjectTimeEntry> findByDailyTimeSheetId(Long id);
 }

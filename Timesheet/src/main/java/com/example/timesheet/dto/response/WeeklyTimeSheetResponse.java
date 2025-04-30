@@ -1,13 +1,10 @@
 package com.example.timesheet.dto.response;
 
-import com.example.timesheet.models.DailyTimeSheet;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

@@ -33,7 +33,7 @@ public class SecurityConfig {
     // Define JwtDecoder Bean
     @Bean
     public JwtDecoder jwtDecoder() {
-        String issuerUri = "http://localhost:8084/realms/timesheet";
+        String issuerUri = "http://localhost:8081/realms/timesheet";
         return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 
@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/timesheet/admin/.*").hasAuthority("SCOPE_Adminscope")
                         .requestMatchers("/timesheet/Project/.*").permitAll()
+                        .requestMatchers("/timesheet/User/.*").authenticated()
                         .requestMatchers("/timesheet/Rmanager/.*").hasAuthority("SCOPE_RMscope")
                         .anyRequest().permitAll()
                 )

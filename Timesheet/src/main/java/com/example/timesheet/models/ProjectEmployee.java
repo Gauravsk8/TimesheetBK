@@ -1,5 +1,6 @@
 package com.example.timesheet.models;
 
+import com.example.timesheet.enums.EmployeeStatus;
 import com.example.timesheet.keys.ProjectEmployeeId;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,5 +29,15 @@ public class ProjectEmployee {
 
     @Column(name = "employee_keycloak_Id")
     private String employeeKeycloakId;
+
+    @Column(name = "start_date")
+    private Timestamp startDate;  // When assignment begins
+
+    @Column(name = "end_date")
+    private Timestamp endDate;    // When assignment ends (nullable)
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private EmployeeStatus status;
 
 }

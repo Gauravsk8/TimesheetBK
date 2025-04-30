@@ -8,6 +8,6 @@ public class CostCenterDto {
     private String code;
     private String name;
     private String description;
-    private String managerId;
+    private String managerCode;
 }
 
