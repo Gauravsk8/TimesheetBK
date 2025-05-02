@@ -35,6 +35,10 @@ public class ProjectManagementService {
     private final ProjectRepository projectRepository;
     private final ProjectEmployeeRepository projectEmployeeRepository;
 
+    private final String ProjectManager = "ProjectManager";
+    private final String CostCenterManager = "CostCenterManager";
+
+
 
     public String createClient(ClientDto dto) {
         Clients client = new Clients();
@@ -86,11 +90,19 @@ public class ProjectManagementService {
 
 
     public String createCostCenter(CostCenterDto dto) {
+        ResponseEntity<Boolean> managerRole = identityServiceClient.hasManagerRole(dto.getManagerCode(), CostCenterManager);
+
+        if (!managerRole.getBody()) {
+            throw new TimeSheetException(
+                    errorCode.MANAGER_ROLE, // Assuming this is the error code
+                    String.format(errorMessage.CostCenterManager_MANAGER_ROLE, dto.getManagerCode()) // Assuming you have this error message in your errorMessage class
+            );
+        }
         CostCenter costCenter = CostCenter.builder()
-                .code(dto.getCode())
+                .code(dto.getCode().toLowerCase())
                 .name(dto.getName())
                 .description(dto.getDescription())
-                .managerCode(dto.getManagerCode())
+                .managerCode(dto.getManagerCode().toLowerCase())
                 .build();
 
         CostCenter saveCostCenter = costCenterRepository.save(costCenter);
@@ -103,7 +115,7 @@ public class ProjectManagementService {
                         costCenter.getCode(),
                         costCenter.getName(),
                         costCenter.getDescription(),
-                        costCenter.getManagerCode()
+                        costCenter.getManagerCode().toLowerCase()
                 ))
                 .collect(Collectors.toList());
     }
@@ -133,7 +145,7 @@ public class ProjectManagementService {
                 ));
         costCenter.setName(dto.getName());
         costCenter.setDescription(dto.getDescription());
-        costCenter.setManagerCode(dto.getManagerCode());
+        costCenter.setManagerCode(dto.getManagerCode().toLowerCase());
         CostCenter saveCostCenter = costCenterRepository.save(costCenter);
         return String.format("Cost Center created %s", saveCostCenter.getCode());
 
@@ -141,7 +153,7 @@ public class ProjectManagementService {
 
     public String createProject(ProjectDto dto) {
 
-        if (projectRepository.existsById(dto.getProjectCode())) {
+        if (projectRepository.existsById(dto.getProjectCode().toLowerCase())) {
             throw new TimeSheetException(
                     errorCode.PROJECT_ALREADY_EXISTS, // Assuming this is the error code
                     String.format(errorMessage.PROJECT_ALREADY_EXISTS, dto.getProjectCode()) // Assuming you have this error message in your errorMessage class
@@ -154,12 +166,12 @@ public class ProjectManagementService {
                         String.format(errorMessage.CLIENT_NOT_FOUND, dto.getClientId()) // Assuming error message for client not found
                 ));
 
-        CostCenter costCenter = costCenterRepository.findById(dto.getCostCenterCode())
+        CostCenter costCenter = costCenterRepository.findById(dto.getCostCenterCode().toLowerCase())
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR, // Error code for cost center not found
                         String.format(errorMessage.COST_CENTER_NOT_FOUND, dto.getCostCenterCode()) // Error message for cost center not found
                 ));
-        ResponseEntity<Boolean> managerRole = identityServiceClient.hasProjectManagerRole(dto.getManagerCode());
+        ResponseEntity<Boolean> managerRole = identityServiceClient.hasManagerRole(dto.getManagerCode().toLowerCase(), ProjectManager);
 
         if (!managerRole.getBody()) {
             throw new TimeSheetException(
@@ -169,7 +181,7 @@ public class ProjectManagementService {
         }
 
         Project project = new Project();
-        project.setProjectCode(dto.getProjectCode());
+        project.setProjectCode(dto.getProjectCode().toLowerCase());
         project.setTitle(dto.getTitle());
         project.setDescription(dto.getDescription());
         project.setOwner(dto.getOwner());
@@ -177,7 +189,7 @@ public class ProjectManagementService {
         project.setEnd_date(dto.getEndDate());
         project.setClients(client);
         project.setCostCenter(costCenter);
-        project.setManagerCode(dto.getManagerCode());
+        project.setManagerCode(dto.getManagerCode().toLowerCase());
         project.setAllocated_hours(dto.getAllocatedHours());
 
         Project savedProject = projectRepository.save(project);
@@ -200,14 +212,14 @@ public class ProjectManagementService {
     }
 
     public String updateProject(String code, ProjectDto dto) {
-        Project project = getProjectByCode(code);
+        Project project = getProjectByCode(code.toLowerCase());
 
         project.setTitle(dto.getTitle());
         project.setDescription(dto.getDescription());
         project.setOwner(dto.getOwner());
         project.setStart_date(dto.getStartDate());
         project.setEnd_date(dto.getEndDate());
-        project.setManagerCode(dto.getManagerCode());
+        project.setManagerCode(dto.getManagerCode().toLowerCase());
         project.setAllocated_hours(dto.getAllocatedHours());
 
         if (!project.getClients().getId().equals(dto.getClientId())) {
@@ -219,8 +231,8 @@ public class ProjectManagementService {
             project.setClients(client);
         }
 
-        if (!project.getCostCenter().getCode().equals(dto.getCostCenterCode())) {
-            CostCenter costCenter = costCenterRepository.findById(dto.getCostCenterCode())
+        if (!project.getCostCenter().getCode().equalsIgnoreCase(dto.getCostCenterCode())) {
+            CostCenter costCenter = costCenterRepository.findById(dto.getCostCenterCode().toLowerCase())
                     .orElseThrow(() -> new TimeSheetException(
                             errorCode.NOT_FOUND_ERROR, // Error code for cost center not found
                             String.format(errorMessage.COST_CENTER_NOT_FOUND, dto.getCostCenterCode()) // Error message for cost center not found
@@ -234,7 +246,7 @@ public class ProjectManagementService {
     }
 
     public String assignEmployeesToProject(AssignEmployeesDto dto, String projectCode) {
-        Project project = projectRepository.findById(projectCode)
+        Project project = projectRepository.findById(projectCode.toLowerCase())
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR, // Assuming this is the error code
                         String.format(errorMessage.PROJECT_NOT_FOUND, projectCode) // Assuming you have this error message in your errorMessage class
@@ -242,19 +254,19 @@ public class ProjectManagementService {
 
         List<ProjectEmployee> assignments = dto.getEmployees().stream()
                 .filter(emp -> {
-                    ProjectEmployeeId id = new ProjectEmployeeId(projectCode, emp.getEmployeeCode());
+                    ProjectEmployeeId id = new ProjectEmployeeId(projectCode.toLowerCase(), emp.getEmployeeCode().toLowerCase());
                     return !projectEmployeeRepository.existsById(id); // avoid duplicates
                 })
                 .map(emp -> {
                     ProjectEmployee pe = new ProjectEmployee();
                     ResponseEntity<UserIdentityDto> user;
                     try {
-                        user = identityServiceClient.getUserByemployeeCode(emp.getEmployeeCode());
+                        user = identityServiceClient.getUserByemployeeCode(emp.getEmployeeCode().toLowerCase());
                     } catch (Exception e) {
                         throw new TimeSheetException(errorCode.NOT_FOUND_ERROR, errorMessage.USER_NOT_FOUND + e.getMessage());
                     }
                     String EmployeeKeycloakId = user.getBody().getKeycloakUserId();
-                    pe.setId(new ProjectEmployeeId(projectCode, emp.getEmployeeCode()));
+                    pe.setId(new ProjectEmployeeId(projectCode.toLowerCase(), emp.getEmployeeCode().toLowerCase()));
                     pe.setProject(project);
                     pe.setEmployeeKeycloakId(EmployeeKeycloakId);
                     pe.setStartDate(emp.getStartDate());
@@ -270,10 +282,10 @@ public class ProjectManagementService {
     }
 
     public List<ProjectEmployeeDto> getEmployeesByProject(String projectCode) {
-        List<ProjectEmployee> entities = projectEmployeeRepository.findByProject_ProjectCodeIgnoreCase(projectCode);
+        List<ProjectEmployee> entities = projectEmployeeRepository.findByProject_ProjectCodeIgnoreCase(projectCode.toLowerCase());
 
         return entities.stream().map(pe -> {
-            ResponseEntity<UserIdentityDto> user = identityServiceClient.getUserByemployeeCode(pe.getId().getEmployeeCode());
+            ResponseEntity<UserIdentityDto> user = identityServiceClient.getUserByemployeeCode(pe.getId().getEmployeeCode().toLowerCase());
 
             return ProjectEmployeeDto.builder()
                     .employeeCode(pe.getId().getEmployeeCode())
@@ -288,7 +300,7 @@ public class ProjectManagementService {
 
 
     public void removeEmployeeFromProject(String projectCode, String employeeCode) {
-        ProjectEmployeeId id = new ProjectEmployeeId(projectCode, employeeCode);
+        ProjectEmployeeId id = new ProjectEmployeeId(projectCode.toLowerCase(), employeeCode.toLowerCase());
 
         if (!projectEmployeeRepository.existsById(id)) {
             throw new TimeSheetException(
@@ -301,13 +313,13 @@ public class ProjectManagementService {
     }
 
     public ProjectWithEmployeesDto getProjectWithEmployees(String projectCode) {
-        Project project = projectRepository.findById(projectCode)
+        Project project = projectRepository.findById(projectCode.toLowerCase())
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR, // Assuming this is the error code
                         String.format(errorMessage.PROJECT_NOT_FOUND, projectCode) // Assuming you have this error message in your errorMessage class
                 ));
 
-        List<ProjectEmployeeDto> employees = getEmployeesByProject(projectCode);
+        List<ProjectEmployeeDto> employees = getEmployeesByProject(projectCode.toLowerCase());
 
         return ProjectWithEmployeesDto.builder()
                 .projectCode(project.getProjectCode())
@@ -325,7 +337,7 @@ public class ProjectManagementService {
     }
 
     public void deleteProject(String projectCode) {
-        Project project = projectRepository.findById(projectCode)
+        Project project = projectRepository.findById(projectCode.toLowerCase())
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR, // Assuming this is the error code
                         String.format(errorMessage.PROJECT_NOT_FOUND, projectCode) // Assuming you have this error message in your errorMessage class
@@ -335,7 +347,7 @@ public class ProjectManagementService {
     }
 
     public String updateEmployeeStatus(String projectCode, String employeeCode, String newStatus) {
-        ProjectEmployeeId id = new ProjectEmployeeId(projectCode, employeeCode);
+        ProjectEmployeeId id = new ProjectEmployeeId(projectCode.toLowerCase(), employeeCode.toLowerCase());
 
         ProjectEmployee projectEmployee = projectEmployeeRepository.findById(id)
                 .orElseThrow(() -> new TimeSheetException(
@@ -358,7 +370,7 @@ public class ProjectManagementService {
 
 
     public String updateEmployee(String projectCode, String employeeCode, AssignEmployeesDto.EmployeeAssignment dto) {
-        ProjectEmployeeId id = new ProjectEmployeeId(projectCode, employeeCode);
+        ProjectEmployeeId id = new ProjectEmployeeId(projectCode.toLowerCase(), employeeCode.toLowerCase());
 
         ProjectEmployee projectEmployee = projectEmployeeRepository.findById(id)
                 .orElseThrow(() -> new TimeSheetException(

@@ -65,6 +65,8 @@ public class errorMessage {
     public static final String PROJECT_ALREADY_EXISTS = "Project with code '%s' already exists";
     public static final String ASSIGNMENT_NOT_FOUND = "Assignment not found for project '%s' and employee '%s'";
     public static final String PROJECT_MANAGER_ROLE = "Manager %s does not have project manager role";
+    public static final String CostCenterManager_MANAGER_ROLE = "Manager %s does not have CostCenter manager role";
+
     public static final String ReportingManagerAssignedFAILED ="Failed To assign Reporting Manager to employee";
     public static final String ReportingManagerAssigned ="Reporting manager is assigned to employee";
 

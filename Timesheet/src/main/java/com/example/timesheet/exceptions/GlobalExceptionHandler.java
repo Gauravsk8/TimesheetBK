@@ -23,7 +23,6 @@ public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     // Removed: @ExceptionHandler(AlreadyExistsException.class) handler
-
     @ExceptionHandler(TimeSheetException.class)
     public ResponseEntity<ErrorResponse> handleTimeSheetException(TimeSheetException ex) {
         ErrorResponse response = ErrorResponse.builder()
