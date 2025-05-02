@@ -34,7 +34,6 @@ public class KeycloakAdminController {
     @PostMapping("/admin/create-user")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<Map<String, String>> createUser(
-            @RequestHeader("Authorization") String token,
             @Valid @RequestBody EmployeeRequestDto dto
     ) {
         Map<String, String> result = keycloakAdminService.createUser(dto);
@@ -50,7 +49,6 @@ public class KeycloakAdminController {
     @PatchMapping("/User/my/edit-profile")
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public ResponseEntity<String> editOwnProfile(
-            @RequestHeader("Authorization") String token,
             @Valid @RequestBody EmployeeRequestDto dto
     ) {
         try {
@@ -73,7 +71,6 @@ public class KeycloakAdminController {
     @PatchMapping("/admin/edit-profile/{employeeCode}")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> editEmployeeProfile(
-            @RequestHeader("Authorization") String token,
             @PathVariable String employeeCode,
             @Valid @RequestBody EmployeeRequestDto dto
     ) {
@@ -90,7 +87,6 @@ public class KeycloakAdminController {
     @PostMapping("/admin/assign-roles")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> assignRoles(
-            @RequestHeader("Authorization") String token,
             @RequestBody UserRoleAssignRequestDto requestDto
     ) {
         keycloakAssignRoleService.assignRealmRoles(requestDto.getEmployeeCode(), requestDto.getRoles());
@@ -100,7 +96,6 @@ public class KeycloakAdminController {
     @PostMapping("/admin/update-roles")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> updateUserRoles(
-            @RequestHeader("Authorization") String token,
             @RequestBody UserRoleUpdateRequestDto requestDto
     ) {
         keycloakAssignRoleService.updateUserRoles(
@@ -155,9 +150,9 @@ public class KeycloakAdminController {
         return ResponseEntity.ok(response);
     }
 
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     @GetMapping("/admin/users")
-    public ResponseEntity<List<Map<String, String>>> getAllUsers(@RequestHeader("Authorization") String token) {
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    public ResponseEntity<List<Map<String, String>>> getAllUsers() {
         List<UserRepresentation> users = keycloakAdminService.getAllUsers();
         List<Map<String, String>> response = new ArrayList<>();
 
@@ -173,8 +168,8 @@ public class KeycloakAdminController {
 
         return ResponseEntity.ok(response);
     }
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     @GetMapping("/admin/User/{employeeCode}/assigned-roles")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<List<String>> getUserAssignedRealmRoles(@PathVariable String employeeCode) {
         List<String> roles = keycloakAssignRoleService.getAssignedRealmRoles(employeeCode);
         return ResponseEntity.ok(roles);
