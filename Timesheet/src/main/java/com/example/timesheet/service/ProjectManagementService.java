@@ -115,7 +115,7 @@ public class ProjectManagementService {
                         costCenter.getCode(),
                         costCenter.getName(),
                         costCenter.getDescription(),
-                        costCenter.getManagerCode().toLowerCase()
+                        costCenter.getManagerCode()
                 ))
                 .collect(Collectors.toList());
     }

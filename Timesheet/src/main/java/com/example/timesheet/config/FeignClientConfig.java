@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-// FeignClientConfig.java
 @Configuration
 @RequiredArgsConstructor
 public class FeignClientConfig {
@@ -27,7 +26,9 @@ public class FeignClientConfig {
                     (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (attributes != null) {
                 String token = attributes.getRequest().getHeader("Authorization");
-                requestTemplate.header("Authorization", token);
+                if (token != null && !token.trim().isEmpty()) {
+                    requestTemplate.header("Authorization", token);
+                }
             }
         };
     }

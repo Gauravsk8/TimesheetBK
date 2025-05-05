@@ -109,8 +109,8 @@ public class KeycloakAdminController {
 
     @GetMapping("/admin/User/{employeeCode}/has-manager-role")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<Boolean> hasProjectManagerRole(@PathVariable String employeeCode, @RequestParam String roleName) {
-        boolean hasRole = keycloakAssignRoleService.hasProjectManagerRole(employeeCode, roleName);
+    public ResponseEntity<Boolean> hasManagerRole(@PathVariable String employeeCode, @RequestParam String roleName) {
+        boolean hasRole = keycloakAssignRoleService.hasManagerRole(employeeCode, roleName);
         return ResponseEntity.ok(hasRole);
     }
 
