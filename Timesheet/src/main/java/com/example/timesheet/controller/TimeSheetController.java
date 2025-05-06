@@ -25,20 +25,27 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
-@RequestMapping("timesheet")
+
+@RequestMapping("/timesheet")
+
 @RequiredArgsConstructor
 public class TimeSheetController {
 
     private final TimeSheetService timeSheetService;
-    @PostMapping("/Employee/daily")
-//    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+
+
+    @PostMapping("/User/Employee/daily")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+
     public ResponseEntity<String> enterDailyTimeSheet(@RequestBody List<DailyTimeSheetRequest> dailyTimeSheetRequests){
         String result=timeSheetService.enterOrUpdateDailyTimeSheet(dailyTimeSheetRequests);
         return  ResponseEntity.ok().body(result);
     }
 
-    @PostMapping("/Employee/weekly")
-    //@RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+
+    @PostMapping("/User/Employee/weekly")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+
     public ResponseEntity<String> enterWeeklyTimeSheet(@RequestBody WeeklyTimeSheetRequest weeklyTimeSheetRequest){
         String result=timeSheetService.weeklyTimeSheetEntry(weeklyTimeSheetRequest);
         return  ResponseEntity.ok().body(result);
@@ -52,8 +59,9 @@ public class TimeSheetController {
         return timeSheetService.getManagerDashboardResponse(managerCode,monthYear);
     }
     @PreAuthorize("hasAuthority('SCOPE_view_timesheet') or hasAuthority('SCOPE_view_all_timesheets')")
-    @GetMapping("/Employee/weekly")
-    //@RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+    @GetMapping("/User/Employee/weekly")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+
 
     public WeeklyTimeSheetResponse getWeeklyTimeSheetForAnEmployee(@RequestParam("employeeCode") String employeeCode,
                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
@@ -71,6 +79,7 @@ public class TimeSheetController {
         return timeSheetService.getWeeklyTimeSheetForAnEmployee(employeeCode,startTs,endTs);
     }
 
+
     @GetMapping("/Employee/weekly/{id}")
     //@RequiresKeycloakAuthorization(resource = "ReportingManager", scope = "RMscope")
     public WeeklyTimeSheetResponse getWeeklyTimeSheetByWeeklyTimeSheetID(@PathVariable("id") Long id,
@@ -83,9 +92,11 @@ public class TimeSheetController {
         Timestamp endTs = Timestamp.valueOf(LocalDateTime.of(weekEndDate, fixedTime).format(formatter));
         return timeSheetService.getWeeklyTimeSheetByWeeklyTimeSheetID(id,startTs,endTs);
     }
-    @GetMapping("/Employee/weekly/project-hours")
+
+    @GetMapping("/User/Employee/weekly/project-hours")
+
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
-    public Long getWeeklyHoursSpent(@RequestParam("projectId") Long projectId,
+    public Long getWeeklyHoursSpent(@RequestParam("projectCode") String projectCode,
                                     @RequestParam("employeeCode") String employeeCode,
                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekEndDate){
@@ -93,7 +104,7 @@ public class TimeSheetController {
         Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(weekStartDate, fixedTime));
         Timestamp endTs = Timestamp.valueOf(LocalDateTime.of(weekEndDate, fixedTime));
 
-        return  timeSheetService.getWeeklyHoursSpent(projectId,employeeCode,startTs,endTs);
+        return  timeSheetService.getWeeklyHoursSpent(projectCode ,employeeCode,startTs,endTs);
     }
 
 
@@ -139,7 +150,7 @@ public class TimeSheetController {
 
     }
 
-    @PostMapping("/approve/manager-approve")
+    @PostMapping("/approve/manager-approve/")
     public ResponseEntity<String> approvedByManager(@RequestParam("weeklyTimeSheetId") Long weeklyTimeSheetId,
                                                     @RequestParam("managerCode") String managerCode){
         String result=timeSheetService.approvedByManager(weeklyTimeSheetId,managerCode);

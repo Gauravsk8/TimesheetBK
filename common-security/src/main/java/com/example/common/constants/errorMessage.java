@@ -58,6 +58,19 @@ public class errorMessage {
     public static final String NO_EMPLOYEES_FOUND_REPORTING_TO_THIS_MANAGER = "No employees found reporting to this manager.";
     public static final String INVALID_MONTH_YEAR_FORMAT_MESSAGE = "Invalid month/year format. Expected format is MM-yyyy.";
     public static final String NO_VALID_WEEKLY_RANGES_FOR_SELECTED_MONTH = "No valid weekly ranges found for the selected month.";
+    public static final String USER_UPDATE_FAILED = "User update failed";
+    public static final String CLIENT_NOT_FOUND="Client not found with id: %s";
+    public static final String COST_CENTER_NOT_FOUND = "Cost center not found with code: %s";
+    public static final String PROJECT_NOT_FOUND = "Project not found with code: %s";
+    public static final String PROJECT_ALREADY_EXISTS = "Project with code '%s' already exists";
+    public static final String ASSIGNMENT_NOT_FOUND = "Assignment not found for project '%s' and employee '%s'";
+    public static final String PROJECT_MANAGER_ROLE = "Manager %s does not have project manager role";
+    public static final String CostCenterManager_MANAGER_ROLE = "Manager %s does not have CostCenter manager role";
+
+    public static final String ReportingManagerAssignedFAILED ="Failed To assign Reporting Manager to employee";
+    public static final String ReportingManagerAssigned ="Reporting manager is assigned to employee";
+
+
 
     private errorMessage() {}
 }

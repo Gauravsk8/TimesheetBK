@@ -5,6 +5,7 @@ import com.example.IdentityManagementService.exceptions.KeycloakException;
 import com.example.common.audit.AuditEvent;
 import com.example.common.audit.AuditKafkaProducer;
 import com.example.common.constants.errorCode;
+import com.example.common.constants.errorMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.core.Response;
@@ -72,11 +73,13 @@ public class KeycloakCreateUserService {
 
             usersResource.get(userId).resetPassword(passwordCred);
 
+            Map<String, String> variables = new HashMap<>();
+            variables.put("firstName", employee.getFirstName());
+            variables.put("username", employee.getEmployeeCode());
+            variables.put("password", randomPassword);
+
             String emailSubject = "Welcome to the Company Portal";
-            String emailBody = String.format(
-                    "Hello %s,\n\nYour account has been created.\nUsername: %s\nTemporary Password: %s\n\nPlease log in and change your password.",
-                    employee.getFirstName(), employee.getEmployeeCode(), randomPassword
-            );
+            String emailBody = emailService.loadTemplate("EmailTemplate.txt", variables);
             emailService.sendEmail(employee.getEmail(), emailSubject, emailBody);
 
             try {
@@ -234,7 +237,7 @@ public class KeycloakCreateUserService {
         return users.stream()
                 .filter(u -> u.getUsername().equalsIgnoreCase(employeeCode))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new KeycloakException(errorCode.NOT_FOUND_ERROR, USER_NOT_FOUND + employeeCode));
     }
 
     public UserRepresentation getUserById(String id) {

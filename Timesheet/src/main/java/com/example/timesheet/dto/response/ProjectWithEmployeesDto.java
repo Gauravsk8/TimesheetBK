@@ -1,6 +1,5 @@
-package com.example.timesheet.dto.reponse;
+package com.example.timesheet.dto.response;
 
-import com.example.timesheet.dto.reponse.ProjectEmployeeDto;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,5 +17,6 @@ public class ProjectWithEmployeesDto {
     private Timestamp endDate;
     private String costCenterCode;
     private String clientName;
+    private String managerCode;
     private List<ProjectEmployeeDto> employees;
 }

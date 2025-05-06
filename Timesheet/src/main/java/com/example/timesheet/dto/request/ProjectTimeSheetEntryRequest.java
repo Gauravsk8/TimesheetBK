@@ -10,6 +10,6 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class ProjectTimeSheetEntryRequest {
-    private Long projectId;
+    private String projectCode;
     private Long totalHoursSpent;
 }

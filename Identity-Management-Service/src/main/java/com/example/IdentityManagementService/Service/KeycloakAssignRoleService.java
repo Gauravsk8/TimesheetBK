@@ -237,7 +237,7 @@ public class KeycloakAssignRoleService {
     }
 
 
-    public boolean hasProjectManagerRole(String employeeCode) {
+    public boolean hasManagerRole(String employeeCode, String role) {
         RealmResource realmResource = keycloakAdmin.realm(realm);
 
         List<UserRepresentation> users = realmResource.users().search(employeeCode);
@@ -256,7 +256,7 @@ public class KeycloakAssignRoleService {
                 .map(RoleRepresentation::getName)
                 .collect(Collectors.toList());
 
-        return assignedRoles.contains("ProjectManager");
+        return assignedRoles.contains(role);
     }
 
 

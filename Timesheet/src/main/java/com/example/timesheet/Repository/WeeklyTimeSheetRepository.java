@@ -31,7 +31,9 @@ public interface WeeklyTimeSheetRepository extends PagingAndSortingRepository<We
 
 
     //@Query("SELECT w FROM WeeklyTimeSheet w WHERE w.employeeCode = :employeeCode AND FUNCTION('DATE', w.weekStartDate) = :weekStartDate")
-    WeeklyTimeSheet findByEmployeeCodeAndWeekStartDate(String employeeCode, Timestamp weekStartDate);
+    WeeklyTimeSheet findByEmployeeCodeIgnoreCaseAndWeekStartDate(String employeeCode, Timestamp weekStartDate);
 
     WeeklyTimeSheet findByEmployeeCode(String employeeCode);
+
+    WeeklyTimeSheet findByEmployeeCodeAndWeekStartDate(String employeeCode, Timestamp startTs);
 }

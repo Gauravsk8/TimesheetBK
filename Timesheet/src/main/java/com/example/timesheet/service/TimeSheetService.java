@@ -206,7 +206,7 @@ public class TimeSheetService {
             System.out.println("Week start date in timesheet service: " + weekStartDate);
 
             WeeklyTimeSheet weeklyTimeSheet = weeklyTimeSheetRepository
-                    .findByEmployeeCodeAndWeekStartDate(employeeCode, weekStartDate);
+                    .findByEmployeeCodeIgnoreCaseAndWeekStartDate(employeeCode, weekStartDate);
 
             if (weeklyTimeSheet == null) {
                 throw new TimeSheetException(NOT_FOUND_ERROR, WEEKLY_TIME_SHEET_NOT_FOUND + employeeCode);
@@ -219,7 +219,10 @@ public class TimeSheetService {
             weeklyTimeSheetResponse.setTotalIdleHours(weeklyTimeSheet.getTotalIdleHours()); // Fixed mistake: using getter
 
             // Calculate total project hours
-            Map<Long, Long> projectHours = calculateTotalProjectHours(weeklyTimeSheet.getDailySheets());
+
+            Map<String, Long> projectHours = calculateTotalProjectHours(weeklyTimeSheet.getDailySheets());
+
+
             weeklyTimeSheetResponse.setProjectHours(projectHours);
 
             // Build list of daily time sheet responses
@@ -248,21 +251,24 @@ public class TimeSheetService {
 
     // Calculate total project hours spent in the week, per project
 
-    private Map<Long, Long> calculateTotalProjectHours(List<DailyTimeSheet> dailyTimeSheets) {
+
+    private Map<String, Long> calculateTotalProjectHours(List<DailyTimeSheet> dailyTimeSheets) {
+
+
         try {
             if (dailyTimeSheets == null || dailyTimeSheets.isEmpty()) {
                 throw new TimeSheetException(NOT_FOUND_ERROR, DAILY_TIME_SHEETS_NOT_FOUND_FOR_EMPLOYEE_BETWEEN_THESE_DATES);
             }
 
-            Map<Long, Long> projectHoursMap = new HashMap<>();
+            Map<String, Long> projectHoursMap = new HashMap<>();
 
             for (DailyTimeSheet dailySheet : dailyTimeSheets) {
                 List<ProjectTimeEntry> projectEntries = projectTimeEntryRepository.findByDailyTimeSheetId(dailySheet.getId());
 
                 for (ProjectTimeEntry entry : projectEntries) {
-                    Long projectId = entry.getProjectId();
+                    String projectCode = entry.getProjectCode();
                     Long totalHours = entry.getTotalHoursSpent() != null ? entry.getTotalHoursSpent() : 0L;
-                    projectHoursMap.put(projectId, projectHoursMap.getOrDefault(projectId, 0L) + totalHours);
+                    projectHoursMap.put(projectCode, projectHoursMap.getOrDefault(projectCode, 0L) + totalHours);
                 }
             }
 
@@ -277,7 +283,7 @@ public class TimeSheetService {
     }
 
 
-    public Long getWeeklyHoursSpent(Long projectId, String employeeCode, Timestamp weekStartDate, Timestamp weekEndDate) {
+    public Long getWeeklyHoursSpent(String projectCode, String employeeCode, Timestamp weekStartDate, Timestamp weekEndDate) {
         try {
             List<DailyTimeSheet> dailyTimeSheets = dailyTimeSheetRepository.findByEmployeeCodeAndDateBetween(employeeCode, weekStartDate, weekEndDate);
 
@@ -289,7 +295,7 @@ public class TimeSheetService {
 
             for (DailyTimeSheet dailySheet : dailyTimeSheets) {
                 List<ProjectTimeEntry> projectEntries = projectTimeEntryRepository
-                        .findByDailyTimeSheetIdAndProjectId(dailySheet.getId(), projectId);
+                        .findByDailyTimeSheetIdAndProjectCode(dailySheet.getId(), projectCode);
 
                 for (ProjectTimeEntry entry : projectEntries) {
                     totalHours += (entry.getTotalHoursSpent() != null ? entry.getTotalHoursSpent() : 0L);
@@ -451,7 +457,7 @@ public class TimeSheetService {
                             System.out.println("Old project hours:" + oldProjectHours);
 
                             for (ProjectTimeSheetEntryRequest projectTimeSheetEntryRequest : dailyTimeSheetRequest.getProjectTimeSheetEntryRequests()) {
-                                if (projectTimeEntry.getProjectId().equals(projectTimeSheetEntryRequest.getProjectId())) {
+                                if (projectTimeEntry.getProjectCode().equals(projectTimeSheetEntryRequest.getProjectCode())) {
                                     if (!projectTimeEntry.getTotalHoursSpent().equals(projectTimeSheetEntryRequest.getTotalHoursSpent())) {
                                         totalHours -= oldProjectHours;
                                         totalHours += projectTimeSheetEntryRequest.getTotalHoursSpent();
@@ -549,12 +555,12 @@ public class TimeSheetService {
             }
 
             // Set values for project time entry
-            entry.setProjectId(e.getProjectId());
+            entry.setProjectCode(e.getProjectCode());
             entry.setTotalHoursSpent(e.getTotalHoursSpent());
             entry.setDailyTimeSheet(savedDailyTimeSheet);
 
             // Log the successful addition
-            System.out.println("Successfully added ProjectTimeSheetEntry for project ID: " + e.getProjectId() + " with total hours: " + e.getTotalHoursSpent());
+            System.out.println("Successfully added ProjectTimeSheetEntry for project ID: " + e.getProjectCode() + " with total hours: " + e.getTotalHoursSpent());
 
         } catch (IllegalArgumentException ex) {
             // Log invalid argument exceptions
@@ -595,7 +601,7 @@ public class TimeSheetService {
                 if (entry != null) {
                     ProjectTimeSheetEntryResponse projectResponse = new ProjectTimeSheetEntryResponse();
                     projectResponse.setId(entry.getId());
-                    projectResponse.setProjectId(entry.getProjectId());
+                    projectResponse.setProjectCode(entry.getProjectCode());
                     projectResponse.setTotalHoursSpent(entry.getTotalHoursSpent());
 
                     // Add to project responses list
@@ -635,7 +641,7 @@ public class TimeSheetService {
                     if (projectReq.getTotalHoursSpent() < 0) {
                         throw new TimeSheetException(NOT_NULL,TOTAL_PROJECT_HOURS_CANNOT_BE_NULL);
                     }
-                    System.out.println("Project "+ projectReq.getProjectId()+" :"+projectReq.getTotalHoursSpent());
+                    System.out.println("Project "+ projectReq.getProjectCode()+" :"+projectReq.getTotalHoursSpent());
                     total += projectReq.getTotalHoursSpent();
                 }
             }
@@ -726,6 +732,7 @@ public class TimeSheetService {
             for (LocalDate weekStart : weekStartDates) {
                 LocalTime fixedTime = LocalTime.of(5, 30);
                 Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(weekStart, fixedTime));
+
                 System.out.println("starts:"+startTs);
                 WeeklyTimeSheet timeSheet = weeklyTimeSheetRepository.findByEmployeeCodeAndWeekStartDate(
                         employee.getEmployeeCode(), startTs);
@@ -741,7 +748,6 @@ public class TimeSheetService {
 //                            employee.getEmployeeCode() + "   " + weekStart);
                 }
                 else {
-
 
                     weeklyTimeSheets.add(timeSheet);
                 }
@@ -785,7 +791,7 @@ public class TimeSheetService {
         weeklyTimeSheetResponse.setTotalIdleHours(weeklyTimeSheet.getTotalIdleHours()); // Fixed mistake: using getter
 
         // Calculate total project hours
-        Map<Long, Long> projectHours = calculateTotalProjectHours(weeklyTimeSheet.getDailySheets());
+        Map<String, Long> projectHours = calculateTotalProjectHours(weeklyTimeSheet.getDailySheets());
         weeklyTimeSheetResponse.setProjectHours(projectHours);
 
         // Build list of daily time sheet responses

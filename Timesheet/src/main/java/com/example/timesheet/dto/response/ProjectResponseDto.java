@@ -1,4 +1,4 @@
-package com.example.timesheet.dto.reponse;
+package com.example.timesheet.dto.response;
 
 
 import lombok.Builder;

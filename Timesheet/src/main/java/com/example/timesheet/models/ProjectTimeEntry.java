@@ -20,7 +20,7 @@ public class ProjectTimeEntry{
     @ManyToOne
     @JoinColumn(name="daily_time_sheet_id")
     private DailyTimeSheet dailyTimeSheet;
-    private Long projectId;
+    private String projectCode;
     private Long totalHoursSpent;
 
     private boolean isTotalHoursSpentOnProjectModifiedByManager = false;

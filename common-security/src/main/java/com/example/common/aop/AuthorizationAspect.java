@@ -80,7 +80,6 @@ public class AuthorizationAspect {
         boolean authorized = enforcer.isAuthorized(token, resource, scope);
         if (!authorized) {
             throw new SecurityException(UNAUTHORIZED_ACCESS);
-
         }
 
         logger.info("Authorization granted. Proceeding with method: {}", joinPoint.getSignature());
