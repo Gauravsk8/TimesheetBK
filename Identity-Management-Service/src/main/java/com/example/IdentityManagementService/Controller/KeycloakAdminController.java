@@ -153,21 +153,10 @@ public class KeycloakAdminController {
     @GetMapping("/admin/users")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<List<Map<String, String>>> getAllUsers() {
-        List<UserRepresentation> users = keycloakAdminService.getAllUsers();
-        List<Map<String, String>> response = new ArrayList<>();
-
-        for (UserRepresentation user : users) {
-            Map<String, String> userMap = new HashMap<>();
-            userMap.put("keycloakUserId", user.getId());
-            userMap.put("employeeCode", user.getUsername());
-            userMap.put("firstname", user.getFirstName());
-            userMap.put("lastname", user.getLastName());
-            userMap.put("email", user.getEmail());
-            response.add(userMap);
-        }
-
-        return ResponseEntity.ok(response);
+        List<Map<String, String>> users = keycloakAdminService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
+
     @GetMapping("/admin/User/{employeeCode}/assigned-roles")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<List<String>> getUserAssignedRealmRoles(@PathVariable String employeeCode) {
