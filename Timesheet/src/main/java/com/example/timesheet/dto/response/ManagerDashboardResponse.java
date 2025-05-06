@@ -11,10 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ManagerDashboardResponse {
     private String employeeCode;
-    private Long week1;
-    private Long week2;
-    private Long week3;
-    private Long week4;
-    private Long week5;
+    private WeeklySummaryResponse week1;
+    private WeeklySummaryResponse week2;
+    private WeeklySummaryResponse week3;
+    private WeeklySummaryResponse week4;
+    private WeeklySummaryResponse week5;
 
 }

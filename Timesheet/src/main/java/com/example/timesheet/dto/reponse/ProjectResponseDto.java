@@ -17,7 +17,7 @@ public class ProjectResponseDto {
     private Timestamp endDate;
     private String clientName;
     private String costCenterCode;
-    private String managerId;
+    private String managerCode;
     private String allocatedHours;
 }
 

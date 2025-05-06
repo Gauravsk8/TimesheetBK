@@ -68,7 +68,7 @@ public class ProjectManagementService {
                 .code(dto.getCode())
                 .name(dto.getName())
                 .description(dto.getDescription())
-                .managerId(dto.getManagerId())
+                .managerCode(dto.getManagerCode())
                 .build();
 
         return costCenterRepository.save(costCenter);
@@ -88,7 +88,7 @@ public class ProjectManagementService {
 
         costCenter.setName(dto.getName());
         costCenter.setDescription(dto.getDescription());
-        costCenter.setManagerId(dto.getManagerId());
+        costCenter.setManagerCode(dto.getManagerCode());
 
         return costCenterRepository.save(costCenter);
     }
@@ -114,7 +114,7 @@ public class ProjectManagementService {
         project.setEnd_date(dto.getEndDate());
         project.setClients(client);
         project.setCostCenter(costCenter);
-        project.setManagerId(dto.getManagerId());
+        project.setManagerCode(dto.getManagerCode());
         project.setAllocated_hours(dto.getAllocatedHours());
 
         Project savedProject=projectRepository.save(project);
@@ -141,7 +141,7 @@ public class ProjectManagementService {
         project.setOwner(dto.getOwner());
         project.setStart_date(dto.getStartDate());
         project.setEnd_date(dto.getEndDate());
-        project.setManagerId(dto.getManagerId());
+        project.setManagerCode(dto.getManagerCode());
         project.setAllocated_hours(dto.getAllocatedHours());
 
         if (!project.getClients().getId().equals(dto.getClientId())) {
@@ -248,7 +248,7 @@ public class ProjectManagementService {
                 .endDate(project.getEnd_date())
                 .clientName(project.getClients().getName())
                 .costCenterCode(project.getCostCenter().getCode())
-                .managerId(project.getManagerId())
+                .managerCode(project.getManagerCode())
                 .allocatedHours(project.getAllocated_hours())
                 .build();
     }

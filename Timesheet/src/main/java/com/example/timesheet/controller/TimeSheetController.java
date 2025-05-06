@@ -24,20 +24,21 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@RestController("/timesheet")
+@RestController
+@RequestMapping("timesheet")
 @RequiredArgsConstructor
 public class TimeSheetController {
 
     private final TimeSheetService timeSheetService;
     @PostMapping("/Employee/daily")
-    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+//    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public ResponseEntity<String> enterDailyTimeSheet(@RequestBody List<DailyTimeSheetRequest> dailyTimeSheetRequests){
         String result=timeSheetService.enterOrUpdateDailyTimeSheet(dailyTimeSheetRequests);
         return  ResponseEntity.ok().body(result);
     }
 
     @PostMapping("/Employee/weekly")
-    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+    //@RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public ResponseEntity<String> enterWeeklyTimeSheet(@RequestBody WeeklyTimeSheetRequest weeklyTimeSheetRequest){
         String result=timeSheetService.weeklyTimeSheetEntry(weeklyTimeSheetRequest);
         return  ResponseEntity.ok().body(result);
@@ -45,15 +46,14 @@ public class TimeSheetController {
 
 
     @GetMapping("/dashboard/manager/{managerCode}")
+
     public List<ManagerDashboardResponse> getManagerDashboardResponse(@PathVariable("managerCode") String managerCode,
                                                                       @RequestParam String monthYear){
         return timeSheetService.getManagerDashboardResponse(managerCode,monthYear);
     }
     @PreAuthorize("hasAuthority('SCOPE_view_timesheet') or hasAuthority('SCOPE_view_all_timesheets')")
-
-
     @GetMapping("/Employee/weekly")
-    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+    //@RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
 
     public WeeklyTimeSheetResponse getWeeklyTimeSheetForAnEmployee(@RequestParam("employeeCode") String employeeCode,
                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
@@ -71,6 +71,18 @@ public class TimeSheetController {
         return timeSheetService.getWeeklyTimeSheetForAnEmployee(employeeCode,startTs,endTs);
     }
 
+    @GetMapping("/Employee/weekly/{id}")
+    //@RequiresKeycloakAuthorization(resource = "ReportingManager", scope = "RMscope")
+    public WeeklyTimeSheetResponse getWeeklyTimeSheetByWeeklyTimeSheetID(@PathVariable("id") Long id,
+                                                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
+                                                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekEndDate){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalTime fixedTime = LocalTime.of(5, 30);
+        Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(weekStartDate, fixedTime).format(formatter));
+
+        Timestamp endTs = Timestamp.valueOf(LocalDateTime.of(weekEndDate, fixedTime).format(formatter));
+        return timeSheetService.getWeeklyTimeSheetByWeeklyTimeSheetID(id,startTs,endTs);
+    }
     @GetMapping("/Employee/weekly/project-hours")
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
     public Long getWeeklyHoursSpent(@RequestParam("projectId") Long projectId,
@@ -141,6 +153,13 @@ public class TimeSheetController {
         String result=timeSheetService.approveWithManagerOverWrite(approveWithManagerOverWriteRequest,weeklyTimeSheetId,status);
         return  ResponseEntity.ok().body(result);
     }
+    @PostMapping("/approve-sendBack/admin")
+    public ResponseEntity<String> approveSendBackByAdmin(@RequestParam("weeklyTimeSheetId") Long weeklyTimeSheetId,
+                                                    @RequestParam("adminCode") String adminCode){
+        String result=timeSheetService.approveSendBackByAdmin(weeklyTimeSheetId,adminCode);
+        return  ResponseEntity.ok().body(result);
+    }
+
 
 
 }

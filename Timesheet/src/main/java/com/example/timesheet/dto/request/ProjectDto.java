@@ -14,7 +14,7 @@ public class ProjectDto {
     private Timestamp endDate;
     private Long clientId;
     private String costCenterCode;
-    private String managerId;
+    private String managerCode;
     private String allocatedHours;
 }
 

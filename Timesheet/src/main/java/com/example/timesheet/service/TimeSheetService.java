@@ -88,7 +88,7 @@ public class TimeSheetService {
 //                    entry.setTotalHoursSpent(e.getTotalHoursSpent());
 //                    entry.setDailyTimeSheet(savedDailyTimeSheet);
                     addProjectTimeSheetEntry(entry, e, savedDailyTimeSheet);
-                    totalHours += e.getTotalHoursSpent();
+
                     newEntries.add(entry);
                 }
                 dailyTimeSheet.setTotalHours(totalHours);
@@ -219,7 +219,7 @@ public class TimeSheetService {
             weeklyTimeSheetResponse.setTotalIdleHours(weeklyTimeSheet.getTotalIdleHours()); // Fixed mistake: using getter
 
             // Calculate total project hours
-            Map<Long, Long> projectHours = calculateTotalProjectHours(employeeCode, weekStartDate, weekEndDate, weeklyTimeSheet.getDailySheets());
+            Map<Long, Long> projectHours = calculateTotalProjectHours(weeklyTimeSheet.getDailySheets());
             weeklyTimeSheetResponse.setProjectHours(projectHours);
 
             // Build list of daily time sheet responses
@@ -248,7 +248,7 @@ public class TimeSheetService {
 
     // Calculate total project hours spent in the week, per project
 
-    private Map<Long, Long> calculateTotalProjectHours(String employeeCode, Timestamp weekStartDate, Timestamp weekEndDate, List<DailyTimeSheet> dailyTimeSheets) {
+    private Map<Long, Long> calculateTotalProjectHours(List<DailyTimeSheet> dailyTimeSheets) {
         try {
             if (dailyTimeSheets == null || dailyTimeSheets.isEmpty()) {
                 throw new TimeSheetException(NOT_FOUND_ERROR, DAILY_TIME_SHEETS_NOT_FOUND_FOR_EMPLOYEE_BETWEEN_THESE_DATES);
@@ -621,7 +621,10 @@ public class TimeSheetService {
             if (req == null) {
                 throw new TimeSheetException(NOT_NULL,DAILY_TIME_SHEET_CANNOT_BE_NULL);
             }
-
+            System.out.println("leave:"+req.getLeave());
+            System.out.println("Holiday:"+req.getHoliday());
+            System.out.println("Idle:"+req.getIdeal());
+            System.out.println("Training:"+req.getTraining());
             // Add basic hours (Leave, Holiday, Training, Ideal)
             total += req.getLeave() + req.getHoliday() + req.getTraining() + req.getIdeal();
 
@@ -632,6 +635,7 @@ public class TimeSheetService {
                     if (projectReq.getTotalHoursSpent() < 0) {
                         throw new TimeSheetException(NOT_NULL,TOTAL_PROJECT_HOURS_CANNOT_BE_NULL);
                     }
+                    System.out.println("Project "+ projectReq.getProjectId()+" :"+projectReq.getTotalHoursSpent());
                     total += projectReq.getTotalHoursSpent();
                 }
             }
@@ -646,7 +650,7 @@ public class TimeSheetService {
             System.err.println("Unexpected error occurred while calculating total logged hours: " + e.getMessage());
             throw new RuntimeException("Unexpected error occurred while calculating total logged hours.", e);
         }
-
+        System.out.println("Total:"+total);
         // Return the calculated total hours
         return total;
     }
@@ -716,35 +720,53 @@ public class TimeSheetService {
 
         for (EmployeeReportingManager employee : employeeReportingManagers) {
             List<WeeklyTimeSheet> weeklyTimeSheets = new ArrayList<>();
-            Map<Integer, Long> weeklyHoursMap = new HashMap<>();
+            Map<Integer, WeeklySummaryResponse> weeklyHoursMap = new HashMap<>();
             int count = 0;
 
             for (LocalDate weekStart : weekStartDates) {
                 LocalTime fixedTime = LocalTime.of(5, 30);
                 Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(weekStart, fixedTime));
-
+                System.out.println("starts:"+startTs);
                 WeeklyTimeSheet timeSheet = weeklyTimeSheetRepository.findByEmployeeCodeAndWeekStartDate(
                         employee.getEmployeeCode(), startTs);
 
-                if (timeSheet == null) {
-                    throw new TimeSheetException(NOT_FOUND_ERROR, DAILY_TIME_SHEETS_NOT_FOUND_FOR_EMPLOYEE_BETWEEN_THESE_DATES +
-                            employee.getEmployeeCode() + "   " + weekStart);
-                }
 
-                weeklyTimeSheets.add(timeSheet);
+                if (timeSheet == null) {
+                    WeeklyTimeSheet timeSheet1=new WeeklyTimeSheet();
+                    timeSheet1.setTotalWorkingHours(0L);
+                    timeSheet1.setId(null);
+                    timeSheet1.setWeekStartDate(startTs);
+                    weeklyTimeSheets.add(timeSheet1);
+//                    throw new TimeSheetException(NOT_FOUND_ERROR, DAILY_TIME_SHEETS_NOT_FOUND_FOR_EMPLOYEE_BETWEEN_THESE_DATES +
+//                            employee.getEmployeeCode() + "   " + weekStart);
+                }
+                else {
+
+
+                    weeklyTimeSheets.add(timeSheet);
+                }
             }
 
             for (WeeklyTimeSheet tempTimeSheet : weeklyTimeSheets) {
-                weeklyHoursMap.put(++count, tempTimeSheet.getTotalWorkingHours());
+                WeeklySummaryResponse response=new WeeklySummaryResponse();
+                response.setHours(tempTimeSheet.getTotalWorkingHours());
+                response.setWeeklyTimeSheetId(tempTimeSheet.getId());
+                response.setWeekStartDate(tempTimeSheet.getWeekStartDate());
+                LocalDate weekStart = tempTimeSheet.getWeekStartDate().toLocalDateTime().toLocalDate();
+                LocalDate weekEnd = weekStart.plusDays(7);
+                Timestamp endTs = Timestamp.valueOf(weekEnd.atStartOfDay());
+                response.setWeekEndDate(endTs);
+                weeklyHoursMap.put(++count, response);
             }
 
             ManagerDashboardResponse response = new ManagerDashboardResponse();
+            WeeklySummaryResponse res=new WeeklySummaryResponse();
             response.setEmployeeCode(employee.getEmployeeCode());
-            response.setWeek1(weeklyHoursMap.getOrDefault(1, 0L));
-            response.setWeek2(weeklyHoursMap.getOrDefault(2, 0L));
-            response.setWeek3(weeklyHoursMap.getOrDefault(3, 0L));
-            response.setWeek4(weeklyHoursMap.getOrDefault(4, 0L));
-            response.setWeek5(weeklyHoursMap.getOrDefault(5, 0L));
+            response.setWeek1(weeklyHoursMap.getOrDefault(1, res));
+            response.setWeek2(weeklyHoursMap.getOrDefault(2, res));
+            response.setWeek3(weeklyHoursMap.getOrDefault(3, res));
+            response.setWeek4(weeklyHoursMap.getOrDefault(4, res));
+            response.setWeek5(weeklyHoursMap.getOrDefault(5, res));
 
             managerDashboardResponses.add(response);
         }
@@ -753,5 +775,50 @@ public class TimeSheetService {
     }
 
 
+    public WeeklyTimeSheetResponse getWeeklyTimeSheetByWeeklyTimeSheetID(Long id,Timestamp weekStartDate,Timestamp weekEndDate) {
+        WeeklyTimeSheet weeklyTimeSheet=weeklyTimeSheetRepository.findById(String.valueOf(id))
+                .orElseThrow();
+        WeeklyTimeSheetResponse weeklyTimeSheetResponse = new WeeklyTimeSheetResponse();
+        weeklyTimeSheetResponse.setId(weeklyTimeSheet.getId());
+        weeklyTimeSheetResponse.setEmployeeId(weeklyTimeSheet.getEmployeeId());
+        weeklyTimeSheetResponse.setTotalWorkingHours(weeklyTimeSheet.getTotalWorkingHours());
+        weeklyTimeSheetResponse.setTotalIdleHours(weeklyTimeSheet.getTotalIdleHours()); // Fixed mistake: using getter
+
+        // Calculate total project hours
+        Map<Long, Long> projectHours = calculateTotalProjectHours(weeklyTimeSheet.getDailySheets());
+        weeklyTimeSheetResponse.setProjectHours(projectHours);
+
+        // Build list of daily time sheet responses
+        List<DailyTimeSheetResponse> dailyTimeSheetResponses = new ArrayList<>();
+        for (DailyTimeSheet dailyTimeSheet : weeklyTimeSheet.getDailySheets()) {
+            dailyTimeSheetResponses.add(convertToDailyTimeSheetResponse(dailyTimeSheet));
+        }
+        weeklyTimeSheetResponse.setDailyTimeSheetResponses(dailyTimeSheetResponses);
+
+        // Get hours by type
+        Map<String, Long> hoursMap = getWeeklyHoursSpentByType(weeklyTimeSheet.getEmployeeCode(), weeklyTimeSheet.getWeekStartDate(), weekEndDate);
+        weeklyTimeSheetResponse.setHoursMap(hoursMap);
+
+        return weeklyTimeSheetResponse;
+    }
+
+    public String approveSendBackByAdmin(Long weeklyTimeSheetId, String adminCode) {
+        try {
+            WeeklyTimeSheet weeklyTimeSheet = weeklyTimeSheetRepository.findById(String.valueOf(weeklyTimeSheetId))
+                    .orElseThrow(() -> new TimeSheetException(NOT_FOUND_ERROR, WEEKLY_TIME_SHEET_NOT_FOUND));
+
+            weeklyTimeSheet.setTimeSheetStatus(TimeSheetStatus.OPEN);
+            weeklyTimeSheet.setApprovedBy(adminCode); // Set approved by manager code
+
+            weeklyTimeSheetRepository.save(weeklyTimeSheet);
+
+            return "Weekly time sheet sent back by admin.";
+        } catch (TimeSheetException e) {
+            throw e; // Rethrow custom exception if already known
+        } catch (Exception e) {
+            e.printStackTrace(); // Ideally, use logger.error instead of printStackTrace
+            throw new TimeSheetException(INTERNAL_SERVER_ERROR, FAILED_TO_APPROVE_WEEKLY_TIMESHEET);
+        }
+    }
 }
 
