@@ -35,9 +35,9 @@ public class TimeSheetController {
     private final TimeSheetService timeSheetService;
 
 
-    //@PostMapping("/User/Employee/daily")
-    @PostMapping("/Employee/daily")
-    //@RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+    @PostMapping("/User/Employee/daily")
+    //@PostMapping("/Employee/daily")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
 
     public ResponseEntity<String> enterDailyTimeSheet(@RequestBody List<DailyTimeSheetRequest> dailyTimeSheetRequests){
         System.out.println("Entered daily time sheet controller");
@@ -61,7 +61,7 @@ public class TimeSheetController {
 
 
     @PostMapping("/Employee/weekly")
-    //@RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
 
     public ResponseEntity<String> enterWeeklyTimeSheet(@RequestBody WeeklyTimeSheetRequest weeklyTimeSheetRequest){
         String result=timeSheetService.weeklyTimeSheetEntry(weeklyTimeSheetRequest);
@@ -103,7 +103,7 @@ public class TimeSheetController {
     }
 
     @GetMapping("/Employee/getSaved-dailyTimeSheet")
-  //  @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
 
 
     public SavedDailyTimeSheetResponse getSavedDailyTimesheetForAnEmployee(@RequestParam("employeeCode") String employeeCode,
@@ -125,7 +125,7 @@ public class TimeSheetController {
 
 
     @GetMapping("/Employee/weekly/{id}")
-    //@RequiresKeycloakAuthorization(resource = "ReportingManager", scope = "RMscope")
+    @RequiresKeycloakAuthorization(resource = "ReportingManager", scope = "RMscope")
     public WeeklyTimeSheetResponse getWeeklyTimeSheetByWeeklyTimeSheetID(@PathVariable("id") Long id,
                                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStartDate,
                                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekEndDate){
