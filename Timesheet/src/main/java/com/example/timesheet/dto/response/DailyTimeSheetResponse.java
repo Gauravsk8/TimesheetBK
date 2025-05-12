@@ -24,6 +24,11 @@ public class DailyTimeSheetResponse {
     private Long ideal;
     private Long training;
     private Long totalHours;
+    private boolean isIdealModifiedByManager;
+    private boolean isHolidayModifiedByManager;
+    private boolean isLeaveModifiedByManager ;
+    private boolean isTrainingModifiedByManager;
+    private boolean isTotalHoursModifiedByManager;
 
 
 }

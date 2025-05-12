@@ -8,6 +8,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,10 @@ public interface DailyTimeSheetRepository extends
                                                           @Param("endDate") Timestamp endDate);
 
     DailyTimeSheet findByDateAndEmployeeCode(Timestamp date, String employeeCode);
+
+    boolean existsByEmployeeCodeAndDateBetween(String employeeCode, Timestamp startDate, Timestamp endDate);
+
+    List<DailyTimeSheet> findByWeeklyTimeSheetId(Long id);
 
     // List<DailyTimeSheet> findByEmployeeCodeAndDateBetween(String employeeCode, Timestamp weekStartDate, Timestamp weekEndDate);
 }

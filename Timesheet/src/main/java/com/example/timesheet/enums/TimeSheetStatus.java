@@ -4,5 +4,6 @@ public enum TimeSheetStatus {
     PENDING_APPROVAL,
     MANAGER_APPROVED,
     OPEN,
-    APPROVED
+    APPROVED,
+    FILL
 }

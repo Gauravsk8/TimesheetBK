@@ -90,14 +90,14 @@ public class ProjectManagementService {
 
 
     public String createCostCenter(CostCenterDto dto) {
-        ResponseEntity<Boolean> managerRole = identityServiceClient.hasManagerRole(dto.getManagerCode(), CostCenterManager);
-
-        if (!managerRole.getBody()) {
-            throw new TimeSheetException(
-                    errorCode.MANAGER_ROLE, // Assuming this is the error code
-                    String.format(errorMessage.CostCenterManager_MANAGER_ROLE, dto.getManagerCode()) // Assuming you have this error message in your errorMessage class
-            );
-        }
+//        ResponseEntity<Boolean> managerRole = identityServiceClient.hasManagerRole(dto.getManagerCode(), CostCenterManager);
+//
+//        if (!managerRole.getBody()) {
+//            throw new TimeSheetException(
+//                    errorCode.MANAGER_ROLE, // Assuming this is the error code
+//                    String.format(errorMessage.CostCenterManager_MANAGER_ROLE, dto.getManagerCode()) // Assuming you have this error message in your errorMessage class
+//            );
+//        }
         CostCenter costCenter = CostCenter.builder()
                 .code(dto.getCode().toLowerCase())
                 .name(dto.getName())
@@ -175,14 +175,14 @@ public class ProjectManagementService {
                         errorCode.NOT_FOUND_ERROR, // Error code for cost center not found
                         String.format(errorMessage.COST_CENTER_NOT_FOUND, dto.getCostCenterCode()) // Error message for cost center not found
                 ));
-        ResponseEntity<Boolean> managerRole = identityServiceClient.hasManagerRole(dto.getManagerCode().toLowerCase(), ProjectManager);
+        //ResponseEntity<Boolean> managerRole = identityServiceClient.hasManagerRole(dto.getManagerCode().toLowerCase(), ProjectManager);
 
-        if (!managerRole.getBody()) {
-            throw new TimeSheetException(
-                    errorCode.MANAGER_ROLE, // Assuming this is the error code
-                    String.format(errorMessage.PROJECT_MANAGER_ROLE, dto.getManagerCode()) // Assuming you have this error message in your errorMessage class
-            );
-        }
+//        if (!managerRole.getBody()) {
+//            throw new TimeSheetException(
+//                    errorCode.MANAGER_ROLE, // Assuming this is the error code
+//                    String.format(errorMessage.PROJECT_MANAGER_ROLE, dto.getManagerCode()) // Assuming you have this error message in your errorMessage class
+//            );
+//        }
 
         Project project = new Project();
         project.setProjectCode(dto.getProjectCode().toLowerCase());
@@ -406,7 +406,7 @@ public class ProjectManagementService {
                     dto.setEndDate(project.getEnd_date());
                     dto.setManagerCode(project.getManagerCode());
                     dto.setAllocatedHours(project.getAllocated_hours());
-
+                    dto.setCostCenterCode(project.getCostCenter().getCode());
                     return dto;
                 })
                 .toList();

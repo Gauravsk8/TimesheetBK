@@ -1,17 +1,16 @@
 package com.example.timesheet.controller;
 
 
-import com.example.timesheet.dto.response.ManagerDashboardResponse;
+import com.example.timesheet.dto.response.*;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
 
-import com.example.timesheet.dto.response.ShiftDetailsResponse;
 import com.example.timesheet.dto.request.ApproveWithManagerOverWriteRequest;
 import com.example.timesheet.dto.request.DailyTimeSheetRequest;
 import com.example.timesheet.dto.request.UserIdentityDto;
 import com.example.timesheet.dto.request.WeeklyTimeSheetRequest;
-import com.example.timesheet.dto.response.WeeklyTimeSheetResponse;
 import com.example.timesheet.enums.TimeSheetStatus;
+import com.example.timesheet.models.WeeklyTimeSheet;
 import com.example.timesheet.service.TimeSheetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,7 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 
@@ -34,17 +35,33 @@ public class TimeSheetController {
     private final TimeSheetService timeSheetService;
 
 
-    @PostMapping("/User/Employee/daily")
-    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+    //@PostMapping("/User/Employee/daily")
+    @PostMapping("/Employee/daily")
+    //@RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
 
     public ResponseEntity<String> enterDailyTimeSheet(@RequestBody List<DailyTimeSheetRequest> dailyTimeSheetRequests){
+        System.out.println("Entered daily time sheet controller");
         String result=timeSheetService.enterOrUpdateDailyTimeSheet(dailyTimeSheetRequests);
         return  ResponseEntity.ok().body(result);
     }
 
 
-    @PostMapping("/User/Employee/weekly")
-    @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+        @GetMapping("/status")
+        public ResponseEntity<Map<String, TimeSheetStatus>> getTimesheetStatus(
+                @RequestParam String employeeCode,
+                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate
+        ) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalTime fixedTime = LocalTime.of(5, 30);
+            Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(startDate, fixedTime).format(formatter));
+
+             TimeSheetStatus status=timeSheetService.getTimesheetStatus(employeeCode,startTs);
+            return ResponseEntity.ok(Collections.singletonMap("status", status));
+        }
+
+
+    @PostMapping("/Employee/weekly")
+    //@RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
 
     public ResponseEntity<String> enterWeeklyTimeSheet(@RequestBody WeeklyTimeSheetRequest weeklyTimeSheetRequest){
         String result=timeSheetService.weeklyTimeSheetEntry(weeklyTimeSheetRequest);
@@ -57,6 +74,12 @@ public class TimeSheetController {
     public List<ManagerDashboardResponse> getManagerDashboardResponse(@PathVariable("managerCode") String managerCode,
                                                                       @RequestParam String monthYear){
         return timeSheetService.getManagerDashboardResponse(managerCode,monthYear);
+    }
+    @GetMapping("/employee-view-timesheet/{employeeCode}")
+
+    public List<EmployeeViewTimesheetResponse> getEmployeeViewTimesheetResponse(@PathVariable("employeeCode") String employeeCode,
+                                                                                @RequestParam String monthYear){
+        return timeSheetService.getEmployeeViewTimesheetResponse(employeeCode,monthYear);
     }
     @PreAuthorize("hasAuthority('SCOPE_view_timesheet') or hasAuthority('SCOPE_view_all_timesheets')")
     @GetMapping("/User/Employee/weekly")
@@ -78,6 +101,27 @@ public class TimeSheetController {
         System.out.println("Week start date in controller:"+startTs);
         return timeSheetService.getWeeklyTimeSheetForAnEmployee(employeeCode,startTs,endTs);
     }
+
+    @GetMapping("/Employee/getSaved-dailyTimeSheet")
+  //  @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
+
+
+    public SavedDailyTimeSheetResponse getSavedDailyTimesheetForAnEmployee(@RequestParam("employeeCode") String employeeCode,
+                                                                           @RequestParam Timestamp weekStartDate,
+                                                                           @RequestParam Timestamp weekEndDate){
+
+        System.out.println("Week start date in controller:"+weekStartDate);
+        // Convert to Timestamp only if needed later
+        // Manually set to 05:30:00
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalTime fixedTime = LocalTime.of(5, 30);
+//        Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(weekStartDate, fixedTime).format(formatter));
+//
+//        Timestamp endTs = Timestamp.valueOf(LocalDateTime.of(weekEndDate, fixedTime).format(formatter));
+        System.out.println("Week start date in controller:"+weekStartDate);
+        return timeSheetService.getSavedDailyTimesheetForAnEmployee(employeeCode,weekStartDate,weekEndDate);
+    }
+
 
 
     @GetMapping("/Employee/weekly/{id}")

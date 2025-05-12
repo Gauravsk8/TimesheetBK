@@ -23,7 +23,7 @@ public class ProjectManagementController {
     private final ProjectManagementService projectManagementService;
 
     @PostMapping("/admin/clients")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    //@RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> createClient(@RequestBody ClientDto clientDto) {
         String response = projectManagementService.createClient(clientDto);
         return ResponseEntity.ok(response);
@@ -56,7 +56,7 @@ public class ProjectManagementController {
     }
 
     @PostMapping("/admin/cost-centers")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    //@RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> createCostCenter(@RequestBody CostCenterDto dto) {
         return ResponseEntity.ok(projectManagementService.createCostCenter(dto));
     }
@@ -88,7 +88,7 @@ public class ProjectManagementController {
     }
 
     @PostMapping("/admin/Project")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    //@RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> createProjects(@RequestBody ProjectDto projectCreateRequest){
         try {
             String result=projectManagementService.createProject(projectCreateRequest);
@@ -115,7 +115,7 @@ public class ProjectManagementController {
     }
 
     @PostMapping("admin/Project/{projectCode}/assign")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    //@RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> assignEmployees(@RequestBody AssignEmployeesDto dto,@PathVariable String projectCode) {
         return ResponseEntity.ok(projectManagementService.assignEmployeesToProject(dto, projectCode));
     }
@@ -159,7 +159,8 @@ public class ProjectManagementController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/Project/by-employee/{employeeCode}")
-    @RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")    public ResponseEntity<List<ProjectDto>> getProjectsByEmployee(@PathVariable String employeeCode) {
+    //@RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")
+    public ResponseEntity<List<ProjectDto>> getProjectsByEmployee(@PathVariable String employeeCode) {
         List<ProjectDto> projects = projectManagementService.getProjectsByEmployeeCode(employeeCode);
         return ResponseEntity.ok(projects);
     }

@@ -45,6 +45,7 @@ public class TimeSheetService {
     private final EmployeeReportingManagerRepository employeeReportingManagerRepository;
     private final IdentityServiceClient identityServiceClient;
     public String enterOrUpdateDailyTimeSheet(List<DailyTimeSheetRequest> dailyTimeSheetRequests) {
+        System.out.println("Entered daily time sheet service");
         for (DailyTimeSheetRequest dailyTimeSheetRequest : dailyTimeSheetRequests) {
             try{
             Long totalHours = 0L;
@@ -55,7 +56,8 @@ public class TimeSheetService {
                 dailyTimeSheet = new DailyTimeSheet();
                 status = TimeSheetStatus.OPEN;// if not found, create new
             } else {
-                if (dailyTimeSheet.getWeeklyTimeSheet().getTimeSheetStatus() == TimeSheetStatus.OPEN) {
+                System.out.println("Found :"+dailyTimeSheet.getDate());
+                if (dailyTimeSheet.getWeeklyTimeSheet() == null ||dailyTimeSheet.getWeeklyTimeSheet().getTimeSheetStatus() == TimeSheetStatus.OPEN) {
                     status = TimeSheetStatus.OPEN;
                     projectTimeEntryRepository.deleteByDailyTimeSheetId(dailyTimeSheet.getId());
                 }
@@ -592,7 +594,12 @@ public class TimeSheetService {
         response.setId(dailyTimeSheet.getId());
         response.setEmployeeId(dailyTimeSheet.getEmployeeId());
         response.setTotalHours(dailyTimeSheet.getTotalHours());
-
+        response.setHolidayModifiedByManager(dailyTimeSheet.isHolidayModifiedByManager());
+        response.setLeaveModifiedByManager(dailyTimeSheet.isLeaveModifiedByManager());
+        response.setIdealModifiedByManager(dailyTimeSheet.isIdealModifiedByManager());
+        response.setTrainingModifiedByManager(dailyTimeSheet.isTrainingModifiedByManager());
+        System.out.println("Employee code:"+dailyTimeSheet.getEmployeeCode());
+        System.out.println("Leave:"+dailyTimeSheet.getLeave());
         // Handle ProjectTimeEntry responses, ensuring we handle potential nulls
         List<ProjectTimeSheetEntryResponse> projectResponses = new ArrayList<>();
 
@@ -603,7 +610,7 @@ public class TimeSheetService {
                     projectResponse.setId(entry.getId());
                     projectResponse.setProjectCode(entry.getProjectCode());
                     projectResponse.setTotalHoursSpent(entry.getTotalHoursSpent());
-
+                    projectResponse.setTotalHoursSpentOnProjectModifiedByManager(entry.isTotalHoursSpentOnProjectModifiedByManager());
                     // Add to project responses list
                     projectResponses.add(projectResponse);
                 } else {
@@ -615,7 +622,7 @@ public class TimeSheetService {
 
         // Set project time entry responses
         response.setProjectTimeSheetEntryResponses(projectResponses);
-
+        System.out.println("Leave in response:"+response.getLeave());
         // Return the populated response
         return response;
     }
@@ -824,6 +831,171 @@ public class TimeSheetService {
         } catch (Exception e) {
             e.printStackTrace(); // Ideally, use logger.error instead of printStackTrace
             throw new TimeSheetException(INTERNAL_SERVER_ERROR, FAILED_TO_APPROVE_WEEKLY_TIMESHEET);
+        }
+    }
+
+    public TimeSheetStatus getTimesheetStatus(String employeeCode, Timestamp startDate) {
+        // 1. Check weekly timesheet
+        WeeklyTimeSheet weekly = weeklyTimeSheetRepository.findByEmployeeCodeAndWeekStartDate(employeeCode, startDate);
+        System.out.println("Weekly time sheet found in finding time sheet status");
+        if (weekly!=null) {
+            System.out.println("status:"+weekly.getTimeSheetStatus());
+            return  weekly.getTimeSheetStatus();
+        }
+
+        // 2. Check daily timesheets in the week range
+        // Getting the start of the week and the end of the week using the Timestamp's `toLocalDateTime` method
+        LocalDateTime startDateTime = startDate.toLocalDateTime();
+        LocalDateTime endDateTime = startDateTime.plusDays(6); // Add 6 days to the start date
+
+        // Convert back to Timestamp for the range check
+        Timestamp endDateTimestamp = Timestamp.valueOf(endDateTime);
+        boolean hasDailyEntries = dailyTimeSheetRepository.existsByEmployeeCodeAndDateBetween(employeeCode, startDate, endDateTimestamp);
+        System.out.println("Has daily time sheet in time sheet status:"+hasDailyEntries );
+        TimeSheetStatus status = hasDailyEntries ? TimeSheetStatus.OPEN : TimeSheetStatus.FILL;
+        return status;
+    }
+
+    public List<EmployeeViewTimesheetResponse> getEmployeeViewTimesheetResponse(String employeeCode, String monthYear) {
+        if (employeeCode == null || employeeCode.isEmpty() || monthYear == null || monthYear.isEmpty()) {
+            throw new TimeSheetException(INVALID_INPUT, MANAGER_CODE_OR_MONTH_YEAR_MUST_NOT_BE_NULL);
+        }
+
+        Month month;
+        int year;
+
+        try {
+            String[] parts = monthYear.split(" ");
+            month = Month.valueOf(parts[0].toUpperCase());
+            year = Integer.parseInt(parts[1]);
+        } catch (Exception e) {
+            throw new TimeSheetException("INVALID_MONTH_YEAR_FORMAT", "MonthYear must be like 'April 2024'");
+        }
+
+        LocalDate firstOfMonth = LocalDate.of(year, month, 1);
+        LocalDate lastOfMonth = firstOfMonth.withDayOfMonth(firstOfMonth.lengthOfMonth());
+        LocalDate currentMonday = firstOfMonth.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+        List<LocalDate> weekStartDates = new ArrayList<>();
+
+        while (currentMonday.isBefore(lastOfMonth.plusDays(1))) {
+            int daysInMonth = 0;
+            for (int i = 0; i < 7; i++) {
+                LocalDate day = currentMonday.plusDays(i);
+                if (day.getMonth() == month) {
+                    daysInMonth++;
+                }
+            }
+
+            if (daysInMonth >= 4) {
+                weekStartDates.add(currentMonday);
+            }
+
+            currentMonday = currentMonday.plusWeeks(1);
+        }
+
+        if (weekStartDates.isEmpty()) {
+            throw new TimeSheetException(NOT_FOUND_ERROR, NO_VALID_WEEKLY_RANGES_FOR_SELECTED_MONTH + monthYear);
+        }
+        List<WeeklyTimeSheet> weeklyTimeSheets = new ArrayList<>();
+        List<EmployeeViewTimesheetResponse> responses= new ArrayList<>();
+        for(LocalDate startDate:weekStartDates){
+
+            LocalTime fixedTime = LocalTime.of(5, 30);
+            Timestamp startTs = Timestamp.valueOf(LocalDateTime.of(startDate, fixedTime));
+
+            System.out.println("starts:"+startTs);
+            WeeklyTimeSheet timeSheet = weeklyTimeSheetRepository.findByEmployeeCodeAndWeekStartDate(
+                    employeeCode, startTs);
+            if(timeSheet==null){
+                WeeklyTimeSheet weeklyTimeSheet=new WeeklyTimeSheet();
+                weeklyTimeSheet.setWeekStartDate(startTs);
+                weeklyTimeSheets.add(weeklyTimeSheet);
+            }
+            if(timeSheet!=null){
+                weeklyTimeSheets.add(timeSheet);
+                System.out.println("Weekly time sheet date before adding to list:"+timeSheet.getWeekStartDate());
+            }
+
+        }
+        for(WeeklyTimeSheet weeklyTimeSheet:weeklyTimeSheets){
+            System.out.println("Weekly time sheet inside for loop:"+weeklyTimeSheet.getWeekStartDate());
+            List<DailyTimeSheet> dailyTimeSheets=dailyTimeSheetRepository.findByWeeklyTimeSheetId(weeklyTimeSheet.getId());
+            Map<String, Long> projectHours = new HashMap<>();
+            long idle = 0, holiday = 0, training = 0, leave = 0;
+
+            for (DailyTimeSheet daily : dailyTimeSheets) {
+                // Sum project entries
+                System.out.println("Daily inside get employee view time sheet:"+daily.getTotalHours()+" "+daily.getDate());
+                for (ProjectTimeEntry entry : daily.getProjectTimeEntries()) {
+                    String code = entry.getProjectCode();
+                    if (code != null && !code.trim().isEmpty()) {
+                        System.out.println("Project code inside get employee view time sheet:" + entry.getProjectCode());
+                        projectHours.merge(entry.getProjectCode(),
+                                entry.getTotalHoursSpent() != null ? entry.getTotalHoursSpent() : 0L,
+                                Long::sum);
+                    }
+
+                }
+
+                idle += daily.getIdeal() != null ? daily.getIdeal() : 0L;
+                holiday += daily.getHoliday() != null ? daily.getHoliday() : 0L;
+                training += daily.getTraining() != null ? daily.getTraining() : 0L;
+                leave += daily.getLeave() != null ? daily.getLeave() : 0L;
+            }
+
+            EmployeeViewTimesheetResponse dto = new EmployeeViewTimesheetResponse();
+            dto.setWeekStartDate(weeklyTimeSheet.getWeekStartDate());
+            dto.setProjectHours(projectHours);
+            dto.setIdleHours(idle);
+            dto.setHolidayHours(holiday);
+            dto.setTrainingHours(training);
+            dto.setLeaveHours(leave);
+
+            responses.add(dto);
+        }
+    return responses;
+    }
+
+    public SavedDailyTimeSheetResponse getSavedDailyTimesheetForAnEmployee(String employeeCode, Timestamp weekStartDate, Timestamp weekEndDate) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String loggedInEmployeeCode = null;
+
+            if (authentication instanceof JwtAuthenticationToken jwtAuthToken) {
+                Jwt jwt = jwtAuthToken.getToken();
+                loggedInEmployeeCode = jwt.getClaimAsString("preferred_username"); // or "email"
+            }
+
+            System.out.println("Logged-in employee: " + loggedInEmployeeCode);
+
+            boolean isManager = authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("SCOPE_view_all_timesheets"));
+
+            if (!isManager && !employeeCode.equals(loggedInEmployeeCode)) {
+                throw new TimeSheetException(ACCESS_DENIED, EMPLOYEES_CAN_ONLY_VIEW_THEIR_TIMESHEET);
+            }
+
+            System.out.println("Week start date in timesheet service: " + weekStartDate);
+
+
+            List<DailyTimeSheet> dailyTimeSheets=dailyTimeSheetRepository.findByEmployeeCodeAndDateBetween(employeeCode,weekStartDate,weekEndDate);
+            System.out.println(dailyTimeSheets.size());
+            SavedDailyTimeSheetResponse savedDailyTimeSheetResponse=new SavedDailyTimeSheetResponse();
+            // Build list of daily time sheet responses
+            List<DailyTimeSheetResponse> dailyTimeSheetResponses = new ArrayList<>();
+            for (DailyTimeSheet dailyTimeSheet : dailyTimeSheets) {
+                System.out.println(dailyTimeSheet.getDate());
+                dailyTimeSheetResponses.add(convertToDailyTimeSheetResponse(dailyTimeSheet));
+            }
+            savedDailyTimeSheetResponse.setDailyTimeSheetResponses(dailyTimeSheetResponses);
+           return  savedDailyTimeSheetResponse;
+
+        } catch (TimeSheetException ex) {
+            throw ex; // Custom business exception, propagate as-is
+        } catch (Exception ex) {
+            ex.printStackTrace(); // or use log.error("Error fetching weekly timesheet", ex);
+            throw new TimeSheetException(INTERNAL_SERVER_ERROR, UNEXPECTED_ERROR_FETCHING_TIME_SHEET);
         }
     }
 }

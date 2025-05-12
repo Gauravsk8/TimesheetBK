@@ -44,11 +44,9 @@ public class Project {
     @JoinColumn(name = "cost_center_id", nullable = false)
     private CostCenter costCenter;
 
-<<<<<<< HEAD
-    @Column
-=======
+
     @Column(name = "managerCode")
->>>>>>> 42891513c5793753c24a5006bfc9af3f77150c80
+
     private String managerCode;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -5,14 +5,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 @Getter
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ProjectTimeSheetEntryResponse {
+public class SavedDailyTimeSheetResponse {
+    private List<DailyTimeSheetResponse> dailyTimeSheetResponses = new ArrayList<>();
 
-    protected Long id;
-    private String projectCode;
-    private Long totalHoursSpent;
-    private boolean isTotalHoursSpentOnProjectModifiedByManager;
 }
