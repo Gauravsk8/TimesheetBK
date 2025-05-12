@@ -37,4 +37,12 @@ public class EmployeeController {
         return ResponseEntity.ok().body(employees);
     }
 
+    @GetMapping("/admin/manager-name")
+    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    public ResponseEntity<String> getManagerNameByEmployeeCode(@RequestParam("employeeCode") String employeeCode) {
+        String managerName = employeeService.getManagerNameByEmployeeCode(employeeCode);
+        return ResponseEntity.ok().body(managerName);
+    }
+
+
 }

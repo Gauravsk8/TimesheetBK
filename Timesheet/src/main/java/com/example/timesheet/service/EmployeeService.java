@@ -5,6 +5,7 @@ import com.example.common.constants.errorMessage;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.Repository.EmployeeReportingManagerRepository;
 import com.example.timesheet.client.IdentityServiceClient;
+import com.example.timesheet.dto.request.UserIdentityDto;
 import com.example.timesheet.models.EmployeeReportingManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -61,4 +62,28 @@ public class EmployeeService {
                 .map(EmployeeReportingManager::getEmployeeCode)
                 .toList();
     }
+
+    public String getManagerNameByEmployeeCode(String employeeCode) {
+        EmployeeReportingManager relation = employeeReportingManagerRepository
+                .findByEmployeeCodeIgnoreCase(employeeCode)
+                .orElseThrow(() -> new TimeSheetException(errorCode.NOT_FOUND_ERROR, errorMessage.NO_MANAGER_ASSIGNED));
+
+        String managerCode = relation.getManagerCode();
+
+        try {
+            UserIdentityDto managerDto = identityServiceClient.getUserByemployeeCode(managerCode).getBody();
+            if (managerDto != null && managerDto.getFirstName() != null) {
+                String fullName = managerDto.getFirstName();
+                if (managerDto.getLastName() != null) {
+                    fullName += " " + managerDto.getLastName();
+                }
+                return fullName;
+            } else {
+                throw new TimeSheetException(errorCode.NOT_FOUND_ERROR, errorMessage.NO_MANAGER_ASSIGNED);
+            }
+        } catch (Exception e) {
+            throw new TimeSheetException(INTERNAL_SERVER_ERROR, errorMessage.NO_MANAGER_ASSIGNED, e);
+        }
+    }
+
 }

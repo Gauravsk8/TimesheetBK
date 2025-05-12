@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.example.common.constants.errorCode.KEYCLOAK_USER_CREATION_FAILED;
 import static com.example.common.constants.errorMessage.*;
@@ -245,10 +242,33 @@ public class KeycloakCreateUserService {
         return realmResource.users().get(id).toRepresentation();
     }
 
-    public List<UserRepresentation> getAllUsers() {
+    public List<Map<String, String>> getAllUsers() {
         RealmResource realmResource = keycloakAdmin.realm(realm);
-        return realmResource.users().list();
+        List<UserRepresentation> users = realmResource.users().list();
+
+        List<Map<String, String>> response = new ArrayList<>();
+
+        for (UserRepresentation user : users) {
+            Map<String, List<String>> attributes = user.getAttributes();
+            String employeeType = null;
+            if (attributes != null && attributes.containsKey("EmployeeType")) {
+                employeeType = attributes.get("EmployeeType").stream().findFirst().orElse(null);
+            }
+
+            Map<String, String> userMap = new HashMap<>();
+            userMap.put("keycloakUserId", user.getId());
+            userMap.put("employeeCode", user.getUsername());
+            userMap.put("firstname", user.getFirstName());
+            userMap.put("lastname", user.getLastName());
+            userMap.put("email", user.getEmail());
+            userMap.put("EmployeeType", employeeType);
+
+            response.add(userMap);
+        }
+
+        return response;
     }
+
 
     public void updateUserProfile(String userId, EmployeeRequestDto employeeRequestDto) {
         try {

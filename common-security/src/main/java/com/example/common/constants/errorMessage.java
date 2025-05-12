@@ -69,7 +69,7 @@ public class errorMessage {
 
     public static final String ReportingManagerAssignedFAILED ="Failed To assign Reporting Manager to employee";
     public static final String ReportingManagerAssigned ="Reporting manager is assigned to employee";
-
+    public static final String NO_MANAGER_ASSIGNED = "No Manager Assigned";
 
 
     private errorMessage() {}
