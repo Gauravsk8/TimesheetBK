@@ -20,7 +20,7 @@ public interface IdentityServiceClient {
     @GetMapping("/timesheet/admin/User/employeeCode/{employeeCode}")
     ResponseEntity<UserIdentityDto> getUserByemployeeCode(@PathVariable("employeeCode") String employeeCode);
 
-    @GetMapping("/timesheet/admin/User/Id/{id}")
+    @GetMapping("/timesheet/User/Id/{id}")
     ResponseEntity<UserIdentityDto> getUserById(@PathVariable("id") String id);
 
 
@@ -31,5 +31,5 @@ public interface IdentityServiceClient {
     ResponseEntity<List<String>> getUsersByRoles(@RequestParam List<String> roles);
 
 
-
+    @GetMapping("/timesheet/admin/users")ResponseEntity<List<Map<String, String>>> getAllUsers();
 }

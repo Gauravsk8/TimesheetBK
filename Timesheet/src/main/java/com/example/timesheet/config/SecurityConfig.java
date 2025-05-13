@@ -33,7 +33,7 @@ public class SecurityConfig {
     // Define JwtDecoder Bean
     @Bean
     public JwtDecoder jwtDecoder() {
-        String issuerUri = "http://localhost:8084/realms/timesheet";
+        String issuerUri = "http://localhost:8080/realms/timesheet";
         return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 

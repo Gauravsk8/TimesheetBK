@@ -13,5 +13,7 @@ public class UserIdentityDto {
     private String firstName;
     private String lastName;
     private String email;
+    private String employeeType;
+
 
 }

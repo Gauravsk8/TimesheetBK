@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 import com.example.timesheet.Repository.ClientsRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -426,6 +428,23 @@ public class ProjectManagementService {
                 .managerCode(project.getManagerCode())
                 .allocatedHours(project.getAllocated_hours())
                 .build();
+    }
+    public List<Map<String, String>> getUnassignedUsersForProject(String projectCode) {
+        Project project = projectRepository.findById(projectCode.toLowerCase())
+                .orElseThrow(() -> new TimeSheetException(
+                        errorCode.NOT_FOUND_ERROR,
+                        String.format(errorMessage.PROJECT_NOT_FOUND, projectCode)
+                ));
+
+        Set<String> assignedEmployeeCodes = project.getProjectEmployees().stream()
+                .map(pe -> pe.getId().getEmployeeCode())
+                .collect(Collectors.toSet());
+
+        List<Map<String, String>> allUsers = identityServiceClient.getAllUsers().getBody();
+
+        return allUsers.stream()
+                .filter(user -> !assignedEmployeeCodes.contains(user.get("employeeCode")))
+                .collect(Collectors.toList());
     }
 
     public List<ProjectWithEmployeesDto> getProjectsWithEmployeesUnderManager(String managerCode) {

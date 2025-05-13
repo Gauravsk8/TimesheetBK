@@ -129,12 +129,16 @@ public class KeycloakAdminController {
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
 
+        Map<String, List<String>> attributes = user.getAttributes();
+        if (attributes != null && attributes.containsKey("EmployeeType")) {
+            dto.setEmployeeType(attributes.get("EmployeeType").get(0));
+        }
+
         return ResponseEntity.ok(dto);
     }
 
 
-    @GetMapping("/admin/User/Id/{id}")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    @GetMapping("/User/Id/{id}")
     public ResponseEntity<Map<String, String>> getUserById(@PathVariable String id) {
         var user = keycloakAdminService.getUserById(id);
         if (user == null) {
@@ -147,6 +151,10 @@ public class KeycloakAdminController {
         response.put("firstname", user.getFirstName());
         response.put("lastname", user.getLastName());
         response.put("email", user.getEmail());
+        Map<String, List<String>> attributes = user.getAttributes();
+        if (attributes != null && attributes.containsKey("EmployeeType")) {
+            response.put("employeeType", attributes.get("EmployeeType").get(0));
+        }
         return ResponseEntity.ok(response);
     }
 

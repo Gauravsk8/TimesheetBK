@@ -7,10 +7,17 @@
     <list default="true" id="5ac3fdf0-da33-45fa-8617-a25f7d096e62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakAdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakAdminController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakAssignRoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakAssignRoleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/FeignClientConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/FeignClientConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/config/CorsGlobalConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/config/CorsGlobalConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/UserIdentityDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/UserIdentityDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/CorsConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimeSheetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimeSheetController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/ProjectManagementService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/ProjectManagementService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/errorMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/errorMessage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/annotations/RequiresKeycloakAuthorization.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/annotations/RequiresKeycloakAuthorization.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/aop/AuthorizationAspect.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/aop/AuthorizationAspect.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
     </list>
@@ -168,7 +175,7 @@
       <command value="gradle build" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.TimesheetBK:Timesheet [sonar]">
+  <component name="RunManager" selected="Application.TimesheetApplication">
     <configuration name="AuditServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.timesheet.audit.AuditServiceApplication" />
       <module name="TimesheetBK.audit-service.main" />
@@ -176,6 +183,20 @@
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.timesheet.audit.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IdentityManagementServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.IdentityManagementService.IdentityManagementServiceApplication" />
+      <module name="TimesheetBK.Identity-Management-Service.main" />
+      <shortenClasspath name="ARGS_FILE" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.IdentityManagementService.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -247,35 +268,13 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="TimesheetBK:Timesheet [sonarqube]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Timesheet" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="sonarqube" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.TimesheetBK:Timesheet [sonar]" />
-        <item itemvalue="Gradle.TimesheetBK:Timesheet [jacocoTestReport]" />
-        <item itemvalue="Gradle.TimesheetBK:Timesheet [sonarqube]" />
         <item itemvalue="Application.AuditServiceApplication" />
         <item itemvalue="Application.TimesheetApplication" />
+        <item itemvalue="Application.IdentityManagementServiceApplication" />
+        <item itemvalue="Gradle.TimesheetBK:Timesheet [sonar]" />
+        <item itemvalue="Gradle.TimesheetBK:Timesheet [jacocoTestReport]" />
       </list>
     </recent_temporary>
   </component>
@@ -300,7 +299,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/ProjectManagementService.java</url>
-          <line>352</line>
+          <line>354</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>

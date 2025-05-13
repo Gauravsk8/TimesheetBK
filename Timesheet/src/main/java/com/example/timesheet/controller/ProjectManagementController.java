@@ -11,9 +11,11 @@ import com.example.timesheet.enums.EmployeeStatus;
 import com.example.timesheet.service.ProjectManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/timesheet")
@@ -166,13 +168,20 @@ public class ProjectManagementController {
     }
 
     @PutMapping("/Project/{projectCode}/employee/{employeeCode}")
-    @RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")    public ResponseEntity<String> updateEmployeeStatus(
+    @RequiresKeycloakAuthorization(resource = "sharedAdminPm", scope = "AdminPMscope")
+     public ResponseEntity<String> updateEmployeeStatus(
             @PathVariable String projectCode,
             @PathVariable String employeeCode,
             @RequestParam String newStatus) {
 
         String response = projectManagementService.updateEmployeeStatus(projectCode, employeeCode, newStatus);
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/admin/Project/{projectCode}/unassigned-users")
+    @RequiresKeycloakAuthorization(resource = "sharedAdminPm", scope = "AdminPMscope")
+    public ResponseEntity<List<Map<String, String>>> getUnassignedUsers(@PathVariable String projectCode) {
+        List<Map<String, String>> unassignedUsers = projectManagementService.getUnassignedUsersForProject(projectCode);
+        return ResponseEntity.ok(unassignedUsers);
     }
     @GetMapping("/Project/under-manager/{managerCode}")
     @RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")

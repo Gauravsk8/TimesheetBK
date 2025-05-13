@@ -36,9 +36,7 @@ public class TimeSheetController {
 
 
     @PostMapping("/User/Employee/daily")
-    //@PostMapping("/Employee/daily")
     @RequiresKeycloakAuthorization(resource = "Employee", scope = "Employeescope")
-
     public ResponseEntity<String> enterDailyTimeSheet(@RequestBody List<DailyTimeSheetRequest> dailyTimeSheetRequests){
         System.out.println("Entered daily time sheet controller");
         String result=timeSheetService.enterOrUpdateDailyTimeSheet(dailyTimeSheetRequests);
@@ -73,7 +71,7 @@ public class TimeSheetController {
 
     public List<ManagerDashboardResponse> getManagerDashboardResponse(@PathVariable("managerCode") String managerCode,
                                                                       @RequestParam String monthYear){
-        return timeSheetService.getManagerDashboardResponse(managerCode,monthYear);
+        return timeSheetService.getManagerDashboardResponse(managerCode ,monthYear);
     }
     @GetMapping("/employee-view-timesheet/{employeeCode}")
 
