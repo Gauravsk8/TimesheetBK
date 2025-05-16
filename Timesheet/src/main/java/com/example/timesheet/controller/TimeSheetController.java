@@ -1,5 +1,6 @@
 package com.example.timesheet.controller;
 
+import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.timesheet.dto.request.DailyTimeSheetRequestDto;
 import com.example.timesheet.dto.request.ManagerApprovalRequestDto;
 import com.example.timesheet.dto.request.TimesheetSummaryDto;
@@ -24,6 +25,7 @@ public class TimeSheetController {
 
     //Save or update daily entry
     @PostMapping("/save")
+    @RequiresKeycloakAuthorization(resource = "tms:rmemp", scope = "tms:timesheet:add")
     public ResponseEntity<String> saveDailyEntry(@RequestBody List<DailyTimeSheetRequestDto> dto) {
         String response = timesheetService.saveDailyEntry(dto);
         return ResponseEntity.ok(response);
@@ -31,6 +33,7 @@ public class TimeSheetController {
 
     //Submit weekly timesheet
     @PostMapping("/submit")
+    @RequiresKeycloakAuthorization(resource = "tms:rmemp", scope = "tms:timesheet:add")
     public ResponseEntity<String> submitWeeklyTimesheet(@RequestBody TimesheetSummaryDto dto) {
         String response = timesheetService.submitTimesheetSummary(dto);
         return ResponseEntity.ok(response);
@@ -38,6 +41,7 @@ public class TimeSheetController {
 
     //Manager approve or reject weekly timesheet
     @PostMapping("/manager_approval")
+    @RequiresKeycloakAuthorization(resource = "tms:rm", scope = "tms:approve:add")
     public ResponseEntity<String> managerApproval(@RequestBody ManagerApprovalRequestDto dto) {
         String response = timesheetService.approveOrRejectWeekly(dto);
         return ResponseEntity.ok(response);
@@ -45,6 +49,7 @@ public class TimeSheetController {
 
     //Get timesheet summaries for an employee (dashboard)
     @GetMapping("/summaries/{employeeCode}")
+    @RequiresKeycloakAuthorization(resource = "tms:rmemp", scope = "tms:timesheet:get")
     public ResponseEntity<List<TimesheetSummaryResponseDto>> getTimesheetSummaries(@PathVariable String employeeCode) {
         List<TimesheetSummaryResponseDto> summaries = timesheetService.getEmployeeTimesheetSummaries(employeeCode);
         return ResponseEntity.ok(summaries);
@@ -52,6 +57,7 @@ public class TimeSheetController {
 
     //Get daily entries for employee for a week (weekStart date format yyyy-MM-dd)
     @GetMapping("/{employeeCode}/{weekStart}")
+    @RequiresKeycloakAuthorization(resource = "tms:rmemp", scope = "tms:timesheet:get")
     public ResponseEntity<List<DailyTimeSheetResponseDto>> getDailyEntries(
             @PathVariable String employeeCode,
             @PathVariable Date weekStart) {
@@ -61,6 +67,7 @@ public class TimeSheetController {
 
     // 6. Generate monthly project report (by Project Manager)
     @GetMapping("/project_report/{projectCode}")
+    @RequiresKeycloakAuthorization(resource = "tms:pm", scope = "tms:timesheet:project:get")
     public ResponseEntity<List<EmployeeWeeklyTimesheetDto>> getWeeklyTimesheetForProject(
             @PathVariable String projectCode,
             @RequestParam Integer year,
