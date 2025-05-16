@@ -1,13 +1,12 @@
 package com.example.timesheet.models;
 
-import com.example.timesheet.enums.EmployeeStatus;
+import com.example.timesheet.enums.Status;
 import com.example.timesheet.keys.ProjectEmployeeId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
+
 
 import java.sql.Timestamp;
 
@@ -16,7 +15,6 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @NoArgsConstructor
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class ProjectEmployee {
 
     @EmbeddedId
@@ -24,11 +22,11 @@ public class ProjectEmployee {
 
     @ManyToOne
     @MapsId("projectCode") // Links part of the composite key to Project
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "projectCode")
     private Project project;
 
-    @Column(name = "employee_keycloak_Id")
-    private String employeeKeycloakId;
+    private String role_in_project;
+
 
     @Column(name = "start_date")
     private Timestamp startDate;  // When assignment begins
@@ -38,6 +36,6 @@ public class ProjectEmployee {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private EmployeeStatus status;
+    private Status status;
 
 }

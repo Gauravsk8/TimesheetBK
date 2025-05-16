@@ -1,5 +1,6 @@
 package com.example.timesheet.dto.response;
 
+import com.example.timesheet.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CostCenterResponseDto {
 
-    private String code;
+    private String costCenterCode;
     private String name;
     private String description;
-    private String managerCode;
+    private String costCenterManagerCode;
+    private Status status;
 
 }

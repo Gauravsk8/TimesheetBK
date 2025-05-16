@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 public class CostCenterDto {
-    private String code;
+    private String costCenterCode;
     private String name;
     private String description;
-    private String managerCode;
+    private String costCenterManagerCode;
 }
 

@@ -1,6 +1,6 @@
 package com.example.timesheet.enums;
 
-public enum EmployeeStatus {
+public enum Status {
     ACTIVATE,
     DEACTIVATE
 }

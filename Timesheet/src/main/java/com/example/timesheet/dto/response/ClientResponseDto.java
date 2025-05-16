@@ -1,6 +1,7 @@
 package com.example.timesheet.dto.response;
 
 
+import com.example.timesheet.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,5 @@ public class ClientResponseDto {
     private String contactPerson;
     private String contactEmail;
     private String address;
+    private Status status;
 }

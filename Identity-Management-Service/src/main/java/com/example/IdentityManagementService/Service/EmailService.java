@@ -20,6 +20,12 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
+    // Constants
+    private static final String TEMPLATE_PATH_PREFIX = "templates/";
+    private static final String TEMPLATE_VAR_PREFIX = "{{";
+    private static final String TEMPLATE_VAR_SUFFIX = "}}";
+    private static final String LINE_SEPARATOR = "\n";
+
     public void sendEmail(String to, String subject, String text) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -35,21 +41,23 @@ public class EmailService {
 
     public String loadTemplate(String templateName, Map<String, String> variables) {
         try {
-            ClassPathResource resource = new ClassPathResource("templates/" + templateName);
+            ClassPathResource resource = new ClassPathResource(TEMPLATE_PATH_PREFIX + templateName);
             String template;
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
-                template = reader.lines().collect(Collectors.joining("\n"));
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
+                template = reader.lines().collect(Collectors.joining(LINE_SEPARATOR));
             }
 
             for (Map.Entry<String, String> entry : variables.entrySet()) {
-                template = template.replace("{{" + entry.getKey() + "}}", entry.getValue());
+                String placeholder = TEMPLATE_VAR_PREFIX + entry.getKey() + TEMPLATE_VAR_SUFFIX;
+                template = template.replace(placeholder, entry.getValue());
             }
 
             return template;
 
         } catch (Exception e) {
-            log.error("Failed to load email template", e);
+            log.error("Failed to load email template: {}", templateName, e);
             throw new RuntimeException("Error loading email template: " + templateName, e);
         }
     }

@@ -1,34 +1,18 @@
+// DailyTimeSheetRepository.java
 package com.example.timesheet.Repository;
 
 import com.example.timesheet.models.DailyTimeSheet;
+import com.example.timesheet.keys.DailyTimeSheetId;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
-public interface DailyTimeSheetRepository extends
-        JpaRepository<DailyTimeSheet, Long>,
-        PagingAndSortingRepository<DailyTimeSheet, Long>,
-        QuerydslPredicateExecutor<DailyTimeSheet> {
+public interface DailyTimeSheetRepository extends JpaRepository<DailyTimeSheet, DailyTimeSheetId> {
 
-    DailyTimeSheet findByDate(Date date);
+    List<DailyTimeSheet> findByIdEmployeeCodeAndIdWorkDateBetween(String employeeCode, Date startDate, Date endDate);
 
-    @Query("SELECT d FROM DailyTimeSheet d WHERE d.employeeCode = :employeeCode AND DATE(d.date) BETWEEN :startDate AND :endDate")
-    List<DailyTimeSheet> findByEmployeeCodeAndDateBetween(@Param("employeeCode") String employeeCode,
-                                                          @Param("startDate") Timestamp startDate,
-                                                          @Param("endDate") Timestamp endDate);
+    List<DailyTimeSheet> findByIdEmployeeCodeAndIdTimesheetYearAndIdTimesheetMonth(String employeeCode, Integer year, Integer month);
 
-    DailyTimeSheet findByDateAndEmployeeCode(Timestamp date, String employeeCode);
 
-    boolean existsByEmployeeCodeAndDateBetween(String employeeCode, Timestamp startDate, Timestamp endDate);
-
-    List<DailyTimeSheet> findByWeeklyTimeSheetId(Long id);
-
-    // List<DailyTimeSheet> findByEmployeeCodeAndDateBetween(String employeeCode, Timestamp weekStartDate, Timestamp weekEndDate);
 }

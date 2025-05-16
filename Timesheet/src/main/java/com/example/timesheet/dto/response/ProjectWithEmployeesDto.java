@@ -12,11 +12,10 @@ public class ProjectWithEmployeesDto {
     private String projectCode;
     private String title;
     private String description;
-    private String owner;
     private Timestamp startDate;
     private Timestamp endDate;
     private String costCenterCode;
     private String clientName;
-    private String managerCode;
+    private String projectManagerCode;
     private List<ProjectEmployeeDto> employees;
 }

@@ -1,12 +1,14 @@
 package com.example.timesheet.models;
 
 
+import com.example.timesheet.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.annotations.GenericGenerator;
+
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,10 +17,15 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class Project {
 
     @Id
+//    @GeneratedValue(generator = "pr-code-gen")
+//    @GenericGenerator(
+//            name = "pr-code-gen",
+//            strategy = "com.example.timesheet.generator.ProjectCodeGenerator"
+//    )
+    @Column(nullable = false, updatable = false, unique = true)
     private String projectCode;
 
     @Column
@@ -28,31 +35,33 @@ public class Project {
     private String description;
 
     @Column
-    private String owner;
+    private Timestamp startDate;
 
     @Column
-    private Timestamp start_date;
-
-    @Column
-    private Timestamp end_date;
+    private Timestamp endDate;
 
     @ManyToOne
-    @JoinColumn(name="clients_id",nullable = false)
+    @JoinColumn(name="clients_id")
     private Clients clients;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cost_center_id", nullable = false)
+    @JoinColumn(name = "costCenterCode", nullable = false)
     private CostCenter costCenter;
 
 
-    @Column(name = "managerCode")
-
-    private String managerCode;
+    @Column(name = "ProjectManagerCode")
+    private String projectManagerCode;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProjectEmployee> projectEmployees = new HashSet<>();
 
     @Column
     private String allocated_hours;
+
+
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
 }

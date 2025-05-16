@@ -2,16 +2,12 @@ package com.example.timesheet.controller;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.common.exceptions.TimeSheetException;
-import com.example.timesheet.dto.response.*;
 import com.example.timesheet.dto.request.AssignEmployeesDto;
-import com.example.timesheet.dto.request.ClientDto;
-import com.example.timesheet.dto.request.CostCenterDto;
 import com.example.timesheet.dto.request.ProjectDto;
-import com.example.timesheet.enums.EmployeeStatus;
+import com.example.timesheet.dto.response.*;
 import com.example.timesheet.service.ProjectManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,84 +20,17 @@ public class ProjectManagementController {
 
     private final ProjectManagementService projectManagementService;
 
-    @PostMapping("/admin/clients")
-    //@RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<String> createClient(@RequestBody ClientDto clientDto) {
-        String response = projectManagementService.createClient(clientDto);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/admin/clients")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<List<ClientResponseDto>> getAllClients() {
-        List<ClientResponseDto> response = projectManagementService.getAllClients();
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/admin/clients/{id}")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<ClientResponseDto> getClientById(@PathVariable Long id) {
-        return projectManagementService.getClientById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/admin/clients/{id}")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<String> updateClient(@PathVariable Long id, @RequestBody ClientDto clientDto) {
+    @PostMapping("/project")
+    public ResponseEntity<String> createProjects(@RequestBody ProjectDto projectCreateRequest) {
         try {
-            String updatedClient = projectManagementService.updateClient(id, clientDto);
-            return ResponseEntity.ok(updatedClient);
+            String response = projectManagementService.createProject(projectCreateRequest);
+            return ResponseEntity.ok(response);
         } catch (TimeSheetException e) {
             throw new TimeSheetException(e.getErrorCode(), e.getMessage());
         }
     }
 
-    @PostMapping("/admin/cost-centers")
-    //@RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<String> createCostCenter(@RequestBody CostCenterDto dto) {
-        return ResponseEntity.ok(projectManagementService.createCostCenter(dto));
-    }
-
-    @GetMapping("/admin/cost-centers")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<List<CostCenterResponseDto>> getAllCostCenters() {
-        return ResponseEntity.ok(projectManagementService.getAllCostCenters());
-    }
-
-    @GetMapping("/admin/cost-centers/{code}")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<CostCenterResponseDto> getCostCenterByCode(@PathVariable String code) {
-        try {
-            return ResponseEntity.ok(projectManagementService.getCostCenterByCode(code));
-        }  catch (TimeSheetException e) {
-            throw new TimeSheetException(e.getErrorCode(), e.getMessage());
-        }
-    }
-
-    @PutMapping("/admin/cost-centers/{code}")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<String> updateCostCenter(@PathVariable String code, @RequestBody CostCenterDto dto) {
-        try {
-            return ResponseEntity.ok(projectManagementService.updateCostCenter(code, dto));
-        }  catch (TimeSheetException e) {
-            throw new TimeSheetException(e.getErrorCode(), e.getMessage());
-        }
-    }
-
-    @PostMapping("/admin/Project")
-    //@RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<String> createProjects(@RequestBody ProjectDto projectCreateRequest){
-        try {
-            String result=projectManagementService.createProject(projectCreateRequest);
-            return ResponseEntity.ok(result);
-        } catch (TimeSheetException e) {
-            throw new TimeSheetException(e.getErrorCode(), e.getMessage());
-        }
-    }
-
-    @PutMapping("/admin/Project/{projectCode}")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    @PutMapping("/project/{projectCode}")
     public ResponseEntity<String> updateProject(@PathVariable String projectCode, @RequestBody ProjectDto dto) {
         try {
             return ResponseEntity.ok(projectManagementService.updateProject(projectCode, dto));
@@ -110,39 +39,35 @@ public class ProjectManagementController {
         }
     }
 
-    @GetMapping("/admin/Project")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<List<ProjectResponseDto>> getAllProject() {
+    @GetMapping("/project")
+    public ResponseEntity<List<ProjectResponseDto>> getAllProjects() {
         return ResponseEntity.ok(projectManagementService.getAllProjects());
     }
 
-    @PostMapping("admin/Project/{projectCode}/assign")
-    //@RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
-    public ResponseEntity<String> assignEmployees(@RequestBody AssignEmployeesDto dto,@PathVariable String projectCode) {
+    @PostMapping("project/{projectCode}/assign_employee")
+    public ResponseEntity<String> assignEmployees(@RequestBody AssignEmployeesDto dto, @PathVariable String projectCode) {
         return ResponseEntity.ok(projectManagementService.assignEmployeesToProject(dto, projectCode));
     }
 
-    @GetMapping("/admin/Project/{projectCode}/with-employees")
+    @GetMapping("project/{projectCode}")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<ProjectWithEmployeesDto> getProjectWithEmployees(@PathVariable String projectCode) {
-        ProjectWithEmployeesDto dto = projectManagementService.getProjectWithEmployees(projectCode);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(projectManagementService.getProjectWithEmployees(projectCode));
     }
 
-    @DeleteMapping("/admin/Project/{projectCode}")
+    @DeleteMapping("project/{projectCode}")
     @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
     public ResponseEntity<String> deleteProject(@PathVariable String projectCode) {
         projectManagementService.deleteProject(projectCode);
         return ResponseEntity.ok("Project with code " + projectCode + " has been deleted.");
     }
-    @GetMapping("/Project/{projectCode}/employees")
+
+    @GetMapping("/project/{projectCode}/employees")
     public ResponseEntity<List<ProjectEmployeeDto>> getAssignedEmployees(@PathVariable String projectCode) {
-        List<ProjectEmployeeDto> employees = projectManagementService.getEmployeesByProject(projectCode);
-        return ResponseEntity.ok(employees);
+        return ResponseEntity.ok(projectManagementService.getEmployeesByProject(projectCode));
     }
 
-    @DeleteMapping("/admin/Project/{projectCode}/employees/{employeeCode}")
-    @RequiresKeycloakAuthorization(resource = "Admin", scope = "Adminscope")
+    @DeleteMapping("/project/{projectCode}/employee/{employeeCode}")
     public ResponseEntity<String> removeEmployeeFromProject(
             @PathVariable String projectCode,
             @PathVariable String employeeCode) {
@@ -150,49 +75,34 @@ public class ProjectManagementController {
         return ResponseEntity.ok("Employee removed from project successfully.");
     }
 
-    @PutMapping("/Project/{projectCode}/employee/{employeeCode}/")
-    @RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")    public ResponseEntity<String> updateEmployeeSDED(
+    @PutMapping("/project/{projectCode}/employee/{employeeCode}/")
+    public ResponseEntity<String> updateEmployeeSDED(
             @PathVariable String projectCode,
             @PathVariable String employeeCode,
             @RequestBody AssignEmployeesDto.EmployeeAssignment dto) {
-
-        // Call the service to update the status
-        String response=projectManagementService.updateEmployee(projectCode, employeeCode, dto);
-        return ResponseEntity.ok(response);
-    }
-    @GetMapping("/Project/by-employee/{employeeCode}")
-    //@RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")
-    public ResponseEntity<List<ProjectDto>> getProjectsByEmployee(@PathVariable String employeeCode) {
-        List<ProjectDto> projects = projectManagementService.getProjectsByEmployeeCode(employeeCode);
-        return ResponseEntity.ok(projects);
+        return ResponseEntity.ok(projectManagementService.updateEmployee(projectCode, employeeCode, dto));
     }
 
-    @PutMapping("/Project/{projectCode}/employee/{employeeCode}")
-    @RequiresKeycloakAuthorization(resource = "sharedAdminPm", scope = "AdminPMscope")
-     public ResponseEntity<String> updateEmployeeStatus(
+    @PutMapping("/project/{projectCode}/employee/{employeeCode}")
+    public ResponseEntity<String> updateEmployeeStatus(
             @PathVariable String projectCode,
             @PathVariable String employeeCode,
             @RequestParam String newStatus) {
-
-        String response = projectManagementService.updateEmployeeStatus(projectCode, employeeCode, newStatus);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(projectManagementService.updateEmployeeStatus(projectCode, employeeCode, newStatus));
     }
-    @GetMapping("/admin/Project/{projectCode}/unassigned-users")
-    @RequiresKeycloakAuthorization(resource = "sharedAdminPm", scope = "AdminPMscope")
+
+    @GetMapping("/employee/{employeeCode}/projects")
+    public ResponseEntity<List<ProjectDto>> getProjectsByEmployee(@PathVariable String employeeCode) {
+        return ResponseEntity.ok(projectManagementService.getProjectsByEmployeeCode(employeeCode));
+    }
+
+    @GetMapping("/project/{projectCode}/unassigned_employees")
     public ResponseEntity<List<Map<String, String>>> getUnassignedUsers(@PathVariable String projectCode) {
-        List<Map<String, String>> unassignedUsers = projectManagementService.getUnassignedUsersForProject(projectCode);
-        return ResponseEntity.ok(unassignedUsers);
-    }
-    @GetMapping("/Project/under-manager/{managerCode}")
-    @RequiresKeycloakAuthorization(resource = "ProjectManager", scope = "PMscope")
-    public ResponseEntity<List<ProjectWithEmployeesDto>> getProjectsUnderManager(
-            @PathVariable String managerCode) {
-
-        List<ProjectWithEmployeesDto> projects = projectManagementService.getProjectsWithEmployeesUnderManager(managerCode);
-        return ResponseEntity.ok(projects);
+        return ResponseEntity.ok(projectManagementService.getUnassignedUsersForProject(projectCode));
     }
 
-
-
+    @GetMapping("/manager/{managerCode}/projects")
+    public ResponseEntity<List<ProjectWithEmployeesDto>> getProjectsUnderManager(@PathVariable String managerCode) {
+        return ResponseEntity.ok(projectManagementService.getProjectsWithEmployeesUnderManager(managerCode));
+    }
 }
-

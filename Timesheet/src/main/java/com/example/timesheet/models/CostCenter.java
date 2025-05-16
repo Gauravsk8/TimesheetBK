@@ -1,7 +1,9 @@
 package com.example.timesheet.models;
 
+import com.example.timesheet.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "cost_centers")
@@ -13,14 +15,24 @@ import lombok.*;
 public class CostCenter {
 
     @Id
-    @Column(unique = true, nullable = false)
-    private String code;
+    @GeneratedValue(generator = "cc-code-gen")
+    @GenericGenerator(
+            name = "cc-code-gen",
+            strategy = "com.example.timesheet.generator.CostCenterCodeGenerator"
+    )
+    @Column(nullable = false, updatable = false, unique = true)
+    private String costCenterCode;
 
     @Column(nullable = false)
     private String name;
 
     private String description;
 
-    private String managerCode;
+    @Column(name = "costCenterManagerCode")
+    private String costCenterManagerCode;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }
+

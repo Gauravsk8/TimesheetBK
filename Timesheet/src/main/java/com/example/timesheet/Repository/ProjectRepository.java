@@ -7,8 +7,10 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, String> {
 
-    boolean existsByProjectCode(String projectCode);
+    //boolean existsByProjectCode(String projectCode);
 
-    List<Project> findByManagerCodeIgnoreCase(String managerCode);
+   List<Project> findByprojectManagerCodeIgnoreCase(String projectManagerCode);
+   List<Project> findByCostCenter_CostCenterCode(String costCenterCode);
+
 
 }

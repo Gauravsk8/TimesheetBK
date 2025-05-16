@@ -1,0 +1,141 @@
+package com.example.timesheet.service.Serviceimpl;
+
+
+import com.example.common.constants.MessageConstants;
+import com.example.common.constants.errorCode;
+import com.example.common.constants.errorMessage;
+import com.example.common.exceptions.TimeSheetException;
+import com.example.timesheet.Repository.CostCenterRepository;
+import com.example.timesheet.Repository.ProjectRepository;
+import com.example.timesheet.client.IdentityServiceClient;
+import com.example.timesheet.dto.request.CostCenterDto;
+import com.example.timesheet.dto.response.CostCenterResponseDto;
+import com.example.timesheet.dto.response.ProjectResponseDto;
+import com.example.timesheet.enums.Status;
+import com.example.timesheet.models.CostCenter;
+import com.example.timesheet.models.Project;
+import com.example.timesheet.service.CostCenterService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class CostCenterServiceImpl implements CostCenterService {
+    private final CostCenterRepository costCenterRepository;
+    private final ProjectRepository projectRepository;
+    private final IdentityServiceClient identityServiceClient;
+
+    private final String CostCenterManager = "CostCenterManager";
+
+    @Override
+    public String createCostCenter(CostCenterDto dto) throws TimeSheetException {
+        CostCenter costCenter = CostCenter.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .costCenterManagerCode(dto.getCostCenterManagerCode())
+                .status(Status.ACTIVATE)
+                .build();
+
+        CostCenter savedCostCenter = costCenterRepository.save(costCenter);
+        return String.format(MessageConstants.COST_CENTER_CREATED, savedCostCenter.getCostCenterCode());
+    }
+
+    @Override
+    public List<CostCenterResponseDto> getAllCostCenters() {
+        return costCenterRepository.findAll().stream()
+                .map(this::mapToCostCenterResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CostCenterResponseDto getCostCenterByCode(String costCenterCode) throws TimeSheetException {
+        CostCenter costCenter = costCenterRepository.findById(costCenterCode.toLowerCase())
+                .orElseThrow(() -> new TimeSheetException(
+                        errorCode.NOT_FOUND_ERROR,
+                        String.format(errorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
+                ));
+        return mapToCostCenterResponseDto(costCenter);
+    }
+
+    @Override
+    public String updateCostCenter(String costCenterCode, CostCenterDto dto) throws TimeSheetException {
+        CostCenter costCenter = costCenterRepository.findById(costCenterCode.toLowerCase())
+                .orElseThrow(() -> new TimeSheetException(
+                        errorCode.NOT_FOUND_ERROR,
+                        String.format(errorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
+                ));
+
+        costCenter.setName(dto.getName());
+        costCenter.setDescription(dto.getDescription());
+        costCenter.setCostCenterManagerCode(dto.getCostCenterManagerCode().toLowerCase());
+
+        CostCenter saveCostCenter = costCenterRepository.save(costCenter);
+        return String.format(MessageConstants.COST_CENTER_UPDATED, saveCostCenter.getCostCenterCode());
+    }
+
+    @Override
+    public String updateCostCenterStatus(String costCenterCode, String newStatus) throws TimeSheetException {
+        CostCenter costCenter = costCenterRepository.findById(costCenterCode.toLowerCase())
+                .orElseThrow(() -> new TimeSheetException(
+                        errorCode.NOT_FOUND_ERROR,
+                        String.format(errorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
+                ));
+
+        Status statusEnum;
+        try {
+            statusEnum = Status.valueOf(newStatus.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new TimeSheetException(
+                    errorCode.NOT_FOUND_ERROR,
+                    errorMessage.COST_CENTER_NOT_FOUND + newStatus
+            );
+        }
+
+        costCenter.setStatus(statusEnum);
+        CostCenter saveCostCenter = costCenterRepository.save(costCenter);
+        return String.format(MessageConstants.COSTCENTER_STATUS_UPDATED, saveCostCenter.getCostCenterCode());
+    }
+
+    @Override
+    public List<CostCenterResponseDto> getAllCostCentersUnderManager(String costCenterManagerCode) {
+        return costCenterRepository.findBycostCenterManagerCodeIgnoreCase(costCenterManagerCode)
+                .stream()
+                .map(this::mapToCostCenterResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProjectResponseDto> getProjectsByCostCenterCode(String costCenterCode) {
+        return projectRepository.findByCostCenter_CostCenterCode(costCenterCode.toLowerCase())
+                .stream()
+                .map(this::mapToProjectResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    private CostCenterResponseDto mapToCostCenterResponseDto(CostCenter costCenter) {
+        return new CostCenterResponseDto(
+                costCenter.getCostCenterCode(),
+                costCenter.getName(),
+                costCenter.getDescription(),
+                costCenter.getCostCenterManagerCode(),
+                costCenter.getStatus()
+        );
+    }
+
+    private ProjectResponseDto mapToProjectResponseDto(Project project) {
+        return ProjectResponseDto.builder()
+                .projectCode(project.getProjectCode())
+                .title(project.getTitle())
+                .description(project.getDescription())
+                .startDate(project.getStartDate())
+                .endDate(project.getEndDate())
+                .clientName(project.getClients().getName())
+                .costCenterCode(project.getCostCenter().getCostCenterCode())
+                .projectManagerCode(project.getProjectManagerCode())
+                .status(project.getStatus())
+                .build();
+    }
+}

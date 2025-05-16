@@ -12,7 +12,7 @@ public interface ProjectEmployeeRepository extends JpaRepository<ProjectEmployee
 
     List<ProjectEmployee> findByProject_ProjectCodeIgnoreCase(String projectCode);
     List<ProjectEmployee> findByIdEmployeeCodeIgnoreCase(String employeeCode);
-
+    List<ProjectEmployee> findByIdProjectCode(String projectCode);
 
     // Optional: check if a user is assigned to a project
 

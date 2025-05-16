@@ -42,11 +42,6 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/timesheet/admin/.*").authenticated()
-                        .requestMatchers("/timesheet/Project/.*").authenticated()
-                        .requestMatchers("/timesheet/User/.*").authenticated()
-                        .requestMatchers("/timesheet/Rmanager/.*").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

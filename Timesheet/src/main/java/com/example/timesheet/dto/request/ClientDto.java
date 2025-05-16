@@ -1,6 +1,7 @@
 package com.example.timesheet.dto.request;
 
 
+import com.example.timesheet.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

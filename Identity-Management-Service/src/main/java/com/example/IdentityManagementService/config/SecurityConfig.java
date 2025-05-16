@@ -27,7 +27,6 @@ public class SecurityConfig {
         this.customEntryPoint = customEntryPoint;
         this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
-
     @Value("${keycloak.enabled:true}")
     private boolean keycloakEnabled;
 
@@ -36,10 +35,6 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/timesheet/admin/.*").authenticated()
-                        .requestMatchers("/timesheet/User/.*").authenticated()
-                        .requestMatchers("/timesheet/Project/.*").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
@@ -50,8 +45,6 @@ public class SecurityConfig {
                     .authenticationEntryPoint(customEntryPoint)
                     .jwt(Customizer.withDefaults())
             );
-
-
 
         return http.build();
     }

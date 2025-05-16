@@ -1,7 +1,7 @@
 package com.example.timesheet.dto.response;
 
 
-import com.example.timesheet.enums.EmployeeStatus;
+import com.example.timesheet.enums.Status;
 import lombok.Builder;
 import lombok.Data;
 import java.sql.Timestamp;
@@ -14,6 +14,6 @@ public class ProjectEmployeeDto {
     private String lastName;
     private Timestamp startDate;  // New
     private Timestamp endDate;    // New
-    private EmployeeStatus status;
+    private Status status;
 }
 

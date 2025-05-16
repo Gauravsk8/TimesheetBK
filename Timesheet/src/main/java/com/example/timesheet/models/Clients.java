@@ -1,33 +1,33 @@
 package com.example.timesheet.models;
 
+import com.example.timesheet.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
 
 @Table
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class Clients {
 
     @Id
+    @Column(name = "client_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String contactPerson;
 
-    @Column(nullable = false)
     private String contactEmail;
 
-    @Column(length = 500)
     private String address;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

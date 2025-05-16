@@ -20,8 +20,8 @@ public class GlobalExceptionHandler {
 
     // Removed: @ExceptionHandler(AlreadyExistsException.class) handler
 
-    @ExceptionHandler(KeycloakException.class)
-    public ResponseEntity<ErrorResponse> handleKeycloakException(KeycloakException ex) {
+    @ExceptionHandler(TimesheetException.class)
+    public ResponseEntity<ErrorResponse> handleKeycloakException(TimesheetException ex) {
         ErrorResponse response = ErrorResponse.builder()
                 .error_code(ex.getErrorCode())
                 .message(ex.getMessage())
