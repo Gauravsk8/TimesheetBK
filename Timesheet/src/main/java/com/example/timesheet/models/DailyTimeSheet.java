@@ -10,12 +10,31 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(
+        name = "daily_time_sheet",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_timesheet_business_key",
+                        columnNames = {
+                                "employeeCode",
+                                "timesheet_year",
+                                "timesheet_month",
+                                "workDate",
+                                "entryType",
+                                "projectCode"
+                        }
+                )
+        }
+)
 public class DailyTimeSheet {
 
     @EmbeddedId
     private DailyTimeSheetId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "projectCode", nullable = true)
+    private String projectCode;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "projectCode", referencedColumnName = "projectCode", insertable = false, updatable = false)
     private Project project;
 

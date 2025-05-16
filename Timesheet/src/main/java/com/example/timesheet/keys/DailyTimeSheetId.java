@@ -27,12 +27,10 @@ public class DailyTimeSheetId implements Serializable {
     @Column(name = "workDate", nullable = false)
     private Date workDate;
 
-    @Column(name = "projectCode",nullable = false)
-    private String projectCode;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "entryType", nullable = true)
     private EntryType entryType;
 
 
 }
+

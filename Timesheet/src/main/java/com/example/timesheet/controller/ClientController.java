@@ -19,18 +19,21 @@ public class ClientController {
     private final ClientService clientService;
 
     @PostMapping("/client")
+    @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:add")
     public ResponseEntity<String> createClient(@RequestBody ClientDto clientDto) {
         String response = clientService.createClient(clientDto);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/clients")
+    @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:client:get")
     public ResponseEntity<List<ClientResponseDto>> getAllClients() {
         List<ClientResponseDto> response = clientService.getAllClients();
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/clients/{id}")
+    @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:get")
     public ResponseEntity<ClientResponseDto> getClientById(@PathVariable Long id) {
         return clientService.getClientById(id)
                 .map(ResponseEntity::ok)
@@ -38,6 +41,7 @@ public class ClientController {
     }
 
     @PutMapping("/clients/{id}")
+    @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:update")
     public ResponseEntity<String> updateClient(@PathVariable Long id, @RequestBody ClientDto clientDto) {
         try {
             String updatedClient = clientService.updateClient(id, clientDto);
@@ -47,6 +51,7 @@ public class ClientController {
         }
     }
     @PutMapping("/client/{id}/status")
+    @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:update")
     public ResponseEntity<String> updateClientStatus(
             @PathVariable Long id,
             @RequestParam String newStatus) {

@@ -21,21 +21,25 @@ public class CostCenterController {
 
 
     @PostMapping("/costCenter")
+    @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:costcenter:add")
     public ResponseEntity<String> createCostCenter(@RequestBody CostCenterDto dto) {
         return ResponseEntity.ok(costCenterService.createCostCenter(dto));
     }
 
     @GetMapping("/costCenters")
+    @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:costcenter:get")
     public ResponseEntity<List<CostCenterResponseDto>> getAllCostCenters() {
         return ResponseEntity.ok(costCenterService.getAllCostCenters());
     }
 
     @GetMapping("/costCenter/{costCenterManagerCode}")
+    @RequiresKeycloakAuthorization(resource = "tms:ccm", scope = "tms:costcenter:get")
     public ResponseEntity<List<CostCenterResponseDto>> getAllCostCentersUnderManager(@PathVariable String costCenterManagerCode) {
         return ResponseEntity.ok(costCenterService.getAllCostCentersUnderManager(costCenterManagerCode));
     }
 
     @GetMapping("/costCenter/{costCenterCode}")
+    @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:costcenter:get")
     public ResponseEntity<CostCenterResponseDto> getCostCenterByCode(@PathVariable String costCenterCode) {
         try {
             return ResponseEntity.ok(costCenterService.getCostCenterByCode(costCenterCode));
@@ -45,6 +49,7 @@ public class CostCenterController {
     }
 
     @PutMapping("/costCenter/{costCenterCode}")
+    @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:costcenter:update")
     public ResponseEntity<String> updateCostCenter(@PathVariable String costCenterCode, @RequestBody CostCenterDto dto) {
         try {
             return ResponseEntity.ok(costCenterService.updateCostCenter(costCenterCode, dto));
@@ -54,6 +59,7 @@ public class CostCenterController {
     }
 
     @PutMapping("/costCenter/{costCenterCode}/status")
+    @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:costcenter:update")
     public ResponseEntity<String> updatecostCenterStatus(
             @PathVariable String costCenterCode,
             @RequestParam String newStatus) {
@@ -62,6 +68,7 @@ public class CostCenterController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/costCenter/{costCenterCode}/Projects")
+    @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:project:get")
     public ResponseEntity<List<ProjectResponseDto>> getProjectsByCostCenter(@PathVariable("code") String costCenterCode) {
         List<ProjectResponseDto> projects = costCenterService.getProjectsByCostCenterCode(costCenterCode);
         return ResponseEntity.ok(projects);
