@@ -1,5 +1,6 @@
 package com.example.IdentityManagementService.model;
 
+import com.example.common.enums.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -36,4 +37,7 @@ public class Employee {
 
     @Column(name = "manager_code")
     private String managerCode;
+
+    @Column(name = "is_active")
+    private boolean isActive;
 }

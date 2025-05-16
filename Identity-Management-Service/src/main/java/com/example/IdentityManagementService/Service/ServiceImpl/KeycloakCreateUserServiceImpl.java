@@ -59,13 +59,13 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
 
         try {
             // Check if email already exists
-            Optional<Employee> existingEmail = employeeRepository.findByEmail(employee.getEmail());
+            Optional<Employee> existingEmail = employeeRepository.findByEmailAndIsActiveTrue(employee.getEmail());
             if (existingEmail.isPresent()) {
                 throw new TimesheetException(errorCode.CONFLICT_ERROR, EMPLOYEE_ALREADY_EXISTS + employee.getEmail());
             }
 
             // Check if employeeCode already exists
-            Optional<Employee> existingCode = employeeRepository.findByEmployeeCode(employee.getEmployeeCode());
+            Optional<Employee> existingCode = employeeRepository.findByEmployeeCodeAndIsActiveTrue(employee.getEmployeeCode());
             if (existingCode.isPresent()) {
                 throw new TimesheetException(errorCode.CONFLICT_ERROR, EMPLOYEE_ALREADY_EXISTS + employee.getEmployeeCode());
             }
@@ -347,7 +347,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             usersResource.get(user.getId()).update(userRep); // If this fails, DB is untouched
 
             // Step 3: Update DB
-            Employee employee = employeeRepository.findById(employeeCode)
+            Employee employee = employeeRepository.findByEmployeeCodeAndIsActiveTrue(employeeCode)
                     .orElseThrow(() -> new TimesheetException(NOT_FOUND_ERROR, USER_NOT_FOUND));
 
             if (dto.getFirstName() != null) employee.setFirstName(dto.getFirstName());
@@ -405,7 +405,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
         }
 
         //Update DB
-        Employee employee = employeeRepository.findByKeycloakUserId(keycloakUserId)
+        Employee employee = employeeRepository.findByKeycloakUserIdAndIsActiveTrue(keycloakUserId)
                 .orElseThrow(() -> new TimesheetException(errorCode.NOT_FOUND_ERROR, errorMessage.USER_NOT_FOUND));
 
         if (dto.getFirstName() != null) employee.setFirstName(dto.getFirstName());

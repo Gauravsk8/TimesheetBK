@@ -26,7 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public UserIdentityDto getUserByEmployeeCodedb(String employeeCode) {
-        Employee user = employeeRepository.findByEmployeeCode(employeeCode)
+        Employee user = employeeRepository.findByEmployeeCodeAndIsActiveTrue(employeeCode)
                 .orElseThrow(() -> new TimesheetException(NOT_FOUND_ERROR, USER_NOT_FOUND + employeeCode));
 
         UserIdentityDto dto = new UserIdentityDto();
@@ -43,7 +43,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public UserIdentityDto getUserByKeycloakUserId(String keycloakUserId) {
-        Employee employee = employeeRepository.findByKeycloakUserId(keycloakUserId)
+        Employee employee = employeeRepository.findByKeycloakUserIdAndIsActiveTrue(keycloakUserId)
                 .orElseThrow(() -> new TimesheetException(NOT_FOUND_ERROR, USER_NOT_FOUND + keycloakUserId));
 
         UserIdentityDto dto = new UserIdentityDto();
@@ -59,7 +59,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Map<String, String>> getAllUsers() {
-        List<Employee> employees = employeeRepository.findAll();
+        List<Employee> employees = employeeRepository.findAllByIsActiveTrue();
         List<Map<String, String>> userList = new ArrayList<>();
 
         for (Employee employee : employees) {

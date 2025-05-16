@@ -29,7 +29,7 @@ public class ReportingManagerServiceImpl implements ReportingManagerService {
             throw new TimesheetException(FORBIDDEN_ERROR, ROLE_NOT_FOUND);
         }
 
-        Employee employee = employeeRepository.findByEmployeeCode(employeeCode)
+        Employee employee = employeeRepository.findByEmployeeCodeAndIsActiveTrue(employeeCode)
                 .orElseThrow(() -> new TimesheetException(NOT_FOUND_ERROR, USER_NOT_FOUND + employeeCode));
 
         employee.setManagerCode(managerCode);
@@ -42,7 +42,7 @@ public class ReportingManagerServiceImpl implements ReportingManagerService {
 
     @Override
     public String getManagerNameByEmployeeCode(String employeeCode) {
-        Employee employee = employeeRepository.findByEmployeeCode(employeeCode)
+        Employee employee = employeeRepository.findByEmployeeCodeAndIsActiveTrue(employeeCode)
                 .orElseThrow(() -> new TimesheetException(NOT_FOUND_ERROR, USER_NOT_FOUND + employeeCode));
 
         String managerCode = employee.getManagerCode();
@@ -51,7 +51,7 @@ public class ReportingManagerServiceImpl implements ReportingManagerService {
             throw new TimesheetException(NOT_FOUND_ERROR, RM_NOT_ASSIGNED + employeeCode);
         }
 
-        Employee manager = employeeRepository.findByEmployeeCode(managerCode)
+        Employee manager = employeeRepository.findByEmployeeCodeAndIsActiveTrue(managerCode)
                 .orElseThrow(() -> new TimesheetException(NOT_FOUND_ERROR, RM_NOT_FOUND + managerCode));
 
         return manager.getFirstName() + " " + manager.getLastName();
