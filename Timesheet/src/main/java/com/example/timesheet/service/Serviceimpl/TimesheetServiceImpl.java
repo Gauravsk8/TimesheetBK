@@ -67,13 +67,13 @@ public class TimesheetServiceImpl implements TimesheetService{
                     dto.getTimesheetYear(),
                     dto.getTimesheetMonth(),
                     dto.getWorkDate(),
-                    dto.getProjectCode(),
                     dto.getEntryType()
             );
 
             DailyTimeSheet daily = new DailyTimeSheet();
             daily.setId(id);
             daily.setHoursSpent(dto.getHoursSpent());
+            daily.setProjectCode(dto.getProjectCode());
             daily.setProject(project);
             daily.setDescription(dto.getDescription());
             daily.setModifiedByManager(false);
@@ -113,7 +113,6 @@ public class TimesheetServiceImpl implements TimesheetService{
                     dto.getTimesheetYear(),
                     dto.getTimesheetMonth(),
                     dto.getWorkDate(),
-                    dto.getProjectCode(),
                     dto.getEntryType()
             );
 
@@ -123,6 +122,7 @@ public class TimesheetServiceImpl implements TimesheetService{
             daily.setId(id);
             daily.setHoursSpent(dto.getHoursSpent());
             daily.setDescription(dto.getDescription());
+            daily.setProjectCode(dto.getProjectCode());
             daily.setProject(project);
             daily.setModifiedByManager(false);
 
@@ -206,7 +206,6 @@ public class TimesheetServiceImpl implements TimesheetService{
                         requestDto.getTimesheetYear(),
                         requestDto.getTimesheetMonth(),
                         requestDto.getWorkDate(),
-                        requestDto.getProjectCode(),
                         requestDto.getEntryType()
                 );
 
@@ -277,7 +276,7 @@ public class TimesheetServiceImpl implements TimesheetService{
                     dto.setTimesheetMonth(d.getId().getTimesheetMonth());
                     dto.setWorkDate(d.getId().getWorkDate());
                     dto.setEntryType(d.getId().getEntryType());
-                    dto.setProjectCode(d.getId().getProjectCode());
+                    dto.setProjectCode(d.getProjectCode());
                     dto.setDescription(d.getDescription());
                     dto.setHoursSpent(d.getHoursSpent());
                     dto.setModifiedByManager(d.getModifiedByManager());
