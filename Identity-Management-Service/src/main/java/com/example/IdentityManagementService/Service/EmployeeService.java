@@ -8,6 +8,7 @@ import java.util.Map;
 
 public interface EmployeeService {
     UserIdentityDto getUserByEmployeeCodedb(String employeeCode);
+    void updateActiveStatus(String employeeCode, boolean isActive);
 
     UserIdentityDto getUserByKeycloakUserId(String keycloakUserId);
 

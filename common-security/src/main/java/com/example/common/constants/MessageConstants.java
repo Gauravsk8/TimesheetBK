@@ -35,5 +35,6 @@ public class MessageConstants {
     public static final String ROLES_ASSIGNED_SUCCESSFULLY = "Roles Assigned Succesfully";
     public static final String PASSWORD_UPDATED_SUCCESSFULLY = "Password Updated successfully";
     public static final String ROLES_UNASSIGNED_SUCCESSFULLY = "Role Unassigned Successfully";
+    public static final String USER_STATUS_UPDATED = "User Status updated succesfully";
 }
 

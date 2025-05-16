@@ -6,6 +6,8 @@ import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
 import com.example.IdentityManagementService.dto.request.UserIdentityDto;
 import com.example.IdentityManagementService.exceptions.TimesheetException;
 import com.example.IdentityManagementService.model.Employee;
+import com.example.common.constants.errorCode;
+import com.example.common.constants.errorMessage;
 import com.example.common.exceptions.TimeSheetException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         dto.setEmployeeType(user.getEmployeeType());
 
         return dto;
+    }
+
+    public void updateActiveStatus(String employeeCode, boolean isActive) {
+        Employee employee = employeeRepository.findById(employeeCode)
+                .orElseThrow(() -> new TimesheetException(NOT_FOUND_ERROR, USER_NOT_FOUND));
+
+        employee.setActive(isActive);
+        employeeRepository.save(employee);
     }
 
     @Override

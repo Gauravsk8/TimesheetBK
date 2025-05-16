@@ -7,6 +7,7 @@ import com.example.IdentityManagementService.Service.ServiceImpl.ReportingManage
 import com.example.IdentityManagementService.dto.request.AssignRMRequest;
 import com.example.IdentityManagementService.dto.request.UserIdentityDto;
 import com.example.common.annotations.RequiresKeycloakAuthorization;
+import com.example.common.constants.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -44,6 +45,15 @@ public class EmployeeController {
         return ResponseEntity.ok(userProfile);
     }
 
+    @PutMapping("/{employeeCode}/status")
+    public ResponseEntity<String> updateActiveStatus(
+            @PathVariable String employeeCode,
+            @RequestParam boolean active
+    ) {
+        employeeService.updateActiveStatus(employeeCode, active);
+        return ResponseEntity.ok(MessageConstants.USER_STATUS_UPDATED);
+    }
+
 
     //get all employees
     @GetMapping("/users")
@@ -73,5 +83,7 @@ public class EmployeeController {
         );
         return ResponseEntity.ok(response);
     }
+
+
 
 }
