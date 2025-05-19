@@ -29,42 +29,58 @@ public class ClientServiceImpl implements ClientService {
         client.setContactPerson(dto.getContactPerson());
         client.setContactEmail(dto.getContactEmail());
         client.setAddress(dto.getAddress());
-        client.setStatus(Status.ACTIVATE);
+        client.isActive();
         Clients savedClient = clientsRepository.save(client);
         return String.format(MessageConstants.CLIENT_CREATED, savedClient.getId());
     }
 
     @Override
     public List<ClientResponseDto> getAllClients() {
-        return clientsRepository.findAll()
-                .stream()
+        List<Clients> activeClients = clientsRepository.findByIsActiveTrue();
+
+        if (activeClients.isEmpty()) {
+            throw new TimeSheetException(
+                    errorCode.NOT_FOUND_ERROR,
+                    errorMessage.NO_ACTIVE_CLIENTS_FOUND
+            );
+        }
+
+        return activeClients.stream()
                 .map(client -> new ClientResponseDto(
                         client.getId(),
                         client.getName(),
                         client.getContactPerson(),
                         client.getContactEmail(),
                         client.getAddress(),
-                        client.getStatus()
+                        client.isActive()
                 ))
                 .toList();
     }
 
+
     @Override
     public Optional<ClientResponseDto> getClientById(Long id) {
-        return clientsRepository.findById(id)
-                .map(client -> new ClientResponseDto(
-                        client.getId(),
-                        client.getName(),
-                        client.getContactPerson(),
-                        client.getContactEmail(),
-                        client.getAddress(),
-                        client.getStatus()
-                ));
+        Clients client = clientsRepository.findByIdAndIsActiveTrue(id)
+                .orElseThrow(() -> new TimeSheetException(
+                        errorCode.NOT_FOUND_ERROR,
+                        String.format(errorMessage.CLIENT_NOT_FOUND, id)));
+
+        ClientResponseDto dto = new ClientResponseDto(
+                client.getId(),
+                client.getName(),
+                client.getContactPerson(),
+                client.getContactEmail(),
+                client.getAddress(),
+                client.isActive()
+        );
+
+        return Optional.of(dto);
     }
+
 
     @Override
     public String updateClient(Long id, ClientDto dto) throws TimeSheetException {
-        Clients client = clientsRepository.findById(id)
+        Clients client = clientsRepository.findByIdAndIsActiveTrue(id)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.CLIENT_NOT_FOUND, id)));
@@ -78,22 +94,14 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public String updateClientStatus(Long id, String newStatus) throws TimeSheetException {
+    public String updateClientStatus(Long id, boolean active) throws TimeSheetException {
         Clients client = clientsRepository.findById(id)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.CLIENT_NOT_FOUND, id)));
 
-        Status statusEnum;
-        try {
-            statusEnum = Status.valueOf(newStatus.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new TimeSheetException(
-                    errorCode.NOT_FOUND_ERROR,
-                    errorMessage.STATUS_NOT_FOUND + newStatus);
-        }
 
-        client.setStatus(statusEnum);
+        client.setActive(active);
         Clients savedClient = clientsRepository.save(client);
         return String.format(MessageConstants.CLIENT_STATUS_UPDATED, savedClient.getName());
     }

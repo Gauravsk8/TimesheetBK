@@ -13,6 +13,7 @@ public class AssignEmployeesDto {
         private String employeeCode;
         private Timestamp startDate;  // New
         private Timestamp endDate;
+        private String role_in_project;
     }
 }
 

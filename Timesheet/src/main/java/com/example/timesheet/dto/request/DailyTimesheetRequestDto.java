@@ -6,7 +6,7 @@ import lombok.Data;
 import java.sql.Date;
 
 @Data
-public class DailyTimeSheetRequestDto {
+public class DailyTimesheetRequestDto {
     private String employeeCode;
     private Integer timesheetYear;
     private Integer timesheetMonth;

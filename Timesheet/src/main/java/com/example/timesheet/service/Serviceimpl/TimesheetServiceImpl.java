@@ -4,11 +4,11 @@ import com.example.common.exceptions.TimeSheetException;
 import com.example.common.constants.MessageConstants;
 import com.example.common.constants.errorCode;
 import com.example.common.constants.errorMessage;
-import com.example.timesheet.dto.request.DailyTimeSheetRequestDto;
-import com.example.timesheet.dto.request.ManagerApprovalRequestDto;
-import com.example.timesheet.dto.request.TimesheetSummaryDto;
+import com.example.timesheet.client.IdentityServiceClient;
+import com.example.timesheet.dto.request.*;
 import com.example.timesheet.dto.response.DailyTimeSheetResponseDto;
 import com.example.timesheet.dto.response.EmployeeWeeklyTimesheetDto;
+import com.example.timesheet.dto.response.ManagerDashboardResponseDto;
 import com.example.timesheet.dto.response.TimesheetSummaryResponseDto;
 import com.example.timesheet.enums.TimeSheetStatus;
 import com.example.timesheet.keys.ProjectEmployeeId;
@@ -20,11 +20,13 @@ import com.example.timesheet.Repository.*;
 import com.example.timesheet.service.TimesheetService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
@@ -38,26 +40,27 @@ public class TimesheetServiceImpl implements TimesheetService{
     private final TimesheetSummaryRepository timesheetSummaryRepository;
     private final ProjectRepository projectRepository;
     private final ProjectEmployeeRepository projectEmployeeRepository;
+    private final IdentityServiceClient identityServiceClient;
     private static final DateTimeFormatter WEEK_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
 
     //  Save or update a daily time entry
     @Transactional
-    public String saveDailyEntry(List<DailyTimeSheetRequestDto> dtos) {
+    public String saveDailyEntry(List<DailyTimesheetRequestDto> dtos) {
 
-        DailyTimeSheetRequestDto first = dtos.get(0);
+        DailyTimesheetRequestDto first = dtos.get(0);
 
-        for (DailyTimeSheetRequestDto dto : dtos) {
+        for (DailyTimesheetRequestDto dto : dtos) {
             Project project = null;
             if (dto.getProjectCode() != null) {
-                ProjectEmployeeId peid = new ProjectEmployeeId(dto.getProjectCode().toLowerCase(), dto.getEmployeeCode().toLowerCase());
+                ProjectEmployeeId peid = new ProjectEmployeeId(dto.getProjectCode(), dto.getEmployeeCode());
                 if (!projectEmployeeRepository.existsById(peid)) {
                     throw new TimeSheetException(
                             errorCode.NOT_FOUND_ERROR,  // Assuming this is the error code
                             String.format(errorMessage.ASSIGNMENT_NOT_FOUND, dto.getProjectCode(), dto.getEmployeeCode())  // Assuming this error message exists
                     );
                 }
-                project = projectRepository.findById(dto.getProjectCode().toLowerCase())
+                project = projectRepository.findById(dto.getProjectCode())
                         .orElseThrow(() -> new TimeSheetException(errorCode.NOT_FOUND_ERROR,
                                 String.format(errorMessage.PROJECT_NOT_FOUND, dto.getProjectCode())));
             }
@@ -91,19 +94,19 @@ public class TimesheetServiceImpl implements TimesheetService{
     }
 
     @Transactional
-    public String UpdateDailyEntry(List<DailyTimeSheetRequestDto> dtos) {
+    public String UpdateDailyEntry(List<DailyTimesheetRequestDto> dtos) {
 
-        for (DailyTimeSheetRequestDto dto : dtos) {
+        for (DailyTimesheetRequestDto dto : dtos) {
             Project project = null;
             if (dto.getProjectCode() != null) {
-                ProjectEmployeeId peid = new ProjectEmployeeId(dto.getProjectCode().toLowerCase(), dto.getEmployeeCode().toLowerCase());
+                ProjectEmployeeId peid = new ProjectEmployeeId(dto.getProjectCode(), dto.getEmployeeCode());
                 if (!projectEmployeeRepository.existsById(peid)) {
                     throw new TimeSheetException(
                             errorCode.NOT_FOUND_ERROR,  // Assuming this is the error code
                             String.format(errorMessage.ASSIGNMENT_NOT_FOUND, dto.getProjectCode(), dto.getEmployeeCode())  // Assuming this error message exists
                     );
                 }
-                project = projectRepository.findById(dto.getProjectCode().toLowerCase())
+                project = projectRepository.findById(dto.getProjectCode())
                         .orElseThrow(() -> new TimeSheetException(errorCode.NOT_FOUND_ERROR,
                                 String.format(errorMessage.PROJECT_NOT_FOUND, dto.getProjectCode())));
             }
@@ -200,7 +203,7 @@ public class TimesheetServiceImpl implements TimesheetService{
             Map<DailyTimeSheetId, DailyTimeSheet> existingSheetsMap = dailyTimeSheets.stream()
                     .collect(Collectors.toMap(DailyTimeSheet::getId, Function.identity()));
 
-            for (DailyTimeSheetRequestDto requestDto : dto.getDailyTimeSheetRequests()) {
+            for (DailyTimesheetRequestDto requestDto : dto.getDailyTimeSheetRequests()) {
                 DailyTimeSheetId requestId = new DailyTimeSheetId(
                         requestDto.getEmployeeCode(),
                         requestDto.getTimesheetYear(),
@@ -236,8 +239,9 @@ public class TimesheetServiceImpl implements TimesheetService{
     }
 
     // 4. Get summaries for an employee
-    public List<TimesheetSummaryResponseDto> getEmployeeTimesheetSummaries(String employeeCode) {
-        return timesheetSummaryRepository.findByIdEmployeeCode(employeeCode)
+    public List<TimesheetSummaryResponseDto> getEmployeeTimesheetSummaries(String employeeCode, Integer year, Integer month) {
+        return timesheetSummaryRepository
+                .findByIdEmployeeCodeAndIdTimesheetYearAndIdTimesheetMonth(employeeCode, year, month)
                 .stream()
                 .map(summary -> {
                     TimesheetSummaryResponseDto dto = new TimesheetSummaryResponseDto();
@@ -251,7 +255,8 @@ public class TimesheetServiceImpl implements TimesheetService{
                     dto.setManagerComment(summary.getManagerComment());
                     dto.setApprovedBy(summary.getApprovedBy());
                     return dto;
-                }).collect(Collectors.toList());
+                })
+                .collect(Collectors.toList());
     }
 
     // 5. Get daily entries for employee for a given week
@@ -336,5 +341,93 @@ public class TimesheetServiceImpl implements TimesheetService{
         summary.setSubmittedDate(new Timestamp(System.currentTimeMillis()));
         timesheetSummaryRepository.save(summary);
 
+    }
+    @Override
+    @Transactional
+    public String approveAllUnderManagerForWeek(ManagerApprovalRequestDto approvalRequest) throws TimeSheetException {
+        // 1. Get all employees under this manager
+        ResponseEntity<List<UserIdentityDto>> response = identityServiceClient
+                .getEmployeesUnderManager(approvalRequest.getManagerCode());
+
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new TimeSheetException(errorCode.FAILED_TO_FETCH_DETAILS, errorMessage.USERID_EXTRACTION_FAILED);
+        } else {
+            response.getBody();
+        }
+
+        List<String> employeeCodes = response.getBody().stream()
+                .map(UserIdentityDto::getEmployeeCode)
+                .toList();
+
+        // 2. Find all timesheet summaries for these employees for the specified week
+        List<TimesheetSummary> summaries = timesheetSummaryRepository
+                .findByIdEmployeeCodeInAndIdWeekStartAndIdTimesheetYearAndIdTimesheetMonth(
+                        employeeCodes,
+                        approvalRequest.getWeekStart(),
+                        approvalRequest.getTimesheetYear(),
+                        approvalRequest.getTimesheetMonth()
+                );
+
+        // 3. Approve each timesheet
+        summaries.forEach(summary -> {
+            summary.setStatus(TimeSheetStatus.APPROVED);
+            summary.setApprovedBy(approvalRequest.getManagerCode());
+            summary.setManagerComment(approvalRequest.getComment());
+        });
+
+        timesheetSummaryRepository.saveAll(summaries);
+
+        return String.format(MessageConstants.APPROVED_ALL_TIMESHEETS_FOR_WEEK,
+                summaries.size(),
+                approvalRequest.getWeekStart(),
+                approvalRequest.getManagerCode());
+    }
+
+    @Override
+    @Transactional
+    public List<ManagerDashboardResponseDto> getEmployeesTimesheetUnderManager(String managerCode, int year, int month) {
+        ResponseEntity<List<UserIdentityDto>> response = identityServiceClient.getEmployeesUnderManager(managerCode);
+        List<String> employeeCodes = Optional.ofNullable(response.getBody())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(UserIdentityDto::getEmployeeCode)
+                .collect(Collectors.toList());
+
+
+        if (employeeCodes.isEmpty()) return List.of();
+
+        List<TimesheetSummary> summaries = timesheetSummaryRepository
+                .findByIdEmployeeCodeInAndIdTimesheetYearAndIdTimesheetMonth(employeeCodes, year, month);
+
+        Map<String, List<WeeklyTimeSheetEntryDto>> grouped = new HashMap<>();
+
+        for (TimesheetSummary summary : summaries) {
+            String empCode = summary.getId().getEmployeeCode();
+            grouped.computeIfAbsent(empCode, k -> new ArrayList<>())
+                    .add(toWeeklyEntryDto(summary));
+        }
+
+        return grouped.entrySet()
+                .stream()
+                .map(entry -> new ManagerDashboardResponseDto(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.comparing(ManagerDashboardResponseDto::getEmployeeCode))
+                .toList();
+    }
+
+    private WeeklyTimeSheetEntryDto toWeeklyEntryDto(TimesheetSummary s) {
+        LocalDate start = toLocalDate(s.getId().getWeekStart());
+        String startStr = start.toString();
+        String endStr = start.plusDays(6).toString();
+
+        return new WeeklyTimeSheetEntryDto(
+                startStr,
+                endStr,
+                s.getTotalHours(),
+                s.getStatus().name()
+        );
+    }
+
+    private LocalDate toLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }

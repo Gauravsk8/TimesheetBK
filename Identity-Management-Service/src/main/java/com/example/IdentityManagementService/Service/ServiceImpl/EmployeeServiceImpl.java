@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.example.common.constants.errorCode.INTERNAL_SERVER_ERROR;
 import static com.example.common.constants.errorCode.NOT_FOUND_ERROR;
@@ -84,6 +85,31 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         return userList;
+    }
+
+
+    @Override
+    public List<UserIdentityDto> getActiveEmployeesUnderManager(String managerCode) {
+        List<Employee> employees = employeeRepository.findByManagerCodeAndIsActiveTrue(managerCode);
+        return mapToUserIdentityDtos(employees);
+    }
+
+    private List<UserIdentityDto> mapToUserIdentityDtos(List<Employee> employees) {
+        return employees.stream()
+                .map(this::mapToUserIdentityDto)
+                .collect(Collectors.toList());
+    }
+
+    private UserIdentityDto mapToUserIdentityDto(Employee employee) {
+        return UserIdentityDto.builder()
+                .keycloakUserId(employee.getKeycloakUserId())
+                .employeeCode(employee.getEmployeeCode())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .email(employee.getEmail())
+                .employeeType(employee.getEmployeeType())
+                .managerCode(employee.getManagerCode())
+                .build();
     }
 
 

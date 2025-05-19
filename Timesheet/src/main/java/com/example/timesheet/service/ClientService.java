@@ -12,5 +12,5 @@ public interface ClientService {
     List<ClientResponseDto> getAllClients();
     Optional<ClientResponseDto> getClientById(Long id);
     String updateClient(Long id, ClientDto dto) throws TimeSheetException;
-    String updateClientStatus(Long id, String newStatus) throws TimeSheetException;
+    String updateClientStatus(Long id, boolean active) throws TimeSheetException;
 }

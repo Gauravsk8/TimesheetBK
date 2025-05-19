@@ -27,7 +27,7 @@ public class EmployeeController {
 
 
     //get EmployeeDetails form employeeCode
-    @GetMapping("/user/{employeeCode}")
+    @GetMapping("/users/{employeeCode}")
     @RequiresKeycloakAuthorization(resource = "tms:com", scope = "tms:com:get")
     public ResponseEntity<UserIdentityDto> getUserByEmployeeCode(@PathVariable String employeeCode) {
         UserIdentityDto dto = employeeService.getUserByEmployeeCodedb(employeeCode);
@@ -35,7 +35,7 @@ public class EmployeeController {
     }
 
     //get My details
-    @GetMapping("/user/my")
+    @GetMapping("/users/my")
     @RequiresKeycloakAuthorization(resource = "idms:user", scope = "idms:user:get")
     public ResponseEntity<UserIdentityDto> getOwnProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -45,7 +45,8 @@ public class EmployeeController {
         return ResponseEntity.ok(userProfile);
     }
 
-    @PutMapping("/{employeeCode}/status")
+    @PutMapping("users/{employeeCode}/status")
+    @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:update")
     public ResponseEntity<String> updateActiveStatus(
             @PathVariable String employeeCode,
             @RequestParam boolean active
@@ -64,8 +65,8 @@ public class EmployeeController {
     }
 
     //get managerName for employeeCode
-    @GetMapping("/user/manager_name/{employee_code}")
-    @RequiresKeycloakAuthorization(resource = "idms:common", scope = "idms:user:get")
+    @GetMapping("/users/{employee_code}/manager")
+    @RequiresKeycloakAuthorization(resource = "tms:com", scope = "tms:com:get")
     public ResponseEntity<String> getManagerNameByEmployeeCode(
             @PathVariable String employeeCode
     ) {
@@ -74,7 +75,7 @@ public class EmployeeController {
     }
 
     //assign reporting manager
-    @PostMapping("/user/assign_manager")
+    @PostMapping("/users/manager")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:add")
     public ResponseEntity<String> assignReportingManager(@RequestBody AssignRMRequest request) {
         String response = employeeRmService.addReportingManagerToEmployee(
@@ -84,6 +85,14 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("users/manager/{managerCode}")
+    @RequiresKeycloakAuthorization(resource = "idms:adminrm", scope = "idms:user:get")
+    public ResponseEntity<List<UserIdentityDto>> getEmployeesUnderManager(
+            @PathVariable String managerCode) {
+        List<UserIdentityDto> employees = employeeService.getActiveEmployeesUnderManager(managerCode);
 
+        return ResponseEntity.ok(employees);
+
+    }
 
 }

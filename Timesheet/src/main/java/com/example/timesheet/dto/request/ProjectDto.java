@@ -1,5 +1,6 @@
 package com.example.timesheet.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -13,6 +14,7 @@ public class ProjectDto {
     private Timestamp endDate;
     private Long clientId;
     private String costCenterCode;
+    @NotBlank(message = "Project manager can not be null")
     private String projectManagerCode;
     private String allocatedHours;
 }

@@ -14,6 +14,6 @@ public class ProjectEmployeeDto {
     private String lastName;
     private Timestamp startDate;  // New
     private Timestamp endDate;    // New
-    private Status status;
+    private boolean isActive;
 }
 

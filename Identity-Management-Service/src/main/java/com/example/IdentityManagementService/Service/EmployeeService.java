@@ -13,4 +13,7 @@ public interface EmployeeService {
     UserIdentityDto getUserByKeycloakUserId(String keycloakUserId);
 
     List<Map<String, String>> getAllUsers();
+
+    List<UserIdentityDto> getActiveEmployeesUnderManager(String managerCode);
+
 }

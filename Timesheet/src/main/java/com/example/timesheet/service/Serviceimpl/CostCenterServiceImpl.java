@@ -11,7 +11,6 @@ import com.example.timesheet.client.IdentityServiceClient;
 import com.example.timesheet.dto.request.CostCenterDto;
 import com.example.timesheet.dto.response.CostCenterResponseDto;
 import com.example.timesheet.dto.response.ProjectResponseDto;
-import com.example.timesheet.enums.Status;
 import com.example.timesheet.models.CostCenter;
 import com.example.timesheet.models.Project;
 import com.example.timesheet.service.CostCenterService;
@@ -36,7 +35,6 @@ public class CostCenterServiceImpl implements CostCenterService {
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .costCenterManagerCode(dto.getCostCenterManagerCode())
-                .status(Status.ACTIVATE)
                 .build();
 
         CostCenter savedCostCenter = costCenterRepository.save(costCenter);
@@ -45,14 +43,24 @@ public class CostCenterServiceImpl implements CostCenterService {
 
     @Override
     public List<CostCenterResponseDto> getAllCostCenters() {
-        return costCenterRepository.findAll().stream()
+        List<CostCenter> activeCostCenters = costCenterRepository.findByIsActiveTrue();
+
+        if (activeCostCenters.isEmpty()) {
+            throw new TimeSheetException(
+                    errorCode.NOT_FOUND_ERROR,
+                    errorMessage.NO_ACTIVE_COST_CENTERS_FOUND
+            );
+        }
+
+        return activeCostCenters.stream()
                 .map(this::mapToCostCenterResponseDto)
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public CostCenterResponseDto getCostCenterByCode(String costCenterCode) throws TimeSheetException {
-        CostCenter costCenter = costCenterRepository.findById(costCenterCode.toLowerCase())
+        CostCenter costCenter = costCenterRepository.findByCostCenterCodeAndIsActiveTrue(costCenterCode)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
@@ -62,7 +70,7 @@ public class CostCenterServiceImpl implements CostCenterService {
 
     @Override
     public String updateCostCenter(String costCenterCode, CostCenterDto dto) throws TimeSheetException {
-        CostCenter costCenter = costCenterRepository.findById(costCenterCode.toLowerCase())
+        CostCenter costCenter = costCenterRepository.findByCostCenterCodeAndIsActiveTrue(costCenterCode)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
@@ -70,38 +78,29 @@ public class CostCenterServiceImpl implements CostCenterService {
 
         costCenter.setName(dto.getName());
         costCenter.setDescription(dto.getDescription());
-        costCenter.setCostCenterManagerCode(dto.getCostCenterManagerCode().toLowerCase());
+        costCenter.setCostCenterManagerCode(dto.getCostCenterManagerCode());
 
         CostCenter saveCostCenter = costCenterRepository.save(costCenter);
         return String.format(MessageConstants.COST_CENTER_UPDATED, saveCostCenter.getCostCenterCode());
     }
 
     @Override
-    public String updateCostCenterStatus(String costCenterCode, String newStatus) throws TimeSheetException {
-        CostCenter costCenter = costCenterRepository.findById(costCenterCode.toLowerCase())
+    public String updateCostCenterStatus(String costCenterCode, boolean active) throws TimeSheetException {
+        CostCenter costCenter = costCenterRepository.findById(costCenterCode)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
                 ));
 
-        Status statusEnum;
-        try {
-            statusEnum = Status.valueOf(newStatus.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new TimeSheetException(
-                    errorCode.NOT_FOUND_ERROR,
-                    errorMessage.COST_CENTER_NOT_FOUND + newStatus
-            );
-        }
-
-        costCenter.setStatus(statusEnum);
+        costCenter.setActive(active);
         CostCenter saveCostCenter = costCenterRepository.save(costCenter);
         return String.format(MessageConstants.COSTCENTER_STATUS_UPDATED, saveCostCenter.getCostCenterCode());
     }
 
     @Override
     public List<CostCenterResponseDto> getAllCostCentersUnderManager(String costCenterManagerCode) {
-        return costCenterRepository.findBycostCenterManagerCodeIgnoreCase(costCenterManagerCode)
+        return costCenterRepository.findByCostCenterManagerCodeIgnoreCaseAndIsActiveTrue
+                        (costCenterManagerCode)
                 .stream()
                 .map(this::mapToCostCenterResponseDto)
                 .collect(Collectors.toList());
@@ -109,7 +108,7 @@ public class CostCenterServiceImpl implements CostCenterService {
 
     @Override
     public List<ProjectResponseDto> getProjectsByCostCenterCode(String costCenterCode) {
-        return projectRepository.findByCostCenter_CostCenterCode(costCenterCode.toLowerCase())
+        return projectRepository.findByCostCenter_CostCenterCodeIgnoreCaseAndIsActiveTrue(costCenterCode)
                 .stream()
                 .map(this::mapToProjectResponseDto)
                 .collect(Collectors.toList());
@@ -121,7 +120,7 @@ public class CostCenterServiceImpl implements CostCenterService {
                 costCenter.getName(),
                 costCenter.getDescription(),
                 costCenter.getCostCenterManagerCode(),
-                costCenter.getStatus()
+                costCenter.isActive()
         );
     }
 
@@ -135,7 +134,7 @@ public class CostCenterServiceImpl implements CostCenterService {
                 .clientName(project.getClients().getName())
                 .costCenterCode(project.getCostCenter().getCostCenterCode())
                 .projectManagerCode(project.getProjectManagerCode())
-                .status(project.getStatus())
+                .isActive(project.isActive())
                 .build();
     }
 }

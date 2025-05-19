@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ProjectTimeSheetEntryResponse {
+public class ProjectTimesheetEntryResponse {
 
     protected Long id;
     private String projectCode;

@@ -15,12 +15,11 @@ public interface ProjectManagementService {
     List<ProjectResponseDto> getAllProjects();
     ProjectResponseDto getProjectByCode(String code) throws TimeSheetException;
     String updateProject(String code, ProjectDto dto) throws TimeSheetException;
+    String updateProjectStatus(String projectCode, boolean active);
     String assignEmployeesToProject(AssignEmployeesDto dto, String projectCode) throws TimeSheetException;
     List<ProjectEmployeeDto> getEmployeesByProject(String projectCode) throws TimeSheetException;
-    void removeEmployeeFromProject(String projectCode, String employeeCode) throws TimeSheetException;
     ProjectWithEmployeesDto getProjectWithEmployees(String projectCode) throws TimeSheetException;
-    void deleteProject(String projectCode) throws TimeSheetException;
-    String updateEmployeeStatus(String projectCode, String employeeCode, String newStatus) throws TimeSheetException;
+    String updateEmployeeStatus(String projectCode, String employeeCode, boolean newStatus) throws TimeSheetException;
     String updateEmployee(String projectCode, String employeeCode, AssignEmployeesDto.EmployeeAssignment dto) throws TimeSheetException;
     List<ProjectDto> getProjectsByEmployeeCode(String employeeCode);
     List<Map<String, String>> getUnassignedUsersForProject(String projectCode) throws TimeSheetException;

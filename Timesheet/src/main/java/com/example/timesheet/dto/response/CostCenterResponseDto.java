@@ -16,6 +16,6 @@ public class CostCenterResponseDto {
     private String name;
     private String description;
     private String costCenterManagerCode;
-    private Status status;
+    private boolean isActive;
 
 }

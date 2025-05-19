@@ -18,7 +18,7 @@ public class MessageConstants {
     public static final String PROJECT_UPDATE = "Project Updated: ";
     public static final String PROJECT_CREATED = "Project Created: ";
     public static final String EMPLOYEE_ALREADY_ASSINGNED = "No new employees assigned (all were already assigned)";
-    public static final String EMPLOYEE_ASSINGNED = "employee(s) assigned successfully.";
+    public static final String EMPLOYEE_ASSINGNED = " employee(s) assigned successfully.";
     public static final String PROJECT_STATUS_UPDATED = "Updated Employee status of %s in project %s ";
 
 
@@ -36,5 +36,6 @@ public class MessageConstants {
     public static final String PASSWORD_UPDATED_SUCCESSFULLY = "Password Updated successfully";
     public static final String ROLES_UNASSIGNED_SUCCESSFULLY = "Role Unassigned Successfully";
     public static final String USER_STATUS_UPDATED = "User Status updated succesfully";
+    public static final String APPROVED_ALL_TIMESHEETS_FOR_WEEK = "Approve All Timesheet For The week";
 }
 

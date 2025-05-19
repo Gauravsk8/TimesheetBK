@@ -18,7 +18,7 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    @PostMapping("/client")
+    @PostMapping("/clients")
     @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:add")
     public ResponseEntity<String> createClient(@RequestBody ClientDto clientDto) {
         String response = clientService.createClient(clientDto);
@@ -50,13 +50,13 @@ public class ClientController {
             throw new TimeSheetException(e.getErrorCode(), e.getMessage());
         }
     }
-    @PutMapping("/client/{id}/status")
+    @PutMapping("/clients/{id}/status")
     @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:update")
     public ResponseEntity<String> updateClientStatus(
             @PathVariable Long id,
-            @RequestParam String newStatus) {
+            @RequestParam boolean active) {
 
-        String response = clientService.updateClientStatus(id, newStatus);
+        String response = clientService.updateClientStatus(id, active);
         return ResponseEntity.ok(response);
     }
 }

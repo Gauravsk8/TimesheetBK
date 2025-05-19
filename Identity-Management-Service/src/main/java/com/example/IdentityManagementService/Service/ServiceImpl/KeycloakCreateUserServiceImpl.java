@@ -76,7 +76,12 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             newEmployee.setLastName(employee.getLastName());
             newEmployee.setEmail(employee.getEmail());
             newEmployee.setEmployeeCode(employee.getEmployeeCode());
-            newEmployee.setEmployeeType(employee.getEmployeeType());
+            String empType = employee.getEmployeeType();
+            if (empType == null || empType.isEmpty()) {
+                empType = "Employee";
+            }
+            newEmployee.setEmployeeType(empType);
+
 
             Employee savedEmployee = employeeRepository.save(newEmployee);
 
@@ -229,7 +234,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
         String employeeType = (employee.getEmployeeType() == null || employee.getEmployeeType().isBlank())
                 ? "Employee"
                 : employee.getEmployeeType();
-        attributes.put("EmployeeType", List.of(employeeType));
+        attributes.put("employeeType", List.of(employeeType));
 
         user.setAttributes(attributes);
 
@@ -340,7 +345,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             Map<String, List<String>> attributes = userRep.getAttributes();
             if (attributes == null) attributes = new HashMap<>();
             if (dto.getEmployeeType() != null) {
-                attributes.put("EmployeeType", List.of(dto.getEmployeeType()));
+                attributes.put("employeeType", List.of(dto.getEmployeeType()));
             }
             userRep.setAttributes(attributes);
 
@@ -384,7 +389,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
 
             Map<String, List<String>> attributes = user.getAttributes() != null ? user.getAttributes() : new HashMap<>();
             if (dto.getEmployeeType() != null) {
-                attributes.put("EmployeeType", List.of(dto.getEmployeeType()));
+                attributes.put("employeeType", List.of(dto.getEmployeeType()));
             }
             user.setAttributes(attributes);
 

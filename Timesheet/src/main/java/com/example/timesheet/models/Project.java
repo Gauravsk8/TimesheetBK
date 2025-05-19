@@ -16,15 +16,18 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 public class Project {
 
     @Id
-//    @GeneratedValue(generator = "pr-code-gen")
-//    @GenericGenerator(
-//            name = "pr-code-gen",
-//            strategy = "com.example.timesheet.generator.ProjectCodeGenerator"
-//    )
+    @GeneratedValue(generator = "pr-code-gen")
+    @GenericGenerator(
+            name = "pr-code-gen",
+            strategy = "com.example.timesheet.generator.ProjectCodeGenerator"
+    )
     @Column(nullable = false, updatable = false, unique = true)
     private String projectCode;
 
@@ -52,16 +55,15 @@ public class Project {
     @Column(name = "ProjectManagerCode")
     private String projectManagerCode;
 
+    @Builder.Default
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProjectEmployee> projectEmployees = new HashSet<>();
 
     @Column
     private String allocated_hours;
 
-
-
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Builder.Default
+    @Column(name = "is_active")
+    private boolean isActive = true;
 
 }

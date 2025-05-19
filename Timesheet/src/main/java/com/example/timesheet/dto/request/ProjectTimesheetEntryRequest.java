@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ProjectTimeSheetEntryRequest {
+public class ProjectTimesheetEntryRequest {
     private String projectCode;
     private Long totalHoursSpent;
 }

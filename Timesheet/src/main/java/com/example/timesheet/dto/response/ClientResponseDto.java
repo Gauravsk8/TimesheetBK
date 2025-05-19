@@ -18,5 +18,5 @@ public class ClientResponseDto {
     private String contactPerson;
     private String contactEmail;
     private String address;
-    private Status status;
+    private boolean isActive;
 }

@@ -15,7 +15,6 @@ import com.example.timesheet.dto.request.UserIdentityDto;
 import com.example.timesheet.dto.response.ProjectEmployeeDto;
 import com.example.timesheet.dto.response.ProjectResponseDto;
 import com.example.timesheet.dto.response.ProjectWithEmployeesDto;
-import com.example.timesheet.enums.Status;
 import com.example.timesheet.keys.ProjectEmployeeId;
 import com.example.timesheet.models.Clients;
 import com.example.timesheet.models.CostCenter;
@@ -26,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,13 +44,13 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
 
     public String createProject(ProjectDto dto) {
 
-        Clients client = clientsRepository.findById(dto.getClientId())
+        Clients client = clientsRepository.findByIdAndIsActiveTrue(dto.getClientId())
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.CLIENT_NOT_FOUND, dto.getClientId())
                 ));
 
-        CostCenter costCenter = costCenterRepository.findById(dto.getCostCenterCode())
+        CostCenter costCenter = costCenterRepository.findByCostCenterCodeAndIsActiveTrue(dto.getCostCenterCode())
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.COST_CENTER_NOT_FOUND, dto.getCostCenterCode())
@@ -64,33 +64,42 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         project.setEndDate(dto.getEndDate());
         project.setClients(client);
         project.setCostCenter(costCenter);
-        project.setProjectManagerCode(dto.getProjectManagerCode().toLowerCase());
+        project.setProjectManagerCode(dto.getProjectManagerCode());
         project.setAllocated_hours(dto.getAllocatedHours());
-        project.setStatus(Status.ACTIVATE); // default status
 
         projectRepository.save(project);
 
         return MessageConstants.PROJECT_CREATED + dto.getTitle();
     }
 
+    @Override
     public List<ProjectResponseDto> getAllProjects() {
-        return projectRepository.findAll().stream()
+        List<Project> activeProjects = projectRepository.findByIsActiveTrue();
+
+        if (activeProjects.isEmpty()) {
+            throw new TimeSheetException(
+                    errorCode.NOT_FOUND_ERROR,
+                    errorMessage.NO_ACTIVE_PROJECTS_FOUND
+            );
+        }
+
+        return activeProjects.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
+
     public ProjectResponseDto getProjectByCode(String code) {
-        Project project = projectRepository.findById(code.toLowerCase())
+        Project project = projectRepository.findByProjectCodeAndIsActiveTrue(code)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.PROJECT_NOT_FOUND, code)
                 ));
-
         return mapToDto(project);
     }
 
     public String updateProject(String code, ProjectDto dto) {
-        Project project = projectRepository.findById(code.toLowerCase())
+        Project project = projectRepository.findByProjectCodeAndIsActiveTrue(code)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.PROJECT_NOT_FOUND, code)
@@ -100,11 +109,11 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         project.setDescription(dto.getDescription());
         project.setStartDate(dto.getStartDate());
         project.setEndDate(dto.getEndDate());
-        project.setProjectManagerCode(dto.getProjectManagerCode().toLowerCase());
+        project.setProjectManagerCode(dto.getProjectManagerCode());
         project.setAllocated_hours(dto.getAllocatedHours());
 
         if (!project.getClients().getId().equals(dto.getClientId())) {
-            Clients client = clientsRepository.findById(dto.getClientId())
+            Clients client = clientsRepository.findByIdAndIsActiveTrue(dto.getClientId())
                     .orElseThrow(() -> new TimeSheetException(
                             errorCode.NOT_FOUND_ERROR,
                             String.format(errorMessage.CLIENT_NOT_FOUND, dto.getClientId())
@@ -113,7 +122,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         }
 
         if (!project.getCostCenter().getCostCenterCode().equalsIgnoreCase(dto.getCostCenterCode())) {
-            CostCenter costCenter = costCenterRepository.findById(dto.getCostCenterCode().toLowerCase())
+            CostCenter costCenter = costCenterRepository.findByCostCenterCodeAndIsActiveTrue(dto.getCostCenterCode())
                     .orElseThrow(() -> new TimeSheetException(
                             errorCode.NOT_FOUND_ERROR,
                             String.format(errorMessage.COST_CENTER_NOT_FOUND, dto.getCostCenterCode())
@@ -125,32 +134,44 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         return MessageConstants.PROJECT_UPDATE + project.getTitle();
     }
 
+    @Override
+    public String updateProjectStatus(String projectCode, boolean active) throws TimeSheetException {
+        Project project = projectRepository.findById(projectCode)
+                .orElseThrow(() -> new TimeSheetException(
+                        errorCode.NOT_FOUND_ERROR,
+                        String.format(errorMessage.PROJECT_NOT_FOUND, projectCode)));
+
+
+        project.setActive(active);
+        Project savedProject = projectRepository.save(project);
+        return String.format(MessageConstants.PROJECT_STATUS_UPDATED, savedProject.getTitle());
+    }
+
     public String assignEmployeesToProject(AssignEmployeesDto dto, String projectCode) {
-        Project project = projectRepository.findById(projectCode.toLowerCase())
+        Project project = projectRepository.findByProjectCodeAndIsActiveTrue(projectCode)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR, // Assuming this is the error code
                         String.format(errorMessage.PROJECT_NOT_FOUND, projectCode) // Assuming you have this error message in your errorMessage class
                 ));
-
         List<ProjectEmployee> assignments = dto.getEmployees().stream()
                 .filter(emp -> {
-                    ProjectEmployeeId id = new ProjectEmployeeId(projectCode.toLowerCase(), emp.getEmployeeCode().toLowerCase());
-                    return !projectEmployeeRepository.existsById(id); // avoid duplicates
+                    ProjectEmployeeId id = new ProjectEmployeeId(projectCode, emp.getEmployeeCode());
+                    return !projectEmployeeRepository.existsByIdAndIsActiveTrue(id); // avoid duplicates
                 })
                 .map(emp -> {
                     ProjectEmployee pe = new ProjectEmployee();
                     ResponseEntity<UserIdentityDto> user;
                     try {
-                        user = identityServiceClient.getUserByemployeeCode(emp.getEmployeeCode().toLowerCase());
+                        user = identityServiceClient.getUserByemployeeCode(emp.getEmployeeCode());
                     } catch (Exception e) {
                         throw new TimeSheetException(errorCode.NOT_FOUND_ERROR, errorMessage.USER_NOT_FOUND + e.getMessage());
                     }
                     String EmployeeKeycloakId = user.getBody().getKeycloakUserId();
-                    pe.setId(new ProjectEmployeeId(projectCode.toLowerCase(), emp.getEmployeeCode().toLowerCase()));
+                    pe.setId(new ProjectEmployeeId(projectCode, emp.getEmployeeCode()));
                     pe.setProject(project);
-                    pe.setStartDate(emp.getStartDate());
-                    pe.setEndDate(emp.getEndDate());
-                    pe.setStatus(Status.ACTIVATE);
+                    pe.setStartDate(project.getStartDate());
+                    pe.setEndDate(project.getEndDate());
+                    pe.setRole_in_project(emp.getRole_in_project());
                     return pe;
                 }).toList();
 
@@ -161,10 +182,10 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
     }
 
     public List<ProjectEmployeeDto> getEmployeesByProject(String projectCode) {
-        List<ProjectEmployee> entities = projectEmployeeRepository.findByProject_ProjectCodeIgnoreCase(projectCode.toLowerCase());
+        List<ProjectEmployee> entities = projectEmployeeRepository.findByProject_ProjectCodeIgnoreCaseAndIsActiveTrue(projectCode);
 
         return entities.stream().map(pe -> {
-            ResponseEntity<UserIdentityDto> user = identityServiceClient.getUserByemployeeCode(pe.getId().getEmployeeCode().toLowerCase());
+            ResponseEntity<UserIdentityDto> user = identityServiceClient.getUserByemployeeCode(pe.getId().getEmployeeCode());
 
             return ProjectEmployeeDto.builder()
                     .employeeCode(pe.getId().getEmployeeCode())
@@ -172,15 +193,15 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                     .lastName(user.getBody().getLastName())
                     .startDate(pe.getStartDate())
                     .endDate(pe.getEndDate())
-                    .status(pe.getStatus())
+                    .isActive(pe.isActive())
                     .build();
         }).toList();
     }
 
     public void removeEmployeeFromProject(String projectCode, String employeeCode) {
-        ProjectEmployeeId id = new ProjectEmployeeId(projectCode.toLowerCase(), employeeCode.toLowerCase());
+        ProjectEmployeeId id = new ProjectEmployeeId(projectCode, employeeCode);
 
-        if (!projectEmployeeRepository.existsById(id)) {
+        if (!projectEmployeeRepository.existsByIdAndIsActiveTrue(id)) {
             throw new TimeSheetException(
                     errorCode.NOT_FOUND_ERROR,  // Assuming this is the error code
                     String.format(errorMessage.ASSIGNMENT_NOT_FOUND, projectCode, employeeCode)  // Assuming this error message exists
@@ -191,13 +212,13 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
     }
 
     public ProjectWithEmployeesDto getProjectWithEmployees(String projectCode) {
-        Project project = projectRepository.findById(projectCode.toLowerCase())
+        Project project = projectRepository.findByProjectCodeAndIsActiveTrue(projectCode)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR, // Assuming this is the error code
                         String.format(errorMessage.PROJECT_NOT_FOUND, projectCode) // Assuming you have this error message in your errorMessage class
                 ));
 
-        List<ProjectEmployeeDto> employees = getEmployeesByProject(projectCode.toLowerCase());
+        List<ProjectEmployeeDto> employees = getEmployeesByProject(projectCode);
 
         return ProjectWithEmployeesDto.builder()
                 .projectCode(project.getProjectCode())
@@ -213,7 +234,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
 
     }
     public void deleteProject(String projectCode) {
-        Project project = projectRepository.findById(projectCode.toLowerCase())
+        Project project = projectRepository.findByProjectCodeAndIsActiveTrue(projectCode)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR, // Assuming this is the error code
                         String.format(errorMessage.PROJECT_NOT_FOUND, projectCode) // Assuming you have this error message in your errorMessage class
@@ -222,8 +243,8 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         projectRepository.delete(project);
     }
 
-    public String updateEmployeeStatus(String projectCode, String employeeCode, String newStatus) {
-        ProjectEmployeeId id = new ProjectEmployeeId(projectCode.toLowerCase(), employeeCode.toLowerCase());
+    public String updateEmployeeStatus(String projectCode, String employeeCode, boolean newStatus) {
+        ProjectEmployeeId id = new ProjectEmployeeId(projectCode, employeeCode);
 
         ProjectEmployee projectEmployee = projectEmployeeRepository.findById(id)
                 .orElseThrow(() -> new TimeSheetException(
@@ -231,14 +252,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                         String.format(errorMessage.ASSIGNMENT_NOT_FOUND, projectCode, employeeCode)
                 ));
 
-        Status statusEnum;
-        try {
-            statusEnum = Status.valueOf(newStatus.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new TimeSheetException(errorCode.NOT_FOUND_ERROR, errorMessage.STATUS_NOT_FOUND + newStatus);
-        }
-
-        projectEmployee.setStatus(statusEnum);  // <-- set the new status
+        projectEmployee.setActive(newStatus);  // <-- set the new status
         projectEmployeeRepository.save(projectEmployee);
 
         return String.format(MessageConstants.PROJECT_STATUS_UPDATED, employeeCode, projectCode);
@@ -246,21 +260,29 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
 
 
     public String updateEmployee(String projectCode, String employeeCode, AssignEmployeesDto.EmployeeAssignment dto) {
-        ProjectEmployeeId id = new ProjectEmployeeId(projectCode.toLowerCase(), employeeCode.toLowerCase());
+        ProjectEmployeeId id = new ProjectEmployeeId(projectCode, employeeCode);
 
-        ProjectEmployee projectEmployee = projectEmployeeRepository.findById(id)
+        Project project = projectRepository.findByProjectCodeAndIsActiveTrue(projectCode)
+                .orElseThrow(() -> new TimeSheetException(
+                        errorCode.NOT_FOUND_ERROR, // Assuming this is the error code
+                        String.format(errorMessage.PROJECT_NOT_FOUND, projectCode) // Assuming you have this error message in your errorMessage class
+                ));
+
+        ProjectEmployee projectEmployee = projectEmployeeRepository.findByIdAndIsActiveTrue(id)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.ASSIGNMENT_NOT_FOUND, projectCode, employeeCode)
                 ));
+        validateEmployeeDates(dto, project.getStartDate(), project.getEndDate(), projectCode);
         projectEmployee.setStartDate(dto.getStartDate());
         projectEmployee.setEndDate(dto.getEndDate());
+        projectEmployee.setRole_in_project(dto.getRole_in_project());
         projectEmployeeRepository.save(projectEmployee);
         return String.format(MessageConstants.PROJECT_STATUS_UPDATED, employeeCode, projectCode);
     }
 
     public List<ProjectDto> getProjectsByEmployeeCode(String employeeCode) {
-        List<ProjectEmployee> assignments = projectEmployeeRepository.findByIdEmployeeCodeIgnoreCase(employeeCode);
+        List<ProjectEmployee> assignments = projectEmployeeRepository.findByIdEmployeeCodeIgnoreCaseAndIsActiveTrue(employeeCode);
 
         return assignments.stream()
                 .map(pe -> {
@@ -295,13 +317,13 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                 .build();
     }
     public List<Map<String, String>> getUnassignedUsersForProject(String projectCode) {
-        Project project = projectRepository.findById(projectCode.toLowerCase())
+        Project project = projectRepository.findByProjectCodeAndIsActiveTrue(projectCode)
                 .orElseThrow(() -> new TimeSheetException(
                         errorCode.NOT_FOUND_ERROR,
                         String.format(errorMessage.PROJECT_NOT_FOUND, projectCode)
                 ));
 
-        Set<String> assignedEmployeeCodes = project.getProjectEmployees().stream()
+        Set<String> assignedEmployeeCodes = projectEmployeeRepository.findByProject_ProjectCode(projectCode).stream()
                 .map(pe -> pe.getId().getEmployeeCode())
                 .collect(Collectors.toSet());
 
@@ -313,7 +335,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
     }
 
     public List<ProjectWithEmployeesDto> getProjectsWithEmployeesUnderManager(String projectManagerCode) {
-        List<Project> projects = projectRepository.findByprojectManagerCodeIgnoreCase(projectManagerCode);
+        List<Project> projects = projectRepository.findByProjectManagerCodeIgnoreCaseAndIsActiveTrue(projectManagerCode);
 
         return projects.stream().map(project -> {
 
@@ -330,7 +352,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                         .lastName(user != null ? user.getLastName() : null)
                         .startDate(pe.getStartDate())
                         .endDate(pe.getEndDate())
-                        .status(pe.getStatus())
+                        .isActive(pe.isActive())
                         .build();
             }).collect(Collectors.toList());
 
@@ -360,7 +382,39 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                 .costCenterCode(project.getCostCenter().getCostCenterCode())
                 .projectManagerCode(project.getProjectManagerCode())
                 .allocatedHours(project.getAllocated_hours())
-                .status(project.getStatus())
+                .isActive(project.isActive())
                 .build();
     }
+
+    private void validateEmployeeDates(AssignEmployeesDto.EmployeeAssignment emp,
+                                       Timestamp projectStart,
+                                       Timestamp projectEnd,
+                                       String projectCode) {
+
+        Timestamp empStart = emp.getStartDate();
+        Timestamp empEnd   = emp.getEndDate(); // may be null
+
+        if (empStart == null) {
+            throw new TimeSheetException(errorCode.VALIDATION_ERROR,
+                    String.format(errorMessage.START_DATE_REQUIRED, emp.getEmployeeCode()));
+        }
+
+        if (empStart.before(projectStart)) {
+            throw new TimeSheetException(errorCode.VALIDATION_ERROR,
+                    String.format(errorMessage.EMP_START_BEFORE_PROJECT,
+                            emp.getEmployeeCode(), projectCode));
+        }
+
+        if (projectEnd != null && empEnd != null && empEnd.after(projectEnd)) {
+            throw new TimeSheetException(errorCode.VALIDATION_ERROR,
+                    String.format(errorMessage.EMP_END_AFTER_PROJECT,
+                            emp.getEmployeeCode(), projectCode));
+        }
+
+        if (empEnd != null && empEnd.before(empStart)) {
+            throw new TimeSheetException(errorCode.VALIDATION_ERROR,
+                    String.format(errorMessage.END_BEFORE_START, emp.getEmployeeCode()));
+        }
+    }
+
 }

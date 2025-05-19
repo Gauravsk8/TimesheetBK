@@ -17,19 +17,15 @@ import java.util.Map;
 )
 public interface IdentityServiceClient {
 
-    @GetMapping("/timesheet/admin/User/employeeCode/{employeeCode}")
+    @GetMapping("/identity/users/{employeeCode}")
     ResponseEntity<UserIdentityDto> getUserByemployeeCode(@PathVariable("employeeCode") String employeeCode);
 
-    @GetMapping("/timesheet/User/Id/{id}")
-    ResponseEntity<UserIdentityDto> getUserById(@PathVariable("id") String id);
-
-
-    @GetMapping("/timesheet/admin/User/{employeeCode}/has-manager-role")
+    @GetMapping("/identity/users/{employeeCode}/manager_role")
     ResponseEntity<Boolean> hasManagerRole(@PathVariable("employeeCode") String employeeCode, @RequestParam String roleName);
 
-    @GetMapping("/timesheet/admin/Users/by-roles")
-    ResponseEntity<List<String>> getUsersByRoles(@RequestParam List<String> roles);
+    @GetMapping("/identity/users")
+    ResponseEntity<List<Map<String, String>>> getAllUsers();
 
-
-    @GetMapping("/timesheet/admin/users")ResponseEntity<List<Map<String, String>>> getAllUsers();
+    @GetMapping("/identity/users/{managerCode}")
+    ResponseEntity<List<UserIdentityDto>> getEmployeesUnderManager(@PathVariable String managerCode);
 }

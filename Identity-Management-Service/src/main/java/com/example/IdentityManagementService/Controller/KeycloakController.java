@@ -30,7 +30,7 @@ public class KeycloakController {
 
     //Create User Common for both keycloak and DB
 
-    @PostMapping("/create_user")
+    @PostMapping("/users")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:add")
     public ResponseEntity<Map<String, String>> createUser(
             @Valid @RequestBody EmployeeRequestDto dto
@@ -43,7 +43,7 @@ public class KeycloakController {
     }
 
 
-    @PatchMapping("/user/my/edit_profile")
+    @PatchMapping("/users/my")
     @RequiresKeycloakAuthorization(resource = "idms:user", scope = "idms:user:update")
     public ResponseEntity<String> editOwnProfile(@Valid @RequestBody EmployeeRequestDto dto) {
         String keycloakUserId = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -57,7 +57,7 @@ public class KeycloakController {
 
 
 
-    @PatchMapping("/user/edit_profile/{employeeCode}")
+    @PatchMapping("/users/{employeeCode}")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:update")
     public ResponseEntity<String> editEmployeeProfile(
             @PathVariable String employeeCode,
@@ -69,7 +69,7 @@ public class KeycloakController {
 
 
     //update password
-    @PostMapping("/user/my/update_password")
+    @PostMapping("/users/my/password")
     @RequiresKeycloakAuthorization(resource = "idms:user", scope = "idms:user:update")
     public ResponseEntity<String> updateOwnPassword(@Valid @RequestBody PasswordUpdateRequestDto request) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -87,7 +87,7 @@ public class KeycloakController {
 
 
     //ROLES
-    @PostMapping("/user/assign_roles")
+    @PostMapping("/users/roles")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:add")
     public ResponseEntity<String> assignRoles(
             @RequestBody UserRoleAssignRequestDto requestDto
@@ -96,7 +96,7 @@ public class KeycloakController {
         return ResponseEntity.ok(MessageConstants.ROLES_ASSIGNED_SUCCESSFULLY);
     }
 
-    @PostMapping("/user/unassign_roles")
+    @DeleteMapping("/users/roles")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:add")
     public ResponseEntity<String> unassignRoles(
             @RequestBody UserRoleAssignRequestDto requestDto
@@ -105,7 +105,7 @@ public class KeycloakController {
         return ResponseEntity.ok(MessageConstants.ROLES_UNASSIGNED_SUCCESSFULLY);
     }
 
-    @PostMapping("/user/update_roles")
+    @PutMapping("/users/roles")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:update")
     public ResponseEntity<String> updateUserRoles(
             @RequestBody UserRoleUpdateRequestDto requestDto
@@ -118,21 +118,21 @@ public class KeycloakController {
         return ResponseEntity.ok(MessageConstants.ROLES_UPDATED_SUCCESSFULLY);
     }
 
-    @GetMapping("/user/{employeeCode}/has_manager_role")
+    @GetMapping("/users/{employeeCode}/manager_role")
     @RequiresKeycloakAuthorization(resource = "tms:com", scope = "tms:com:get")
     public ResponseEntity<Boolean> hasManagerRole(@PathVariable String employeeCode, @RequestParam String roleName) {
         boolean hasRole = keycloakAssignRoleService.hasManagerRole(employeeCode, roleName);
         return ResponseEntity.ok(hasRole);
     }
 
-    @GetMapping("/user/{employeeCode}/assigned_roles")
+    @GetMapping("/users/{employeeCode}/roles")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:get")
     public ResponseEntity<List<String>> getUserAssignedRealmRoles(@PathVariable String employeeCode) {
         List<String> roles = keycloakAssignRoleService.getAssignedRealmRoles(employeeCode);
         return ResponseEntity.ok(roles);
     }
 
-    @GetMapping("/users/by_roles")
+    @GetMapping("/users/roles")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:get")
     public ResponseEntity<Map<String, String>> getUsersByRoles(@RequestParam List<String> roles) {
         Map<String, String> users = keycloakAssignRoleService.getUsersByRoles(roles);

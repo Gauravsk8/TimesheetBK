@@ -31,8 +31,8 @@ public class CostCenter {
     @Column(name = "costCenterManagerCode")
     private String costCenterManagerCode;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Builder.Default
+    @Column(name = "is_active")
+    private boolean isActive = true;
 }
 

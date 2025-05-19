@@ -52,7 +52,14 @@ public class errorMessage {
     //Timesheet
 
     public static final String TIMESHEET_SUMMARY_NOT_FOUND="No weekly summary found for employee %s (week %s)";
+    public static final String NO_ACTIVE_CLIENTS_FOUND = "No active clients found";
+    public static final String NO_ACTIVE_COST_CENTERS_FOUND = "No active cost center found";
+    public static final String NO_ACTIVE_PROJECTS_FOUND = "No active projects found";
 
+    public static final String START_DATE_REQUIRED       = "Start date is required for employee %s";
+    public static final String EMP_START_BEFORE_PROJECT  = "Start date for employee %s is before the project %s start date";
+    public static final String EMP_END_AFTER_PROJECT     = "End date for employee %s is after the project %s end date";
+    public static final String END_BEFORE_START          = "End date is before start date for employee %s";
 
 
     private errorMessage() {}

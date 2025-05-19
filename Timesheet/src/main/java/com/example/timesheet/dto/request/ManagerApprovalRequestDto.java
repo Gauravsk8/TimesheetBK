@@ -15,5 +15,5 @@ public class ManagerApprovalRequestDto {
     private boolean approve;
     private String managerCode;
     private String comment;
-    private List<DailyTimeSheetRequestDto> dailyTimeSheetRequests = new ArrayList<>();
+    private List<DailyTimesheetRequestDto> dailyTimeSheetRequests = new ArrayList<>();
 }

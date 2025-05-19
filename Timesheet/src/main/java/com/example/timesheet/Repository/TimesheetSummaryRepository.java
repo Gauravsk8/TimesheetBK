@@ -5,6 +5,7 @@ import com.example.timesheet.keys.TimesheetSummaryId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Date;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,5 +16,10 @@ public interface TimesheetSummaryRepository extends JpaRepository<TimesheetSumma
     List<TimesheetSummary> findByIdEmployeeCodeAndIdTimesheetYearAndIdTimesheetMonth(
             String employeeCode, Integer year, Integer month);
     Optional<TimesheetSummary>  findByIdEmployeeCodeAndIdWeekStart(String employeeCode, Date weekStart);
+    List<TimesheetSummary> findByIdEmployeeCodeInAndIdWeekStartAndIdTimesheetYearAndIdTimesheetMonth(List<String> employeeCodes, Date weekStart, Integer timesheetYear, Integer timesheetMonth);
+    List<TimesheetSummary> findByIdEmployeeCodeInAndIdTimesheetYearAndIdTimesheetMonth(
+
+            Collection<String> employeeCodes, Integer year, Integer month);
+
 }
  

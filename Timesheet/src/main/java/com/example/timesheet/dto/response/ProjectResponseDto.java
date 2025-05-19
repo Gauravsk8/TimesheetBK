@@ -20,6 +20,6 @@ public class ProjectResponseDto {
     private String costCenterCode;
     private String projectManagerCode;
     private String allocatedHours;
-    private Status status;
+    private boolean isActive;
 }
 

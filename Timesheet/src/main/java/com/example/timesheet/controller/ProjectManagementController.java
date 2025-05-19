@@ -20,7 +20,7 @@ public class ProjectManagementController {
 
     private final ProjectManagementService projectManagementService;
 
-    @PostMapping("/project")
+    @PostMapping("/projects")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:project:add")
     public ResponseEntity<String> createProjects(@RequestBody ProjectDto projectCreateRequest) {
         try {
@@ -31,7 +31,17 @@ public class ProjectManagementController {
         }
     }
 
-    @PutMapping("/project/{projectCode}")
+    @PutMapping("/projects/{projectCode}/status")
+    @RequiresKeycloakAuthorization(resource = "tms:adminpm", scope = "tms:project:update")
+    public ResponseEntity<String> updatecostCenterStatus(
+            @PathVariable String projectCode,
+            @RequestParam boolean active) {
+
+        String response = projectManagementService.updateProjectStatus(projectCode, active);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/projects/{projectCode}")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:project:update")
     public ResponseEntity<String> updateProject(@PathVariable String projectCode, @RequestBody ProjectDto dto) {
         try {
@@ -41,23 +51,23 @@ public class ProjectManagementController {
         }
     }
 
-    @GetMapping("/project")
+    @GetMapping("/projects")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:project:get")
     public ResponseEntity<List<ProjectResponseDto>> getAllProjects() {
         return ResponseEntity.ok(projectManagementService.getAllProjects());
     }
 
-    @PostMapping("project/{projectCode}/assign_employee")
+    @PostMapping("projects/{projectCode}/employees")
     @RequiresKeycloakAuthorization(resource = "tms:adminpm", scope = "tms:project:employee:assign")
     public ResponseEntity<String> assignEmployees(@RequestBody AssignEmployeesDto dto, @PathVariable String projectCode) {
         return ResponseEntity.ok(projectManagementService.assignEmployeesToProject(dto, projectCode));
     }
 
-    @GetMapping("project/{projectCode}")
+  /*  @GetMapping("projects/{projectCode}/employees")
     @RequiresKeycloakAuthorization(resource = "tms:adminpm", scope = "tms:project:employee:get")
     public ResponseEntity<ProjectWithEmployeesDto> getProjectWithEmployees(@PathVariable String projectCode) {
         return ResponseEntity.ok(projectManagementService.getProjectWithEmployees(projectCode));
-    }
+    }*/
 
 //    @DeleteMapping("project/{projectCode}")
 //    public ResponseEntity<String> deleteProject(@PathVariable String projectCode) {
@@ -65,7 +75,7 @@ public class ProjectManagementController {
 //        return ResponseEntity.ok("Project with code " + projectCode + " has been deleted.");
 //    }
 
-    @GetMapping("/project/{projectCode}/employees")
+    @GetMapping("/projects/{projectCode}/employees")
     @RequiresKeycloakAuthorization(resource = "tms:adminpm", scope = "tms:project:employee:get")
     public ResponseEntity<List<ProjectEmployeeDto>> getAssignedEmployees(@PathVariable String projectCode) {
         return ResponseEntity.ok(projectManagementService.getEmployeesByProject(projectCode));
@@ -79,7 +89,7 @@ public class ProjectManagementController {
         return ResponseEntity.ok("Employee removed from project successfully.");
     }*/
 
-    @PutMapping("/project/{projectCode}/employee/{employeeCode}/")
+    @PutMapping("/projects/{projectCode}/employees/{employeeCode}")
     @RequiresKeycloakAuthorization(resource = "tms:adminpm", scope = "tms:project:employee:update")
     public ResponseEntity<String> updateEmployeeSDED(
             @PathVariable String projectCode,
@@ -88,28 +98,28 @@ public class ProjectManagementController {
         return ResponseEntity.ok(projectManagementService.updateEmployee(projectCode, employeeCode, dto));
     }
 
-    @PutMapping("/project/{projectCode}/employee/{employeeCode}")
+    @PutMapping("/projects/{projectCode}/employees/{employeeCode}/status")
     @RequiresKeycloakAuthorization(resource = "tms:adminpm", scope = "tms:project:employee:update")
     public ResponseEntity<String> updateEmployeeStatus(
             @PathVariable String projectCode,
             @PathVariable String employeeCode,
-            @RequestParam String newStatus) {
-        return ResponseEntity.ok(projectManagementService.updateEmployeeStatus(projectCode, employeeCode, newStatus));
+            @RequestParam boolean active) {
+        return ResponseEntity.ok(projectManagementService.updateEmployeeStatus(projectCode, employeeCode, active));
     }
 
-    @GetMapping("/employee/{employeeCode}/projects")
+    @GetMapping("/employees/{employeeCode}/projects")
     @RequiresKeycloakAuthorization(resource = "tms:employee", scope = "tms:project:get")
     public ResponseEntity<List<ProjectDto>> getProjectsByEmployee(@PathVariable String employeeCode) {
         return ResponseEntity.ok(projectManagementService.getProjectsByEmployeeCode(employeeCode));
     }
 
-    @GetMapping("/project/{projectCode}/unassigned_employees")
+    @GetMapping("/projects/{projectCode}/employees/unassigned")
     @RequiresKeycloakAuthorization(resource = "tms:adminpm", scope = "tms:employee:get")
     public ResponseEntity<List<Map<String, String>>> getUnassignedUsers(@PathVariable String projectCode) {
         return ResponseEntity.ok(projectManagementService.getUnassignedUsersForProject(projectCode));
     }
 
-    @GetMapping("/manager/{managerCode}/projects")
+    @GetMapping("/managers/{managerCode}/projects")
     @RequiresKeycloakAuthorization(resource = "tms:pm", scope = "tms:project:get")
     public ResponseEntity<List<ProjectWithEmployeesDto>> getProjectsUnderManager(@PathVariable String managerCode) {
         return ResponseEntity.ok(projectManagementService.getProjectsWithEmployeesUnderManager(managerCode));

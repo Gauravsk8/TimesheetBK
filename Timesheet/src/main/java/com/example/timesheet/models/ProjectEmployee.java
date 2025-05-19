@@ -3,9 +3,7 @@ package com.example.timesheet.models;
 import com.example.timesheet.enums.Status;
 import com.example.timesheet.keys.ProjectEmployeeId;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 import java.sql.Timestamp;
@@ -14,16 +12,20 @@ import java.sql.Timestamp;
 @Table(name = "project_employee")
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 public class ProjectEmployee {
 
+    @Builder.Default
     @EmbeddedId
     private ProjectEmployeeId id = new ProjectEmployeeId();
 
     @ManyToOne
-    @MapsId("projectCode") // Links part of the composite key to Project
-    @JoinColumn(name = "projectCode")
+    @MapsId("projectCode")
+    @JoinColumn(name = "project_code")  // Uses snake_case in DB
     private Project project;
+
 
     private String role_in_project;
 
@@ -34,8 +36,8 @@ public class ProjectEmployee {
     @Column(name = "end_date")
     private Timestamp endDate;    // When assignment ends (nullable)
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Builder.Default
+    @Column(name = "is_active")
+    private boolean isActive = true;
 
 }

@@ -1,5 +1,6 @@
 package com.example.IdentityManagementService.Repository;
 
+import com.example.IdentityManagementService.dto.request.UserIdentityDto;
 import com.example.IdentityManagementService.model.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,5 +15,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
 
     List<Employee> findAllByIsActiveTrue();
     Optional<Employee> findByKeycloakUserIdAndIsActiveTrue(String keycloakUserId);
+
+    List<Employee> findByManagerCodeAndIsActiveTrue(String managerCode);
+
+
+
 
 }

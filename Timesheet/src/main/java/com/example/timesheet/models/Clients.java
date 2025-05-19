@@ -2,15 +2,15 @@ package com.example.timesheet.models;
 
 import com.example.timesheet.enums.Status;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Table
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
 public class Clients {
 
     @Id
@@ -27,7 +27,8 @@ public class Clients {
 
     private String address;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    @Builder.Default
+    @Column(name = "is_active")
+    private boolean isActive = true;
+
 }

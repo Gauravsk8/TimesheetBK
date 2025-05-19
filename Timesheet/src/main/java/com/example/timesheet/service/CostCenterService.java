@@ -12,7 +12,7 @@ public interface CostCenterService {
     List<CostCenterResponseDto> getAllCostCenters();
     CostCenterResponseDto getCostCenterByCode(String costCenterCode) throws TimeSheetException;
     String updateCostCenter(String costCenterCode, CostCenterDto dto) throws TimeSheetException;
-    String updateCostCenterStatus(String costCenterCode, String newStatus) throws TimeSheetException;
+    String updateCostCenterStatus(String costCenterCode, boolean newStatus) throws TimeSheetException;
     List<CostCenterResponseDto> getAllCostCentersUnderManager(String costCenterManagerCode);
     List<ProjectResponseDto> getProjectsByCostCenterCode(String costCenterCode);
 }
