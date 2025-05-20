@@ -53,7 +53,7 @@ public class ProjectManagementController {
         }
     }
 
-    @GetMapping("/projects")
+    @PostMapping("/projects/Page")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:project:get")
     public ResponseEntity<PagedResponse<ProjectResponseDto>> getPagedProjects(@RequestBody PageRequestDto pageRequestDto) {
         return ResponseEntity.ok(projectManagementService.getAllProjects(pageRequestDto));

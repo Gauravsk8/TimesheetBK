@@ -60,7 +60,7 @@ public class EmployeeController {
 
 
     //get all employees
-    @GetMapping("/users")
+    @PostMapping("/users/Page")
     @RequiresKeycloakAuthorization(resource = "manager:com", scope = "com:manager:get")
     public ResponseEntity<PagedResponse<UserResponseDto>> getAllUsersPaged(
             @RequestBody PageRequestDto pageRequestDto) {

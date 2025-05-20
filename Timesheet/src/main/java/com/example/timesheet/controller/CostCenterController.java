@@ -28,7 +28,7 @@ public class CostCenterController {
         return ResponseEntity.ok(costCenterService.createCostCenter(dto));
     }
 
-    @GetMapping("/cost_centers")
+    @PostMapping("/cost_centers/Page")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:costcenter:get")
     public ResponseEntity<PagedResponse<CostCenterResponseDto>> getAllCostCentersPaged(
             @RequestBody PageRequestDto pageRequestDto) {

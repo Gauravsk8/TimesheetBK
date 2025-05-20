@@ -27,7 +27,7 @@ public class ClientController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/clients")
+    @PostMapping("/clients/Page")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:client:get")
     public ResponseEntity<PagedResponse<ClientResponseDto>> getAllClientsPaged(
             @RequestBody PageRequestDto pageRequestDto) {
