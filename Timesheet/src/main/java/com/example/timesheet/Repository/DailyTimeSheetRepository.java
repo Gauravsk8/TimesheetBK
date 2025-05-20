@@ -13,7 +13,6 @@ import java.util.Optional;
 
 public interface DailyTimeSheetRepository extends JpaRepository<DailyTimeSheet, Long> {
 
-//    List<DailyTimeSheet> findByIdEmployeeCodeAndIdWorkDateBetween(String employeeCode, Date startDate, Date endDate);
     List<DailyTimeSheet> findByEmployeeCodeAndWorkDateBetween(String employeeCode, Date start, Date end);
 
 
@@ -42,6 +41,10 @@ public interface DailyTimeSheetRepository extends JpaRepository<DailyTimeSheet, 
             EntryType entryType,
             String projectCode
     );
+
+    List<DailyTimeSheet> findByTimesheetYearAndTimesheetMonth(int year, int month);
+    List<DailyTimeSheet> findByTimesheetYearAndTimesheetMonthAndProjectCode(int year, int month, String projectCode);
+
 
 
 

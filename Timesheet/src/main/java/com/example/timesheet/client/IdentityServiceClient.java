@@ -1,5 +1,6 @@
 package com.example.timesheet.client;
 
+import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.timesheet.config.FeignClientConfig;
 import com.example.timesheet.dto.request.UserIdentityDto;
 import com.example.timesheet.dto.response.UserAssignedRoleResponse;
@@ -26,6 +27,10 @@ public interface IdentityServiceClient {
     @GetMapping("/identity/users")
     ResponseEntity<List<Map<String, String>>> getAllUsers();
 
+    @GetMapping("/identity/users/{employee_code}/manager")
+    public ResponseEntity<String> getManagerNameByEmployeeCode(
+            @PathVariable String employeeCode
+    );
     @GetMapping("/identity/users/manager/{managerCode}")
     ResponseEntity<List<UserIdentityDto>> getEmployeesUnderManager(@PathVariable String managerCode);
 }
