@@ -1,10 +1,12 @@
 package com.example.timesheet.models;
 
-import com.example.timesheet.keys.DailyTimeSheetId;
+import com.example.timesheet.enums.EntryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.sql.Date;
 
 @Entity
 @Getter
@@ -28,8 +30,25 @@ import lombok.Setter;
 )
 public class DailyTimeSheet {
 
-    @EmbeddedId
-    private DailyTimeSheetId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "employeeCode", nullable = false)
+    private String employeeCode;
+
+    @Column(name = "timesheet_year", nullable = false)
+    private Integer timesheetYear;
+
+    @Column(name = "timesheet_month", nullable = false)
+    private Integer timesheetMonth;
+
+    @Column(name = "workDate", nullable = false)
+    private Date workDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "entryType")
+    private EntryType entryType;
 
     @Column(name = "projectCode", nullable = true)
     private String projectCode;
@@ -46,6 +65,4 @@ public class DailyTimeSheet {
 
     @Column
     private Boolean modifiedByManager = false;
-
-
 }

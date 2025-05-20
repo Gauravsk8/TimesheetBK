@@ -7,14 +7,9 @@
     <list default="true" id="5ac3fdf0-da33-45fa-8617-a25f7d096e62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/DailyTimeSheetRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/DailyTimeSheetRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/UserIdentityDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/UserIdentityDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/EmployeeWeeklyTimesheetDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/EmployeeWeeklyTimesheetDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/ProjectManagementServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/ProjectManagementServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/keys/DailyTimeSheetId.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/keys/DailyTimeSheetId.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/models/DailyTimeSheet.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/models/DailyTimeSheet.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/TimesheetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/TimesheetService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -318,12 +313,30 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>414</line>
+          <line>411</line>
           <properties class="com.example.timesheet.service.Serviceimpl.TimesheetServiceImpl" method="getEmployeesTimesheetUnderManager">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
+          <line>92</line>
+          <properties class="com.example.timesheet.service.Serviceimpl.TimesheetServiceImpl" method="updateDailyEntry">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
+          <line>136</line>
+          <properties class="com.example.timesheet.service.Serviceimpl.TimesheetServiceImpl" method="submitTimesheetSummary">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
