@@ -1,5 +1,7 @@
 package com.example.timesheet.service;
 
+import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.dto.request.AssignEmployeesDto;
 import com.example.timesheet.dto.request.ProjectDto;
@@ -12,7 +14,7 @@ import java.util.Map;
 
 public interface ProjectManagementService {
     String createProject(ProjectDto dto) throws TimeSheetException;
-    List<ProjectResponseDto> getAllProjects();
+    PagedResponse<ProjectResponseDto> getAllProjects(PageRequestDto pageRequestDto);
     ProjectResponseDto getProjectByCode(String code) throws TimeSheetException;
     String updateProject(String code, ProjectDto dto) throws TimeSheetException;
     String updateProjectStatus(String projectCode, boolean active);

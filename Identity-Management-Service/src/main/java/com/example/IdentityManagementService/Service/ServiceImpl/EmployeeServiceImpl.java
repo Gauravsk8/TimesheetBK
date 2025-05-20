@@ -3,14 +3,23 @@ package com.example.IdentityManagementService.Service.ServiceImpl;
 import com.example.IdentityManagementService.Repository.EmployeeRepository;
 import com.example.IdentityManagementService.Service.EmployeeService;
 import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
+import com.example.IdentityManagementService.dto.request.Response.UserResponseDto;
 import com.example.IdentityManagementService.dto.request.UserIdentityDto;
 import com.example.IdentityManagementService.exceptions.TimesheetException;
 import com.example.IdentityManagementService.model.Employee;
 import com.example.common.constants.errorCode;
 import com.example.common.constants.errorMessage;
+import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
+import com.example.common.utils.FilterSpecificationBuilder;
+import com.example.common.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -69,23 +78,44 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public List<Map<String, String>> getAllUsers() {
-        List<Employee> employees = employeeRepository.findAllByIsActiveTrue();
-        List<Map<String, String>> userList = new ArrayList<>();
+    public PagedResponse<UserResponseDto> getAllUsers(PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDto.getPage(),
+                pageRequestDto.getSize(),
+                SortUtil.getSort(pageRequestDto.getSort())
+        );
 
-        for (Employee employee : employees) {
-            Map<String, String> userMap = new HashMap<>();
-            userMap.put("employeeCode", employee.getEmployeeCode());
-            userMap.put("firstName", employee.getFirstName());
-            userMap.put("lastName", employee.getLastName());
-            userMap.put("email", employee.getEmail());
-            userMap.put("managerCode", employee.getManagerCode());
-            userMap.put("employeeType", employee.getEmployeeType());
-            userList.add(userMap);
+        Specification<Employee> spec = new FilterSpecificationBuilder<Employee>()
+                .build(pageRequestDto.getFilter());
+
+        Page<Employee> employeePage = employeeRepository.findAll(spec, pageable);
+
+        if (employeePage.isEmpty()) {
+            throw new TimeSheetException(
+                    errorCode.NOT_FOUND_ERROR,
+                    errorMessage.NO_ACTIVE_USERS_FOUND
+            );
         }
 
-        return userList;
+        List<UserResponseDto> content = employeePage.getContent().stream()
+                .map(emp -> new UserResponseDto(
+                        emp.getEmployeeCode(),
+                        emp.getFirstName(),
+                        emp.getLastName(),
+                        emp.getEmail(),
+                        emp.getManagerCode(),
+                        emp.getEmployeeType()
+                )).toList();
+
+        return new PagedResponse<>(
+                content,
+                employeePage.getNumber(),
+                employeePage.getSize(),
+                employeePage.getTotalElements()
+        );
     }
+
+
 
 
     @Override

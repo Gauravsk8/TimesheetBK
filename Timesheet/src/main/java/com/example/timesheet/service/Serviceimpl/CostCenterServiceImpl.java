@@ -4,7 +4,11 @@ package com.example.timesheet.service.Serviceimpl;
 import com.example.common.constants.MessageConstants;
 import com.example.common.constants.errorCode;
 import com.example.common.constants.errorMessage;
+import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
+import com.example.common.utils.FilterSpecificationBuilder;
+import com.example.common.utils.SortUtil;
 import com.example.timesheet.Repository.CostCenterRepository;
 import com.example.timesheet.Repository.ProjectRepository;
 import com.example.timesheet.client.IdentityServiceClient;
@@ -15,6 +19,10 @@ import com.example.timesheet.models.CostCenter;
 import com.example.timesheet.models.Project;
 import com.example.timesheet.service.CostCenterService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,21 +50,36 @@ public class CostCenterServiceImpl implements CostCenterService {
     }
 
     @Override
-    public List<CostCenterResponseDto> getAllCostCenters() {
-        List<CostCenter> activeCostCenters = costCenterRepository.findByIsActiveTrue();
+    public PagedResponse<CostCenterResponseDto> getAllCostCenters(PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDto.getPage(),
+                pageRequestDto.getSize(),
+                SortUtil.getSort(pageRequestDto.getSort())
+        );
 
-        if (activeCostCenters.isEmpty()) {
+        Specification<CostCenter> spec = new FilterSpecificationBuilder<CostCenter>()
+                .build(pageRequestDto.getFilter());
+
+        Page<CostCenter> costCenterPage = costCenterRepository.findAll(spec, pageable);
+
+        if (costCenterPage.isEmpty()) {
             throw new TimeSheetException(
                     errorCode.NOT_FOUND_ERROR,
                     errorMessage.NO_ACTIVE_COST_CENTERS_FOUND
             );
         }
 
-        return activeCostCenters.stream()
+        List<CostCenterResponseDto> content = costCenterPage.getContent().stream()
                 .map(this::mapToCostCenterResponseDto)
                 .collect(Collectors.toList());
-    }
 
+        return new PagedResponse<>(
+                content,
+                costCenterPage.getNumber(),
+                costCenterPage.getSize(),
+                costCenterPage.getTotalElements()
+        );
+    }
 
     @Override
     public CostCenterResponseDto getCostCenterByCode(String costCenterCode) throws TimeSheetException {

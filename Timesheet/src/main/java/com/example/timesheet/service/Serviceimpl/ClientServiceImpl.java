@@ -4,7 +4,11 @@ package com.example.timesheet.service.Serviceimpl;
 import com.example.common.constants.MessageConstants;
 import com.example.common.constants.errorCode;
 import com.example.common.constants.errorMessage;
+import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
+import com.example.common.utils.FilterSpecificationBuilder;
+import com.example.common.utils.SortUtil;
 import com.example.timesheet.Repository.ClientsRepository;
 import com.example.timesheet.dto.request.ClientDto;
 import com.example.timesheet.dto.response.ClientResponseDto;
@@ -12,6 +16,10 @@ import com.example.timesheet.enums.Status;
 import com.example.timesheet.models.Clients;
 import com.example.timesheet.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,17 +43,26 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ClientResponseDto> getAllClients() {
-        List<Clients> activeClients = clientsRepository.findByIsActiveTrue();
+    public PagedResponse<ClientResponseDto> getAllClients(PageRequestDto pageRequestDto) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDto.getPage(),
+                pageRequestDto.getSize(),
+                SortUtil.getSort(pageRequestDto.getSort())
+        );
 
-        if (activeClients.isEmpty()) {
+        Specification<Clients> spec = new FilterSpecificationBuilder<Clients>()
+                .build(pageRequestDto.getFilter());
+
+        Page<Clients> clientPage = clientsRepository.findAll(spec, pageable);
+
+        if (clientPage.isEmpty()) {
             throw new TimeSheetException(
                     errorCode.NOT_FOUND_ERROR,
                     errorMessage.NO_ACTIVE_CLIENTS_FOUND
             );
         }
 
-        return activeClients.stream()
+        List<ClientResponseDto> content = clientPage.getContent().stream()
                 .map(client -> new ClientResponseDto(
                         client.getId(),
                         client.getName(),
@@ -53,9 +70,17 @@ public class ClientServiceImpl implements ClientService {
                         client.getContactEmail(),
                         client.getAddress(),
                         client.isActive()
-                ))
-                .toList();
+                )).toList();
+
+        return new PagedResponse<>(
+                content,
+                clientPage.getNumber(),
+                clientPage.getSize(),
+                clientPage.getTotalElements()
+        );
     }
+
+
 
 
     @Override

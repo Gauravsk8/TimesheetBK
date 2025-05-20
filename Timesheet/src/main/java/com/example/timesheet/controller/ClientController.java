@@ -1,6 +1,8 @@
 package com.example.timesheet.controller;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
+import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.dto.request.ClientDto;
 import com.example.timesheet.dto.response.ClientResponseDto;
@@ -27,9 +29,9 @@ public class ClientController {
 
     @GetMapping("/clients")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:client:get")
-    public ResponseEntity<List<ClientResponseDto>> getAllClients() {
-        List<ClientResponseDto> response = clientService.getAllClients();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<PagedResponse<ClientResponseDto>> getAllClientsPaged(
+            @RequestBody PageRequestDto pageRequestDto) {
+        return ResponseEntity.ok(clientService.getAllClients(pageRequestDto));
     }
 
     @GetMapping("/clients/{id}")

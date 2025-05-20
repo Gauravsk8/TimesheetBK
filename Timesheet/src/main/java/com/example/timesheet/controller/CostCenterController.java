@@ -1,6 +1,8 @@
 package com.example.timesheet.controller;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
+import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.dto.request.CostCenterDto;
 import com.example.timesheet.dto.response.CostCenterResponseDto;
@@ -28,8 +30,9 @@ public class CostCenterController {
 
     @GetMapping("/cost_centers")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:costcenter:get")
-    public ResponseEntity<List<CostCenterResponseDto>> getAllCostCenters() {
-        return ResponseEntity.ok(costCenterService.getAllCostCenters());
+    public ResponseEntity<PagedResponse<CostCenterResponseDto>> getAllCostCentersPaged(
+            @RequestBody PageRequestDto pageRequestDto) {
+        return ResponseEntity.ok(costCenterService.getAllCostCenters(pageRequestDto));
     }
 
     @GetMapping("/cost_centers/manager/{costCenterManagerCode}")

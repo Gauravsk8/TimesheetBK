@@ -60,6 +60,7 @@ public class errorMessage {
     public static final String EMP_START_BEFORE_PROJECT  = "Start date for employee %s is before the project %s start date";
     public static final String EMP_END_AFTER_PROJECT     = "End date for employee %s is after the project %s end date";
     public static final String END_BEFORE_START          = "End date is before start date for employee %s";
+    public static final String NO_ACTIVE_USERS_FOUND = "No Active User Found";
 
 
     private errorMessage() {}

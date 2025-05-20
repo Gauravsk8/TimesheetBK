@@ -3,7 +3,11 @@ package com.example.timesheet.service.Serviceimpl;
 import com.example.common.constants.MessageConstants;
 import com.example.common.constants.errorCode;
 import com.example.common.constants.errorMessage;
+import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
+import com.example.common.utils.FilterSpecificationBuilder;
+import com.example.common.utils.SortUtil;
 import com.example.timesheet.Repository.ClientsRepository;
 import com.example.timesheet.Repository.CostCenterRepository;
 import com.example.timesheet.Repository.ProjectEmployeeRepository;
@@ -22,6 +26,10 @@ import com.example.timesheet.models.Project;
 import com.example.timesheet.models.ProjectEmployee;
 import com.example.timesheet.service.ProjectManagementService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -73,19 +81,41 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
     }
 
     @Override
-    public List<ProjectResponseDto> getAllProjects() {
-        List<Project> activeProjects = projectRepository.findByIsActiveTrue();
+    public PagedResponse<ProjectResponseDto> getAllProjects(PageRequestDto pageRequestDto) {
+        // Create Pageable from page, size, and sort
+        Pageable pageable = PageRequest.of(
+                pageRequestDto.getPage(),
+                pageRequestDto.getSize(),
+                SortUtil.getSort(pageRequestDto.getSort())
+        );
 
-        if (activeProjects.isEmpty()) {
+        // Create filter spec from the provided filter criteria
+        Specification<Project> spec = new FilterSpecificationBuilder<Project>()
+                .build(pageRequestDto.getFilter());
+
+        // Fetch paginated + filtered result from DB
+        Page<Project> projectPage = projectRepository.findAll(spec, pageable);
+
+        // Optional: throw exception if empty
+        if (projectPage.isEmpty()) {
             throw new TimeSheetException(
                     errorCode.NOT_FOUND_ERROR,
                     errorMessage.NO_ACTIVE_PROJECTS_FOUND
             );
         }
 
-        return activeProjects.stream()
+        // Map to response DTO
+        List<ProjectResponseDto> content = projectPage.getContent().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+
+        // Return PagedResponse
+        return new PagedResponse<>(
+                content,
+                projectPage.getNumber(),
+                projectPage.getSize(),
+                projectPage.getTotalElements()
+        );
     }
 
     @Override

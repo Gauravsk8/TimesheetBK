@@ -1,6 +1,8 @@
 package com.example.timesheet.controller;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
+import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.dto.request.AssignEmployeesDto;
 import com.example.timesheet.dto.request.ProjectDto;
@@ -53,8 +55,8 @@ public class ProjectManagementController {
 
     @GetMapping("/projects")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:project:get")
-    public ResponseEntity<List<ProjectResponseDto>> getAllProjects() {
-        return ResponseEntity.ok(projectManagementService.getAllProjects());
+    public ResponseEntity<PagedResponse<ProjectResponseDto>> getPagedProjects(@RequestBody PageRequestDto pageRequestDto) {
+        return ResponseEntity.ok(projectManagementService.getAllProjects(pageRequestDto));
     }
 
     @PostMapping("projects/{projectCode}/employees")

@@ -5,9 +5,12 @@ import com.example.IdentityManagementService.Service.ReportingManagerService;
 import com.example.IdentityManagementService.Service.ServiceImpl.EmployeeServiceImpl;
 import com.example.IdentityManagementService.Service.ServiceImpl.ReportingManagerServiceImpl;
 import com.example.IdentityManagementService.dto.request.AssignRMRequest;
+import com.example.IdentityManagementService.dto.request.Response.UserResponseDto;
 import com.example.IdentityManagementService.dto.request.UserIdentityDto;
 import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.common.constants.MessageConstants;
+import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.response.PagedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -59,9 +62,9 @@ public class EmployeeController {
     //get all employees
     @GetMapping("/users")
     @RequiresKeycloakAuthorization(resource = "manager:com", scope = "com:manager:get")
-    public ResponseEntity<List<Map<String, String>>> getAllUsers() {
-        List<Map<String, String>> users = employeeService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<PagedResponse<UserResponseDto>> getAllUsersPaged(
+            @RequestBody PageRequestDto pageRequestDto) {
+        return ResponseEntity.ok(employeeService.getAllUsers(pageRequestDto));
     }
 
     //get managerName for employeeCode
