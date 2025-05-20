@@ -12,4 +12,7 @@ public class UserIdentityDto {
     private String employeeCode;
     private String firstName;
     private String lastName;
+    private String email;
+    private String employeeType;
+    private String managerCode;
 }

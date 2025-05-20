@@ -63,6 +63,15 @@ public class ProjectManagementController {
         return ResponseEntity.ok(projectManagementService.assignEmployeesToProject(dto, projectCode));
     }
 
+    @GetMapping("/projects/{projectCode}")
+    @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:project:get")
+    public ResponseEntity<ProjectResponseDto> getProject(@PathVariable String projectCode) {
+        try {
+            return ResponseEntity.ok(projectManagementService.getProjectByCode(projectCode));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
   /*  @GetMapping("projects/{projectCode}/employees")
     @RequiresKeycloakAuthorization(resource = "tms:adminpm", scope = "tms:project:employee:get")
     public ResponseEntity<ProjectWithEmployeesDto> getProjectWithEmployees(@PathVariable String projectCode) {

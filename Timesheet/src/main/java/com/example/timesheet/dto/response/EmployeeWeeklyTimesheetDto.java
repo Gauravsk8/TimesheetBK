@@ -16,5 +16,6 @@ public class EmployeeWeeklyTimesheetDto {
     private String employeeCode;
     private Date weekStart;
     private TimeSheetStatus status;
+    private Double hoursSpent;
     // getters & setters
 }

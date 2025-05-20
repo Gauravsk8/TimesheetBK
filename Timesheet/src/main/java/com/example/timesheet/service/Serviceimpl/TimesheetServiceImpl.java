@@ -10,6 +10,7 @@ import com.example.timesheet.dto.response.DailyTimeSheetResponseDto;
 import com.example.timesheet.dto.response.EmployeeWeeklyTimesheetDto;
 import com.example.timesheet.dto.response.ManagerDashboardResponseDto;
 import com.example.timesheet.dto.response.TimesheetSummaryResponseDto;
+import com.example.timesheet.enums.EntryType;
 import com.example.timesheet.enums.TimeSheetStatus;
 import com.example.timesheet.keys.ProjectEmployeeId;
 import com.example.timesheet.models.*;
@@ -20,6 +21,7 @@ import com.example.timesheet.Repository.*;
 import com.example.timesheet.service.TimesheetService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -46,11 +48,10 @@ public class TimesheetServiceImpl implements TimesheetService{
 
     //  Save or update a daily time entry
     @Transactional
-    public String saveDailyEntry(List<DailyTimesheetRequestDto> dtos) {
+    public String saveDailyEntry(DailyTimesheetDto dtos) {
 
-        DailyTimesheetRequestDto first = dtos.get(0);
 
-        for (DailyTimesheetRequestDto dto : dtos) {
+        for (DailyTimesheetRequestDto dto : dtos.getDailyEntry()) {
             Project project = null;
             if (dto.getProjectCode() != null) {
                 ProjectEmployeeId peid = new ProjectEmployeeId(dto.getProjectCode(), dto.getEmployeeCode());
@@ -84,15 +85,14 @@ public class TimesheetServiceImpl implements TimesheetService{
             dailyTimeSheetRepository.save(daily);
         }
         TimesheetSummaryDto summaryDto = new TimesheetSummaryDto();
-        summaryDto.setEmployeeCode(first.getEmployeeCode());
-        summaryDto.setTimesheetMonth(first.getTimesheetMonth());
-        summaryDto.setTimesheetYear(first.getTimesheetYear());
-        summaryDto.setWeekStart(first.getWorkDate()); // Assumes all entries are from the same week
+        summaryDto.setEmployeeCode(dtos.getEmployeeCode());
+        summaryDto.setTimesheetMonth(dtos.getTimesheetMonth());
+        summaryDto.setTimesheetYear(dtos.getTimesheetYear());
+        summaryDto.setWeekStart(dtos.getWeekStart()); // Assumes all entries are from the same week
         saveTimesheetSummary(summaryDto);
 
         return MessageConstants.DAILY_TIMESHEET_SAVED;
     }
-
     @Transactional
     public String UpdateDailyEntry(List<DailyTimesheetRequestDto> dtos) {
 
@@ -197,28 +197,48 @@ public class TimesheetServiceImpl implements TimesheetService{
         if (dto.getDailyTimeSheetRequests() != null && !dto.getDailyTimeSheetRequests().isEmpty()) {
             Date weekStart = dto.getWeekStart();
             Date weekEnd = Date.valueOf(weekStart.toLocalDate().plusDays(6));
-            List<DailyTimeSheet> dailyTimeSheets = dailyTimeSheetRepository
+
+            List<DailyTimeSheet> existingSheets = dailyTimeSheetRepository
                     .findByIdEmployeeCodeAndIdWorkDateBetween(dto.getEmployeeCode(), weekStart, weekEnd);
 
-            Map<DailyTimeSheetId, DailyTimeSheet> existingSheetsMap = dailyTimeSheets.stream()
-                    .collect(Collectors.toMap(DailyTimeSheet::getId, Function.identity()));
-
             for (DailyTimesheetRequestDto requestDto : dto.getDailyTimeSheetRequests()) {
-                DailyTimeSheetId requestId = new DailyTimeSheetId(
-                        requestDto.getEmployeeCode(),
-                        requestDto.getTimesheetYear(),
-                        requestDto.getTimesheetMonth(),
-                        requestDto.getWorkDate(),
-                        requestDto.getEntryType()
-                );
+                EntryType entryType = requestDto.getEntryType();
+                boolean matched = false;
 
-                DailyTimeSheet existingSheet = existingSheetsMap.get(requestId);
-                if (existingSheet != null) {
-                    if (!Objects.equals(existingSheet.getHoursSpent(), requestDto.getHoursSpent())) {
-                        existingSheet.setHoursSpent(requestDto.getHoursSpent());
-                        existingSheet.setModifiedByManager(true);
-                        dailyTimeSheetRepository.save(existingSheet);
+                for (DailyTimeSheet sheet : existingSheets) {
+                    boolean dateMatch = sheet.getId().getWorkDate().toLocalDate().isEqual(requestDto.getWorkDate().toLocalDate());
+                    boolean typeMatch = sheet.getId().getEntryType().name().equalsIgnoreCase(entryType.name());
+
+                    // Optional projectCode match — only for PROJECT entry type
+                    boolean projectMatch = (entryType == EntryType.PROJECT)
+                            ? Objects.equals(StringUtils.trimToNull(sheet.getProjectCode()), StringUtils.trimToNull(requestDto.getProjectCode()))
+                            : true;
+
+
+                    if (dateMatch && typeMatch && projectMatch) {
+                        matched = true;
+
+                        if (!Objects.equals(sheet.getHoursSpent(), requestDto.getHoursSpent())) {
+                            sheet.setHoursSpent(requestDto.getHoursSpent());
+                            sheet.setModifiedByManager(true);
+                            dailyTimeSheetRepository.save(sheet);
+
+                            System.out.printf("Updated sheet on %s [%s]: hours %.2f -> %.2f%n",
+                                    sheet.getId().getWorkDate(),
+                                    entryType,
+                                    sheet.getHoursSpent(),
+                                    requestDto.getHoursSpent());
+                        } else {
+                            System.out.printf("No change on %s [%s], hours unchanged (%.2f)%n",
+                                    sheet.getId().getWorkDate(), entryType, sheet.getHoursSpent());
+                        }
+                        break;
                     }
+                }
+
+                if (!matched) {
+                    System.out.printf("No match found for %s [%s] (project: %s)%n",
+                            requestDto.getWorkDate(), entryType, requestDto.getProjectCode());
                 }
             }
         }
@@ -226,11 +246,9 @@ public class TimesheetServiceImpl implements TimesheetService{
         summary.setStatus(dto.isApprove() ? TimeSheetStatus.APPROVED : TimeSheetStatus.CORRECTION_REQUIRED);
         summary.setManagerComment(dto.getComment());
         summary.setApprovedBy(dto.getManagerCode());
-
         timesheetSummaryRepository.save(summary);
-        TimesheetSummary submitted=timesheetSummaryRepository.save(summary);
 
-        LocalDate week = submitted.getId().getWeekStart().toLocalDate();
+        LocalDate week = summary.getId().getWeekStart().toLocalDate();
         String formattedWeekStart = week.format(WEEK_DATE_FORMATTER);
 
         return dto.isApprove()
@@ -292,16 +310,12 @@ public class TimesheetServiceImpl implements TimesheetService{
 
     // 6. Generate monthly report for a project
     public List<EmployeeWeeklyTimesheetDto> getWeeklyTimesheetsForProject(String projectCode, Integer year, Integer month) {
-        // 1. Get employees assigned to the project
         List<ProjectEmployee> projectEmployees = projectEmployeeRepository.findByIdProjectCode(projectCode);
-
-        // 2. For each employee get their weekly timesheets from TimesheetSummary
         List<EmployeeWeeklyTimesheetDto> result = new ArrayList<>();
 
         for (ProjectEmployee pe : projectEmployees) {
             String employeeCode = pe.getId().getEmployeeCode();
 
-            // fetch all weekly timesheets for this employee in given year/month
             List<TimesheetSummary> timesheets = timesheetSummaryRepository
                     .findByIdEmployeeCodeAndIdTimesheetYearAndIdTimesheetMonth(employeeCode, year, month);
 
@@ -310,6 +324,19 @@ public class TimesheetServiceImpl implements TimesheetService{
                 dto.setEmployeeCode(employeeCode);
                 dto.setWeekStart(ts.getId().getWeekStart());
                 dto.setStatus(ts.getStatus());
+
+                // Calculate week end date from week start
+                Date weekStart = ts.getId().getWeekStart();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(weekStart);
+                cal.add(Calendar.DATE, 6);
+                Date weekEnd = new Date(cal.getTimeInMillis());
+
+                // Get total hours spent by employee on this project for this week
+                Double totalHours = dailyTimeSheetRepository.sumHoursSpentByEmployeeProjectAndWeek(employeeCode, projectCode, weekStart, weekEnd);
+
+                dto.setHoursSpent(totalHours == null ? 0.0 : totalHours);
+
                 result.add(dto);
             }
         }
@@ -427,7 +454,28 @@ public class TimesheetServiceImpl implements TimesheetService{
         );
     }
 
+    @Override
+    public TimeSheetStatus getWeeklyStatus(String employeeCode, Date weekStart) {
+
+        TimesheetSummary summary = timesheetSummaryRepository
+                .findByIdEmployeeCodeAndIdWeekStart(employeeCode, weekStart)
+                .orElseThrow(() -> new TimeSheetException(
+                        errorCode.NOT_FOUND_ERROR,
+                        String.format(errorMessage.TIMESHEET_SUMMARY_NOT_FOUND, employeeCode, weekStart)
+                ));
+        return summary.getStatus();
+    }
+   /* private LocalDate toLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }*/
+
+
     private LocalDate toLocalDate(Date date) {
+        if (date == null) return null;
+        if (date instanceof java.sql.Date) {
+            return ((java.sql.Date) date).toLocalDate();
+        }
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
+
 }

@@ -41,7 +41,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
     private final ProjectEmployeeRepository projectEmployeeRepository;
 
     private final String PROJECT_MANAGER_ROLE = "ProjectManager";
-
+    @Override
     public String createProject(ProjectDto dto) {
 
         Clients client = clientsRepository.findByIdAndIsActiveTrue(dto.getClientId())
@@ -88,7 +88,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                 .collect(Collectors.toList());
     }
 
-
+    @Override
     public ProjectResponseDto getProjectByCode(String code) {
         Project project = projectRepository.findByProjectCodeAndIsActiveTrue(code)
                 .orElseThrow(() -> new TimeSheetException(
@@ -98,6 +98,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         return mapToDto(project);
     }
 
+    @Override
     public String updateProject(String code, ProjectDto dto) {
         Project project = projectRepository.findByProjectCodeAndIsActiveTrue(code)
                 .orElseThrow(() -> new TimeSheetException(
@@ -147,6 +148,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         return String.format(MessageConstants.PROJECT_STATUS_UPDATED, savedProject.getTitle());
     }
 
+    @Override
     public String assignEmployeesToProject(AssignEmployeesDto dto, String projectCode) {
         Project project = projectRepository.findByProjectCodeAndIsActiveTrue(projectCode)
                 .orElseThrow(() -> new TimeSheetException(
@@ -181,6 +183,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                 : assignments.size() + MessageConstants.EMPLOYEE_ASSINGNED;
     }
 
+    @Override
     public List<ProjectEmployeeDto> getEmployeesByProject(String projectCode) {
         List<ProjectEmployee> entities = projectEmployeeRepository.findByProject_ProjectCodeIgnoreCaseAndIsActiveTrue(projectCode);
 
@@ -211,6 +214,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         projectEmployeeRepository.deleteById(id);
     }
 
+    @Override
     public ProjectWithEmployeesDto getProjectWithEmployees(String projectCode) {
         Project project = projectRepository.findByProjectCodeAndIsActiveTrue(projectCode)
                 .orElseThrow(() -> new TimeSheetException(
@@ -243,6 +247,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         projectRepository.delete(project);
     }
 
+    @Override
     public String updateEmployeeStatus(String projectCode, String employeeCode, boolean newStatus) {
         ProjectEmployeeId id = new ProjectEmployeeId(projectCode, employeeCode);
 
@@ -258,7 +263,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         return String.format(MessageConstants.PROJECT_STATUS_UPDATED, employeeCode, projectCode);
     }
 
-
+    @Override
     public String updateEmployee(String projectCode, String employeeCode, AssignEmployeesDto.EmployeeAssignment dto) {
         ProjectEmployeeId id = new ProjectEmployeeId(projectCode, employeeCode);
 
@@ -281,6 +286,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         return String.format(MessageConstants.PROJECT_STATUS_UPDATED, employeeCode, projectCode);
     }
 
+    @Override
     public List<ProjectDto> getProjectsByEmployeeCode(String employeeCode) {
         List<ProjectEmployee> assignments = projectEmployeeRepository.findByIdEmployeeCodeIgnoreCaseAndIsActiveTrue(employeeCode);
 
@@ -316,6 +322,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                 .allocatedHours(project.getAllocated_hours())
                 .build();
     }
+    @Override
     public List<Map<String, String>> getUnassignedUsersForProject(String projectCode) {
         Project project = projectRepository.findByProjectCodeAndIsActiveTrue(projectCode)
                 .orElseThrow(() -> new TimeSheetException(
@@ -334,6 +341,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<ProjectWithEmployeesDto> getProjectsWithEmployeesUnderManager(String projectManagerCode) {
         List<Project> projects = projectRepository.findByProjectManagerCodeIgnoreCaseAndIsActiveTrue(projectManagerCode);
 
@@ -385,6 +393,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                 .isActive(project.isActive())
                 .build();
     }
+
 
     private void validateEmployeeDates(AssignEmployeesDto.EmployeeAssignment emp,
                                        Timestamp projectStart,

@@ -26,6 +26,6 @@ public interface IdentityServiceClient {
     @GetMapping("/identity/users")
     ResponseEntity<List<Map<String, String>>> getAllUsers();
 
-    @GetMapping("/identity/users/{managerCode}")
+    @GetMapping("/identity/users/manager/{managerCode}")
     ResponseEntity<List<UserIdentityDto>> getEmployeesUnderManager(@PathVariable String managerCode);
 }

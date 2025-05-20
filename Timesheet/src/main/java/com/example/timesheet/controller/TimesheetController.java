@@ -1,6 +1,7 @@
 package com.example.timesheet.controller;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
+import com.example.timesheet.dto.request.DailyTimesheetDto;
 import com.example.timesheet.dto.request.DailyTimesheetRequestDto;
 import com.example.timesheet.dto.request.ManagerApprovalRequestDto;
 import com.example.timesheet.dto.request.TimesheetSummaryDto;
@@ -8,6 +9,7 @@ import com.example.timesheet.dto.response.DailyTimeSheetResponseDto;
 import com.example.timesheet.dto.response.EmployeeWeeklyTimesheetDto;
 import com.example.timesheet.dto.response.ManagerDashboardResponseDto;
 import com.example.timesheet.dto.response.TimesheetSummaryResponseDto;
+import com.example.timesheet.enums.TimeSheetStatus;
 import com.example.timesheet.service.TimesheetService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class TimesheetController {
     //Save or update daily entry
     @PostMapping("/save")
     @RequiresKeycloakAuthorization(resource = "tms:employee", scope = "tms:timesheet:add")
-    public ResponseEntity<String> saveDailyEntry(@RequestBody List<DailyTimesheetRequestDto> dto) {
+    public ResponseEntity<String> saveDailyEntry(@RequestBody DailyTimesheetDto dto) {
         String response = timesheetService.saveDailyEntry(dto);
         return ResponseEntity.ok(response);
     }
@@ -49,7 +51,7 @@ public class TimesheetController {
     }
 
     //Get timesheet summaries for an employee (dashboard)
-    @GetMapping("/summaries/{employeeCode}/")
+    @GetMapping("/summaries/{employeeCode}")
     @RequiresKeycloakAuthorization(resource = "tms:rmemp", scope = "tms:timesheet:get")
     public ResponseEntity<List<TimesheetSummaryResponseDto>> getTimesheetSummaries(@PathVariable String employeeCode,
                                                                                    @RequestParam Integer year, @RequestParam Integer month) {
@@ -86,5 +88,13 @@ public class TimesheetController {
             @RequestParam int month) {
 
         return timesheetService.getEmployeesTimesheetUnderManager(managerCode, year, month);
+    }
+    @GetMapping("/{employeeCode}")
+    @RequiresKeycloakAuthorization(resource = "tms:rmemp", scope = "tms:timesheet:get")
+    public ResponseEntity<TimeSheetStatus> getWeeklyStatus(
+            @PathVariable String employeeCode,
+            @RequestParam Date weekStart) {
+        TimeSheetStatus status = timesheetService.getWeeklyStatus(employeeCode, weekStart);
+        return ResponseEntity.ok(status);
     }
 }
