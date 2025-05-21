@@ -45,6 +45,11 @@ public interface DailyTimeSheetRepository extends JpaRepository<DailyTimeSheet, 
     List<DailyTimeSheet> findByTimesheetYearAndTimesheetMonth(int year, int month);
     List<DailyTimeSheet> findByTimesheetYearAndTimesheetMonthAndProjectCode(int year, int month, String projectCode);
 
+    List<DailyTimeSheet> findByTimesheetYearAndTimesheetMonthAndEmployeeCodeInAndEntryTypeIn(
+            int year,
+            int month,
+            List<String> employeeCodes,
+            List<EntryType> entryTypes);
 
 
 

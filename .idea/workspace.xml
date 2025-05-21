@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5ac3fdf0-da33-45fa-8617-a25f7d096e62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/DailyTimeSheetRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/DailyTimeSheetRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetReportServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetReportServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,7 +169,7 @@
       <command value="gradle build" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.AuditServiceApplication">
+  <component name="RunManager" selected="Application.TimesheetApplication">
     <configuration name="AuditServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.timesheet.audit.AuditServiceApplication" />
       <module name="TimesheetBK.audit-service.main" />
