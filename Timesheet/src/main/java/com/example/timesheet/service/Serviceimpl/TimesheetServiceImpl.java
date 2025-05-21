@@ -217,6 +217,7 @@ public class TimesheetServiceImpl implements TimesheetService{
             Date weekStart = dto.getWeekStart();
             Date weekEnd = Date.valueOf(weekStart.toLocalDate().plusDays(6));
 
+            // Fetch all existing DailyTimeSheets for the employee in that week
             List<DailyTimeSheet> existingSheets = dailyTimeSheetRepository
                     .findByEmployeeCodeAndWorkDateBetween(dto.getEmployeeCode(), weekStart, weekEnd);
 
@@ -229,13 +230,13 @@ public class TimesheetServiceImpl implements TimesheetService{
                     boolean typeMatch = sheet.getEntryType() != null && sheet.getEntryType().name().equalsIgnoreCase(entryType.name());
 
                     boolean projectMatch = (entryType == EntryType.PROJECT)
-                            ? Objects.equals(StringUtils.trimToNull(sheet.getProjectCode()), StringUtils.trimToNull(requestDto.getProjectCode()))
+                            ? (sheet.getProjectCode() != null && sheet.getProjectCode().trim().equals(requestDto.getProjectCode().trim()))
                             : true;
 
                     if (dateMatch && typeMatch && projectMatch) {
                         matched = true;
 
-                        if (!Objects.equals(sheet.getHoursSpent(), requestDto.getHoursSpent())) {
+                        if (!sheet.getHoursSpent().equals(requestDto.getHoursSpent())) {
                             sheet.setHoursSpent(requestDto.getHoursSpent());
                             sheet.setModifiedByManager(true);
                             dailyTimeSheetRepository.save(sheet);
@@ -251,6 +252,8 @@ public class TimesheetServiceImpl implements TimesheetService{
                 }
 
                 if (!matched) {
+                    // If no existing sheet matched, you can decide to either
+                    // ignore or throw an error or create a new record.
                     System.out.printf("No match found for %s [%s] (project: %s)%n",
                             requestDto.getWorkDate(), entryType, requestDto.getProjectCode());
                 }
@@ -269,7 +272,6 @@ public class TimesheetServiceImpl implements TimesheetService{
                 ? String.format(MessageConstants.TIMESHEET_APPROVED_BY_MANAGER, dto.getEmployeeCode(), formattedWeekStart, dto.getManagerCode())
                 : String.format(MessageConstants.TIMESHEET_REJECTED_BY_MANAGER, dto.getEmployeeCode(), formattedWeekStart, dto.getManagerCode());
     }
-
 
 
 
