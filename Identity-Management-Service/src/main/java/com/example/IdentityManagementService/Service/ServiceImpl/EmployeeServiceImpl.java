@@ -2,13 +2,12 @@ package com.example.IdentityManagementService.Service.ServiceImpl;
 
 import com.example.IdentityManagementService.Repository.EmployeeRepository;
 import com.example.IdentityManagementService.Service.EmployeeService;
-import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
 import com.example.IdentityManagementService.dto.request.Response.UserResponseDto;
 import com.example.IdentityManagementService.dto.request.UserIdentityDto;
 import com.example.IdentityManagementService.exceptions.TimesheetException;
 import com.example.IdentityManagementService.model.Employee;
-import com.example.common.constants.errorCode;
-import com.example.common.constants.errorMessage;
+import com.example.common.constants.ErrorCode;
+import com.example.common.constants.ErrorMessage;
 import com.example.common.dto.PageRequestDto;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
@@ -25,9 +24,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.common.constants.errorCode.INTERNAL_SERVER_ERROR;
-import static com.example.common.constants.errorCode.NOT_FOUND_ERROR;
-import static com.example.common.constants.errorMessage.*;
+import static com.example.common.constants.ErrorCode.NOT_FOUND_ERROR;
+import static com.example.common.constants.ErrorMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -85,15 +83,20 @@ public class EmployeeServiceImpl implements EmployeeService {
                 SortUtil.getSort(pageRequestDto.getSort())
         );
 
-        Specification<Employee> spec = new FilterSpecificationBuilder<Employee>()
+        Specification<Employee> dynamicSpec = new FilterSpecificationBuilder<Employee>()
                 .build(pageRequestDto.getFilter());
 
-        Page<Employee> employeePage = employeeRepository.findAll(spec, pageable);
+        Specification<Employee> isActiveSpec = (root, query, cb) ->
+                cb.isTrue(root.get("isActive"));
+
+        Specification<Employee> finalSpec = Specification.where(isActiveSpec).and(dynamicSpec);
+
+        Page<Employee> employeePage = employeeRepository.findAll(finalSpec, pageable);
 
         if (employeePage.isEmpty()) {
             throw new TimeSheetException(
-                    errorCode.NOT_FOUND_ERROR,
-                    errorMessage.NO_ACTIVE_USERS_FOUND
+                    ErrorCode.NOT_FOUND_ERROR,
+                    ErrorMessage.NO_ACTIVE_USERS_FOUND
             );
         }
 
@@ -114,6 +117,25 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employeePage.getTotalElements()
         );
     }
+    @Override
+    public List<Map<String, String>> getAllUsersList() {
+        List<Employee> employees = employeeRepository.findAllByIsActiveTrue();
+        List<Map<String, String>> userList = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            Map<String, String> userMap = new HashMap<>();
+            userMap.put("employeeCode", employee.getEmployeeCode());
+            userMap.put("firstName", employee.getFirstName());
+            userMap.put("lastName", employee.getLastName());
+            userMap.put("email", employee.getEmail());
+            userMap.put("managerCode", employee.getManagerCode());
+            userMap.put("employeeType", employee.getEmployeeType());
+            userList.add(userMap);
+        }
+
+        return userList;
+    }
+
 
 
 

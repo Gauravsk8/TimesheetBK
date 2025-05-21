@@ -41,7 +41,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	// Hibernate (explicit)
+	implementation "net.logstash.logback:logstash-logback-encoder:7.4"
 
 
 

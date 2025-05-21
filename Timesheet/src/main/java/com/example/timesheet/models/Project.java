@@ -1,6 +1,7 @@
 package com.example.timesheet.models;
 
 
+import com.example.common.audit.Audit;
 import com.example.timesheet.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class Project {
+public class Project extends Audit {
 
     @Id
     @GeneratedValue(generator = "pr-code-gen")

@@ -10,7 +10,9 @@ import jakarta.persistence.criteria.Predicate;
 public class FilterSpecificationBuilder<T> {
     public Specification<T> build(List<FilterRequest> filters) {
         return (root, query, criteriaBuilder) -> {
-            if (filters == null || filters.isEmpty()) return null;
+            if (filters == null || filters.isEmpty()) {
+                return null;
+            }
 
             List<Predicate> predicates = new ArrayList<>();
 

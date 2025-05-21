@@ -1,5 +1,6 @@
 package com.example.timesheet.models;
 
+import com.example.common.audit.Audit;
 import com.example.timesheet.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import org.hibernate.annotations.GenericGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CostCenter {
+public class CostCenter extends Audit {
 
     @Id
     @GeneratedValue(generator = "cc-code-gen")

@@ -2,14 +2,20 @@ package com.example.common.aop;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.common.config.KeycloakAuthorizationEnforcer;
-import com.example.common.constants.errorCode;
-import com.example.common.constants.errorMessage;
+import com.example.common.constants.ErrorCode;
+import com.example.common.constants.ErrorMessage;
 import com.example.common.exceptions.TimeSheetException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
-import static com.example.common.constants.errorMessage.UNAUTHORIZED_ACCESS;
+import static com.example.common.constants.ErrorMessage.UNAUTHORIZED_ACCESS;
 
 
 @Aspect
@@ -71,7 +77,7 @@ public class AuthorizationAspect {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new TimeSheetException(errorCode.MissingBearerToken, errorMessage.MISSING_BEARER_TOKEN);
+            throw new TimeSheetException(ErrorCode.MISSING_BEARER_TOKEN, ErrorMessage.MISSING_BEARER_TOKEN);
         }
 
         String token = authHeader.substring(7);

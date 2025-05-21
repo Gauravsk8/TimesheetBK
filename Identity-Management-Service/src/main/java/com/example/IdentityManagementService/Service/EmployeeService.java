@@ -14,6 +14,7 @@ public interface EmployeeService {
     void updateActiveStatus(String employeeCode, boolean isActive);
 
     UserIdentityDto getUserByKeycloakUserId(String keycloakUserId);
+    List<Map<String, String>> getAllUsersList();
 
     PagedResponse<UserResponseDto> getAllUsers(PageRequestDto pageRequestDto);
 

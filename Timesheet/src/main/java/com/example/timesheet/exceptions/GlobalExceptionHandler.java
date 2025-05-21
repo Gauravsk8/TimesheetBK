@@ -1,8 +1,8 @@
 package com.example.timesheet.exceptions;
 
 
-import com.example.common.constants.errorCode;
-import com.example.common.constants.errorMessage;
+import com.example.common.constants.ErrorCode;
+import com.example.common.constants.ErrorMessage;
 import com.example.common.dto.ErrorResponse;
 import com.example.common.exceptions.TimeSheetException;
 import jakarta.validation.ConstraintViolationException;
@@ -37,12 +37,12 @@ public class GlobalExceptionHandler {
 
     private HttpStatus resolveHttpStatus(String errorCode) {
         return switch (errorCode) {
-            case com.example.common.constants.errorCode.NOT_FOUND_ERROR -> HttpStatus.NOT_FOUND;
-            case com.example.common.constants.errorCode.CONFLICT_ERROR -> HttpStatus.CONFLICT;
-            case com.example.common.constants.errorCode.FORBIDDEN_ERROR -> HttpStatus.FORBIDDEN;
-            case com.example.common.constants.errorCode.UNAUTHORIZED_ERROR -> HttpStatus.UNAUTHORIZED;
-            case com.example.common.constants.errorCode.VALIDATION_ERROR -> HttpStatus.BAD_REQUEST;
-            case com.example.common.constants.errorCode.INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR;
+            case ErrorCode.NOT_FOUND_ERROR -> HttpStatus.NOT_FOUND;
+            case ErrorCode.CONFLICT_ERROR -> HttpStatus.CONFLICT;
+            case ErrorCode.FORBIDDEN_ERROR -> HttpStatus.FORBIDDEN;
+            case ErrorCode.UNAUTHORIZED_ERROR -> HttpStatus.UNAUTHORIZED;
+            case ErrorCode.VALIDATION_ERROR -> HttpStatus.BAD_REQUEST;
+            case ErrorCode.INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR;
             default -> HttpStatus.BAD_REQUEST;
         };
     }
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<List<ErrorResponse>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<ErrorResponse> errorResponses = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> ErrorResponse.builder()
-                        .error_code(errorCode.VALIDATION_ERROR)
+                        .error_code(ErrorCode.VALIDATION_ERROR)
                         .message(error.getDefaultMessage())
                         .property(error.getField())
                         .build())
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
         ErrorResponse response = ErrorResponse.builder()
-                .error_code(errorCode.VALIDATION_ERROR)
+                .error_code(ErrorCode.VALIDATION_ERROR)
                 .message(ex.getMessage())
                 .property("")
                 .build();
@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleConflict(DataIntegrityViolationException ex) {
         ErrorResponse response = ErrorResponse.builder()
-                .error_code(errorCode.CONFLICT_ERROR)
+                .error_code(ErrorCode.CONFLICT_ERROR)
                 .message("Data conflict: " + ex.getMostSpecificCause().getMessage())
                 .property("")
                 .build();
@@ -93,8 +93,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SecurityException.class)
     public ResponseEntity<ErrorResponse> handleForbidden(SecurityException ex) {
         ErrorResponse response = ErrorResponse.builder()
-                .error_code(errorCode.FORBIDDEN_ERROR)
-                .message(errorMessage.UNAUTHORIZED_ACCESS)
+                .error_code(ErrorCode.FORBIDDEN_ERROR)
+                .message(ErrorMessage.UNAUTHORIZED_ACCESS)
                 .property("")
                 .build();
 
@@ -109,8 +109,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneral(Exception ex) {
         ErrorResponse response = ErrorResponse.builder()
-                .error_code(errorCode.INTERNAL_SERVER_ERROR)
-                .message(errorCode.INTERNAL_SERVER_ERROR)
+                .error_code(ErrorCode.INTERNAL_SERVER_ERROR)
+                .message(ErrorCode.INTERNAL_SERVER_ERROR)
                 .property("")
                 .build();
 

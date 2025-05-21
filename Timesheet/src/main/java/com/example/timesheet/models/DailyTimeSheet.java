@@ -1,5 +1,6 @@
 package com.example.timesheet.models;
 
+import com.example.common.audit.Audit;
 import com.example.timesheet.enums.EntryType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,7 +29,7 @@ import java.sql.Date;
                 )
         }
 )
-public class DailyTimeSheet {
+public class DailyTimeSheet extends Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

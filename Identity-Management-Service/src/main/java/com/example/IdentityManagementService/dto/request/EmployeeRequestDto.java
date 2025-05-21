@@ -2,6 +2,7 @@ package com.example.IdentityManagementService.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Getter
@@ -18,12 +19,14 @@ public class EmployeeRequestDto {
     private String email;
 
     @NotBlank(message = "First name is required")
+    @Size(max = 20, message = "FistName can't exceed 20 characters")
     private String firstName;
 
     @NotBlank(message = "Last name is required")
+    @Size(max = 20, message = "lastName can't exceed 20 characters")
     private String lastName;
 
-
+    @Size(max = 20, message = "EmployeeType can't exceed 20 characters")
     private String EmployeeType;
 
 

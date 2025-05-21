@@ -58,6 +58,13 @@ public class EmployeeController {
         return ResponseEntity.ok(MessageConstants.USER_STATUS_UPDATED);
     }
 
+    @GetMapping("/users")
+    @RequiresKeycloakAuthorization(resource = "manager:com", scope = "com:manager:get")
+    public ResponseEntity<List<Map<String, String>>> getAllUsers() {
+        List<Map<String, String>> users = employeeService.getAllUsersList();
+        return ResponseEntity.ok(users);
+    }
+
 
     //get all employees
     @PostMapping("/users/Page")

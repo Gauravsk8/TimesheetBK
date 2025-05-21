@@ -7,11 +7,8 @@ import com.example.IdentityManagementService.Repository.EmployeeRepository;
 import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
 import com.example.IdentityManagementService.exceptions.TimesheetException;
 import com.example.IdentityManagementService.model.Employee;
-import com.example.common.audit.AuditEvent;
-import com.example.common.audit.AuditKafkaProducer;
-import com.example.common.constants.errorCode;
-import com.example.common.constants.errorMessage;
-import com.example.common.exceptions.TimeSheetException;
+import com.example.common.constants.ErrorCode;
+import com.example.common.constants.ErrorMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -26,18 +23,15 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.ErrorResponseException;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.*;
 
-import static com.example.common.constants.errorCode.KEYCLOAK_USER_CREATION_FAILED;
-import static com.example.common.constants.errorCode.NOT_FOUND_ERROR;
-import static com.example.common.constants.errorMessage.*;
+import static com.example.common.constants.ErrorCode.KEYCLOAK_USER_CREATION_FAILED;
+import static com.example.common.constants.ErrorCode.NOT_FOUND_ERROR;
+import static com.example.common.constants.ErrorMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +39,6 @@ import static com.example.common.constants.errorMessage.*;
 public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService {
 
     private final Keycloak keycloakAdmin;
-    private final AuditKafkaProducer auditKafkaProducer;
     private final EmailService emailService;
     private final EmployeeRepository employeeRepository;
 
@@ -61,13 +54,13 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             // Check if email already exists
             Optional<Employee> existingEmail = employeeRepository.findByEmailAndIsActiveTrue(employee.getEmail());
             if (existingEmail.isPresent()) {
-                throw new TimesheetException(errorCode.CONFLICT_ERROR, EMPLOYEE_ALREADY_EXISTS + employee.getEmail());
+                throw new TimesheetException(ErrorCode.CONFLICT_ERROR, EMPLOYEE_ALREADY_EXISTS + employee.getEmail());
             }
 
             // Check if employeeCode already exists
             Optional<Employee> existingCode = employeeRepository.findByEmployeeCodeAndIsActiveTrue(employee.getEmployeeCode());
             if (existingCode.isPresent()) {
-                throw new TimesheetException(errorCode.CONFLICT_ERROR, EMPLOYEE_ALREADY_EXISTS + employee.getEmployeeCode());
+                throw new TimesheetException(ErrorCode.CONFLICT_ERROR, EMPLOYEE_ALREADY_EXISTS + employee.getEmployeeCode());
             }
 
             // Save employee in DB first
@@ -126,30 +119,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             emailService.sendEmail(employee.getEmail(), emailSubject, emailBody);
 
             // Audit logging
-            try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                String actor = authentication != null ? authentication.getName() : "unknown";
 
-                Map<String, Object> auditDetails = new HashMap<>();
-                auditDetails.put("createdUserId", userId);
-                auditDetails.put("username", employee.getEmployeeCode());
-                auditDetails.put("email", employee.getEmail());
-                auditDetails.put("firstName", employee.getFirstName());
-                auditDetails.put("lastName", employee.getLastName());
-                auditDetails.put("employeeType", employee.getEmployeeType());
-                auditDetails.put("createdBy", actor);
-
-                AuditEvent event = new AuditEvent(
-                        "create-user-service",
-                        actor,
-                        "CreateUser",
-                        Instant.now(),
-                        auditDetails
-                );
-                auditKafkaProducer.sendAudit(event);
-            } catch (Exception ex) {
-                log.error("Audit Kafka send failed", ex);
-            }
 
             // Return result
             Map<String, String> result = new HashMap<>();
@@ -188,7 +158,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             keycloakAdmin.realms().findAll();
         } catch (Exception e) {
             throw new TimesheetException(
-                    errorCode.KEYCLOAK_CONNECTION_ERROR,
+                    ErrorCode.KEYCLOAK_CONNECTION_ERROR,
                     KEYCLOAK_ADMIN_CONNECTION_FAILED,
                     e
             );
@@ -201,7 +171,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
         for (UserRepresentation user : usersByemployeeCode) {
             if (user.getUsername().equalsIgnoreCase(employeeCode)) {
                 throw new TimesheetException(
-                        errorCode.CONFLICT_ERROR,
+                        ErrorCode.CONFLICT_ERROR,
                         String.format(KEYCLOAK_USER_ALREADY_EXISTS, employeeCode)
                 );
             }
@@ -212,7 +182,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
         for (UserRepresentation user : allUsers) {
             if (user.getEmail() != null && user.getEmail().equalsIgnoreCase(email)) {
                 throw new TimesheetException(
-                        errorCode.CONFLICT_ERROR,
+                        ErrorCode.CONFLICT_ERROR,
                         String.format(KEYCLOAK_USER_ALREADY_EXISTS, email)
                 );
             }
@@ -264,7 +234,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             return location.substring(location.lastIndexOf('/') + 1);
         } catch (Exception e) {
             throw new TimesheetException(
-                    errorCode.KEYCLOAK_RESPONSE_PARSING_ERROR,
+                    ErrorCode.KEYCLOAK_RESPONSE_PARSING_ERROR,
                     USERID_EXTRACTION_FAILED,
                     e
             );
@@ -287,19 +257,19 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
 
             if (message.contains("403")) {
                 log.warn("Forbidden - not allowed to reset password for user {}", userId);
-                throw new TimesheetException(errorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
+                throw new TimesheetException(ErrorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
             } else if (message.contains("404")) {
                 log.warn("User not found in Keycloak for ID {}", userId);
-                throw new TimesheetException(errorCode.NOT_FOUND_ERROR, USER_NOT_FOUND, e);
+                throw new TimesheetException(ErrorCode.NOT_FOUND_ERROR, USER_NOT_FOUND, e);
             } else {
                 log.error("Unexpected Keycloak error while resetting password: {}", message);
-                throw new TimesheetException(errorCode.INTERNAL_SERVER_ERROR, PASSWORD_UPDATE_FAILED + ": " + message, e);
+                throw new TimesheetException(ErrorCode.INTERNAL_SERVER_ERROR, PASSWORD_UPDATE_FAILED + ": " + message, e);
             }
 
         } catch (Exception e) {
             log.error("Error updating user password", e);
             throw new TimesheetException(
-                    errorCode.KEYCLOAK_CONNECTION_ERROR,
+                    ErrorCode.KEYCLOAK_CONNECTION_ERROR,
                     PASSWORD_UPDATE_FAILED + ": " + e.getMessage(),
                     e
             );
@@ -330,7 +300,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             // Step 1: Find user by employeeCode (to get Keycloak ID)
             var user = getUserByemployeeCodekc(employeeCode);
             if (user == null) {
-                throw new TimesheetException(NOT_FOUND_ERROR, errorMessage.USER_NOT_FOUND);
+                throw new TimesheetException(NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND);
             }
 
             // Step 2: Update Keycloak
@@ -365,7 +335,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
         } catch (Exception e) {
             log.error("Error updating user profile (Keycloak or DB)", e);
             throw new TimesheetException(
-                    errorCode.FORBIDDEN_ERROR,
+                    ErrorCode.FORBIDDEN_ERROR,
                     UNAUTHORIZED_ACCESS + e.getMessage(),
                     e
             );
@@ -399,19 +369,19 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             String message = e.getMessage().toLowerCase();
 
             if (message.contains("403")) {
-                throw new TimesheetException(errorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
+                throw new TimesheetException(ErrorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
             } else if (message.contains("404")) {
-                throw new TimesheetException(errorCode.NOT_FOUND_ERROR, USER_NOT_FOUND, e);
+                throw new TimesheetException(ErrorCode.NOT_FOUND_ERROR, USER_NOT_FOUND, e);
             } else {
-                throw new TimesheetException(errorCode.INTERNAL_SERVER_ERROR, USER_UPDATE_FAILED + ": " + message, e);
+                throw new TimesheetException(ErrorCode.INTERNAL_SERVER_ERROR, USER_UPDATE_FAILED + ": " + message, e);
             }
         } catch (Exception e) {
-            throw new TimesheetException(errorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
+            throw new TimesheetException(ErrorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
         }
 
         //Update DB
         Employee employee = employeeRepository.findByKeycloakUserIdAndIsActiveTrue(keycloakUserId)
-                .orElseThrow(() -> new TimesheetException(errorCode.NOT_FOUND_ERROR, errorMessage.USER_NOT_FOUND));
+                .orElseThrow(() -> new TimesheetException(ErrorCode.NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND));
 
         if (dto.getFirstName() != null) employee.setFirstName(dto.getFirstName());
         if (dto.getLastName() != null) employee.setLastName(dto.getLastName());

@@ -2,14 +2,11 @@ package com.example.timesheet.service.Serviceimpl;
 
 import com.example.common.exceptions.TimeSheetException;
 import com.example.common.constants.MessageConstants;
-import com.example.common.constants.errorCode;
-import com.example.common.constants.errorMessage;
+import com.example.common.constants.ErrorCode;
+import com.example.common.constants.ErrorMessage;
 import com.example.timesheet.client.IdentityServiceClient;
 import com.example.timesheet.dto.request.*;
-import com.example.timesheet.dto.response.DailyTimeSheetResponseDto;
-import com.example.timesheet.dto.response.EmployeeWeeklyTimesheetDto;
-import com.example.timesheet.dto.response.ManagerDashboardResponseDto;
-import com.example.timesheet.dto.response.TimesheetSummaryResponseDto;
+import com.example.timesheet.dto.response.*;
 import com.example.timesheet.enums.EntryType;
 import com.example.timesheet.enums.TimeSheetStatus;
 import com.example.timesheet.keys.ProjectEmployeeId;
@@ -20,17 +17,16 @@ import com.example.timesheet.Repository.*;
 import com.example.timesheet.service.TimesheetService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,14 +52,14 @@ public class TimesheetServiceImpl implements TimesheetService{
                 ProjectEmployeeId peid = new ProjectEmployeeId(dto.getProjectCode(), dto.getEmployeeCode());
                 if (!projectEmployeeRepository.existsById(peid)) {
                     throw new TimeSheetException(
-                            errorCode.NOT_FOUND_ERROR,
-                            String.format(errorMessage.ASSIGNMENT_NOT_FOUND, dto.getProjectCode(), dto.getEmployeeCode())
+                            ErrorCode.NOT_FOUND_ERROR,
+                            String.format(ErrorMessage.ASSIGNMENT_NOT_FOUND, dto.getProjectCode(), dto.getEmployeeCode())
                     );
                 }
 
                 project = projectRepository.findById(dto.getProjectCode())
-                        .orElseThrow(() -> new TimeSheetException(errorCode.NOT_FOUND_ERROR,
-                                String.format(errorMessage.PROJECT_NOT_FOUND, dto.getProjectCode())));
+                        .orElseThrow(() -> new TimeSheetException(ErrorCode.NOT_FOUND_ERROR,
+                                String.format(ErrorMessage.PROJECT_NOT_FOUND, dto.getProjectCode())));
             }
 
             Optional<DailyTimeSheet> existing = dailyTimeSheetRepository
@@ -119,13 +115,13 @@ public class TimesheetServiceImpl implements TimesheetService{
                 ProjectEmployeeId peid = new ProjectEmployeeId(dto.getProjectCode(), dto.getEmployeeCode());
                 if (!projectEmployeeRepository.existsById(peid)) {
                     throw new TimeSheetException(
-                            errorCode.NOT_FOUND_ERROR,
-                            String.format(errorMessage.ASSIGNMENT_NOT_FOUND, dto.getProjectCode(), dto.getEmployeeCode())
+                            ErrorCode.NOT_FOUND_ERROR,
+                            String.format(ErrorMessage.ASSIGNMENT_NOT_FOUND, dto.getProjectCode(), dto.getEmployeeCode())
                     );
                 }
                 project = projectRepository.findById(dto.getProjectCode())
-                        .orElseThrow(() -> new TimeSheetException(errorCode.NOT_FOUND_ERROR,
-                                String.format(errorMessage.PROJECT_NOT_FOUND, dto.getProjectCode())));
+                        .orElseThrow(() -> new TimeSheetException(ErrorCode.NOT_FOUND_ERROR,
+                                String.format(ErrorMessage.PROJECT_NOT_FOUND, dto.getProjectCode())));
             }
 
             DailyTimeSheet daily = dailyTimeSheetRepository
@@ -137,8 +133,8 @@ public class TimesheetServiceImpl implements TimesheetService{
                             dto.getEntryType(),
                             dto.getProjectCode()
                     )
-                    .orElseThrow(() -> new TimeSheetException(errorCode.NOT_FOUND_ERROR,
-                            errorMessage.DAILY_TIME_SHEET_NOT_FOUND_FOR_EMPLOYEE_WITHIN_DATES));
+                    .orElseThrow(() -> new TimeSheetException(ErrorCode.NOT_FOUND_ERROR,
+                            ErrorMessage.DAILY_TIME_SHEET_NOT_FOUND_FOR_EMPLOYEE_WITHIN_DATES));
 
             daily.setHoursSpent(dto.getHoursSpent());
             daily.setDescription(dto.getDescription());
@@ -166,15 +162,15 @@ public class TimesheetServiceImpl implements TimesheetService{
 
         TimesheetSummary summary = timesheetSummaryRepository.findById(id)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.TIMESHEET_SUMMARY_NOT_FOUND,
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.TIMESHEET_SUMMARY_NOT_FOUND,
                                 dto.getEmployeeCode(), dto.getWeekStart()))
                 );
 
         if (summary.getStatus() != TimeSheetStatus.DRAFT) {
             throw new TimeSheetException(
-                    errorCode.NOT_FOUND_ERROR,
-                    errorMessage.STATUS_NOT_FOUND);
+                    ErrorCode.NOT_FOUND_ERROR,
+                    ErrorMessage.STATUS_NOT_FOUND);
         }
         summary.setStatus(TimeSheetStatus.SUBMITTED);
         summary.setSubmittedDate(new Timestamp(System.currentTimeMillis()));
@@ -208,8 +204,8 @@ public class TimesheetServiceImpl implements TimesheetService{
 
         TimesheetSummary summary = timesheetSummaryRepository.findById(id)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.TIMESHEET_SUMMARY_NOT_FOUND,
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.TIMESHEET_SUMMARY_NOT_FOUND,
                                 dto.getEmployeeCode(), dto.getWeekStart()))
                 );
 
@@ -241,24 +237,35 @@ public class TimesheetServiceImpl implements TimesheetService{
                             sheet.setModifiedByManager(true);
                             dailyTimeSheetRepository.save(sheet);
 
-                            System.out.printf("Updated sheet on %s [%s]: hours changed to %.2f%n",
-                                    sheet.getWorkDate(), entryType, requestDto.getHoursSpent());
-                        } else {
-                            System.out.printf("No change on %s [%s], hours unchanged (%.2f)%n",
-                                    sheet.getWorkDate(), entryType, sheet.getHoursSpent());
                         }
                         break;
                     }
                 }
 
                 if (!matched) {
-                    // If no existing sheet matched, you can decide to either
-                    // ignore or throw an error or create a new record.
-                    System.out.printf("No match found for %s [%s] (project: %s)%n",
-                            requestDto.getWorkDate(), entryType, requestDto.getProjectCode());
+                    DailyTimeSheet newSheet = new DailyTimeSheet();
+                    newSheet.setEmployeeCode(dto.getEmployeeCode());
+                    newSheet.setWorkDate(requestDto.getWorkDate());
+                    newSheet.setEntryType(requestDto.getEntryType());
+                    if(requestDto.getEntryType()==EntryType.PROJECT) {
+                        newSheet.setProjectCode(requestDto.getProjectCode());
+                    }
+                    newSheet.setTimesheetMonth(requestDto.getTimesheetMonth());
+                    newSheet.setTimesheetYear(requestDto.getTimesheetYear());
+                    newSheet.setDescription(requestDto.getDescription());
+                    newSheet.setHoursSpent(requestDto.getHoursSpent());
+                    newSheet.setModifiedByManager(true);
+                    dailyTimeSheetRepository.save(newSheet);
+
+
                 }
             }
         }
+        // ✅ Recalculate totalHours from request DTOs
+        double totalHours = dto.getDailyTimeSheetRequests().stream()
+                .mapToDouble(req -> req.getHoursSpent() != null ? req.getHoursSpent() : 0.0)
+                .sum();
+        summary.setTotalHours(totalHours);
 
         summary.setStatus(dto.isApprove() ? TimeSheetStatus.APPROVED : TimeSheetStatus.CORRECTION_REQUIRED);
         summary.setManagerComment(dto.getComment());
@@ -303,8 +310,8 @@ public class TimesheetServiceImpl implements TimesheetService{
         TimesheetSummary summary = timesheetSummaryRepository
                 .findByIdEmployeeCodeAndIdWeekStart(employeeCode, weekStart)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.TIMESHEET_SUMMARY_NOT_FOUND, employeeCode, weekStart)
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.TIMESHEET_SUMMARY_NOT_FOUND, employeeCode, weekStart)
                 ));
 
         return dailyTimeSheetRepository
@@ -397,7 +404,7 @@ public class TimesheetServiceImpl implements TimesheetService{
                 .getEmployeesUnderManager(approvalRequest.getManagerCode());
 
         if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new TimeSheetException(errorCode.FAILED_TO_FETCH_DETAILS, errorMessage.USERID_EXTRACTION_FAILED);
+            throw new TimeSheetException(ErrorCode.FAILED_TO_FETCH_DETAILS, ErrorMessage.USERID_EXTRACTION_FAILED);
         } else {
             response.getBody();
         }
@@ -480,14 +487,47 @@ public class TimesheetServiceImpl implements TimesheetService{
         TimesheetSummary summary = timesheetSummaryRepository
                 .findByIdEmployeeCodeAndIdWeekStart(employeeCode, weekStart)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.TIMESHEET_SUMMARY_NOT_FOUND, employeeCode, weekStart)
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.TIMESHEET_SUMMARY_NOT_FOUND, employeeCode, weekStart)
                 ));
         return summary.getStatus();
     }
-   /* private LocalDate toLocalDate(Date date) {
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    }*/
+
+    @Override
+    public List<TimesheetMatrixRowResponseDto> getEmployeeTimesheetMatrix(String employeeCode, Integer year, Integer month) {
+        List<DailyTimeSheet> entries = dailyTimeSheetRepository
+                .findByEmployeeCodeAndTimesheetYearAndTimesheetMonth(employeeCode, year, month);
+
+        Map<String, Map<String, Double>> matrix = new LinkedHashMap<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        for (DailyTimeSheet entry : entries) {
+            LocalDate workDate = entry.getWorkDate().toLocalDate();
+
+            LocalDate startOfWeek = workDate.with(DayOfWeek.MONDAY);
+            LocalDate endOfWeek = workDate.with(DayOfWeek.SUNDAY);
+            String weekLabel = formatter.format(startOfWeek) + " - " + formatter.format(endOfWeek);
+
+            String rowKey = entry.getEntryType() == EntryType.PROJECT
+                    ? getProjectName(entry.getProjectCode())
+                    : entry.getEntryType().name();
+
+            matrix.computeIfAbsent(rowKey, k -> new LinkedHashMap<>());
+            Map<String, Double> weekMap = matrix.get(rowKey);
+            weekMap.put(weekLabel, weekMap.getOrDefault(weekLabel, 0.0) + entry.getHoursSpent());
+        }
+
+        return matrix.entrySet().stream()
+                .map(entry -> new TimesheetMatrixRowResponseDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+    public String getProjectName(String projectCode) {
+        Optional<Project> project = projectRepository.findById(projectCode);
+        return project.map(Project::getTitle) // assuming getName() returns the project name
+                .orElse("Unknown Project"); // fallback if project not found
+    }
+
 
 
     private LocalDate toLocalDate(Date date) {

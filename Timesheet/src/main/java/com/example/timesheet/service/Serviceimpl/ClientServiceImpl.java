@@ -2,8 +2,8 @@ package com.example.timesheet.service.Serviceimpl;
 
 
 import com.example.common.constants.MessageConstants;
-import com.example.common.constants.errorCode;
-import com.example.common.constants.errorMessage;
+import com.example.common.constants.ErrorCode;
+import com.example.common.constants.ErrorMessage;
 import com.example.common.dto.PageRequestDto;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
@@ -12,7 +12,6 @@ import com.example.common.utils.SortUtil;
 import com.example.timesheet.Repository.ClientsRepository;
 import com.example.timesheet.dto.request.ClientDto;
 import com.example.timesheet.dto.response.ClientResponseDto;
-import com.example.timesheet.enums.Status;
 import com.example.timesheet.models.Clients;
 import com.example.timesheet.service.ClientService;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +56,8 @@ public class ClientServiceImpl implements ClientService {
 
         if (clientPage.isEmpty()) {
             throw new TimeSheetException(
-                    errorCode.NOT_FOUND_ERROR,
-                    errorMessage.NO_ACTIVE_CLIENTS_FOUND
+                    ErrorCode.NOT_FOUND_ERROR,
+                    ErrorMessage.NO_ACTIVE_CLIENTS_FOUND
             );
         }
 
@@ -87,8 +86,8 @@ public class ClientServiceImpl implements ClientService {
     public Optional<ClientResponseDto> getClientById(Long id) {
         Clients client = clientsRepository.findByIdAndIsActiveTrue(id)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.CLIENT_NOT_FOUND, id)));
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.CLIENT_NOT_FOUND, id)));
 
         ClientResponseDto dto = new ClientResponseDto(
                 client.getId(),
@@ -107,8 +106,8 @@ public class ClientServiceImpl implements ClientService {
     public String updateClient(Long id, ClientDto dto) throws TimeSheetException {
         Clients client = clientsRepository.findByIdAndIsActiveTrue(id)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.CLIENT_NOT_FOUND, id)));
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.CLIENT_NOT_FOUND, id)));
 
         client.setName(dto.getName());
         client.setContactPerson(dto.getContactPerson());
@@ -122,8 +121,8 @@ public class ClientServiceImpl implements ClientService {
     public String updateClientStatus(Long id, boolean active) throws TimeSheetException {
         Clients client = clientsRepository.findById(id)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.CLIENT_NOT_FOUND, id)));
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.CLIENT_NOT_FOUND, id)));
 
 
         client.setActive(active);

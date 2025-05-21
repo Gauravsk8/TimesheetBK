@@ -2,8 +2,8 @@ package com.example.timesheet.service.Serviceimpl;
 
 
 import com.example.common.constants.MessageConstants;
-import com.example.common.constants.errorCode;
-import com.example.common.constants.errorMessage;
+import com.example.common.constants.ErrorCode;
+import com.example.common.constants.ErrorMessage;
 import com.example.common.dto.PageRequestDto;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
@@ -64,8 +64,8 @@ public class CostCenterServiceImpl implements CostCenterService {
 
         if (costCenterPage.isEmpty()) {
             throw new TimeSheetException(
-                    errorCode.NOT_FOUND_ERROR,
-                    errorMessage.NO_ACTIVE_COST_CENTERS_FOUND
+                    ErrorCode.NOT_FOUND_ERROR,
+                    ErrorMessage.NO_ACTIVE_COST_CENTERS_FOUND
             );
         }
 
@@ -85,8 +85,8 @@ public class CostCenterServiceImpl implements CostCenterService {
     public CostCenterResponseDto getCostCenterByCode(String costCenterCode) throws TimeSheetException {
         CostCenter costCenter = costCenterRepository.findByCostCenterCodeAndIsActiveTrue(costCenterCode)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
                 ));
         return mapToCostCenterResponseDto(costCenter);
     }
@@ -95,8 +95,8 @@ public class CostCenterServiceImpl implements CostCenterService {
     public String updateCostCenter(String costCenterCode, CostCenterDto dto) throws TimeSheetException {
         CostCenter costCenter = costCenterRepository.findByCostCenterCodeAndIsActiveTrue(costCenterCode)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
                 ));
 
         costCenter.setName(dto.getName());
@@ -111,13 +111,13 @@ public class CostCenterServiceImpl implements CostCenterService {
     public String updateCostCenterStatus(String costCenterCode, boolean active) throws TimeSheetException {
         CostCenter costCenter = costCenterRepository.findById(costCenterCode)
                 .orElseThrow(() -> new TimeSheetException(
-                        errorCode.NOT_FOUND_ERROR,
-                        String.format(errorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
+                        ErrorCode.NOT_FOUND_ERROR,
+                        String.format(ErrorMessage.COST_CENTER_NOT_FOUND, costCenterCode)
                 ));
 
         costCenter.setActive(active);
         CostCenter saveCostCenter = costCenterRepository.save(costCenter);
-        return String.format(MessageConstants.COSTCENTER_STATUS_UPDATED, saveCostCenter.getCostCenterCode());
+        return String.format(MessageConstants.COST_CENTER_STATUS_UPDATED, saveCostCenter.getCostCenterCode());
     }
 
     @Override

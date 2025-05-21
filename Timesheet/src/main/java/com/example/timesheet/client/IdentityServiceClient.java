@@ -25,7 +25,7 @@ public interface IdentityServiceClient {
     ResponseEntity<Boolean> hasManagerRole(@PathVariable("employeeCode") String employeeCode, @RequestParam String roleName);
 
     @GetMapping("/identity/users")
-    ResponseEntity<List<Map<String, String>>> getAllUsers();
+    ResponseEntity<List<Map<String, String>>> getAllUsersList();
 
     @GetMapping("/identity/users/{employee_code}/manager")
     public ResponseEntity<String> getManagerNameByEmployeeCode(

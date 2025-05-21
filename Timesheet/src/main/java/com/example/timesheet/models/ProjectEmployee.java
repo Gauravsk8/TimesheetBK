@@ -1,5 +1,6 @@
 package com.example.timesheet.models;
 
+import com.example.common.audit.Audit;
 import com.example.timesheet.enums.Status;
 import com.example.timesheet.keys.ProjectEmployeeId;
 import jakarta.persistence.*;
@@ -15,7 +16,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class ProjectEmployee {
+public class ProjectEmployee extends Audit {
 
     @Builder.Default
     @EmbeddedId

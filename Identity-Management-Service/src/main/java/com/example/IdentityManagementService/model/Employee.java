@@ -1,20 +1,22 @@
 package com.example.IdentityManagementService.model;
 
+import com.example.common.audit.Audit;
 import com.example.common.enums.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 @Entity
 @Table(name = "employee")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Employee {
+@Getter
+@Setter
+public class Employee extends Audit {
 
     @Id
     @Column(name = "employee_code", nullable = false)
@@ -29,6 +31,7 @@ public class Employee {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @Email(message = "Email should be valid")
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.example.common.constants.errorCode.*;
-import static com.example.common.constants.errorMessage.*;
+import static com.example.common.constants.ErrorCode.*;
+import static com.example.common.constants.ErrorMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +36,8 @@ public class ReportingManagerServiceImpl implements ReportingManagerService {
         Employee savedEmployee = employeeRepository.save(employee);
 
         return savedEmployee.getEmployeeCode() != null
-                ? ReportingManagerAssigned
-                : ReportingManagerAssignedFAILED;
+                ? REPORTING_MANAGER_ASSIGNED
+                : REPORTING_MANAGER_ASSIGN_FAILED;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.example.timesheet.config;
 
-import com.example.common.constants.errorCode;
+import com.example.common.constants.ErrorCode;
 import com.example.common.dto.ErrorResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +37,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
         } catch (IOException e) {
             log.error("Failed to process Feign error response", e);
             return new TimeSheetException(
-                    errorCode.INTERNAL_SERVER_ERROR,
+                    ErrorCode.INTERNAL_SERVER_ERROR,
                     "Error communicating with Identity Service"
             );
         }

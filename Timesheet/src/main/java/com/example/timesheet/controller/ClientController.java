@@ -7,6 +7,7 @@ import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.dto.request.ClientDto;
 import com.example.timesheet.dto.response.ClientResponseDto;
 import com.example.timesheet.service.ClientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class ClientController {
 
     @PostMapping("/clients")
     @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:add")
-    public ResponseEntity<String> createClient(@RequestBody ClientDto clientDto) {
+    public ResponseEntity<String> createClient(@Valid @RequestBody ClientDto clientDto) {
         String response = clientService.createClient(clientDto);
         return ResponseEntity.ok(response);
     }
@@ -44,7 +45,7 @@ public class ClientController {
 
     @PutMapping("/clients/{id}")
     @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:update")
-    public ResponseEntity<String> updateClient(@PathVariable Long id, @RequestBody ClientDto clientDto) {
+    public ResponseEntity<String> updateClient(@PathVariable Long id,@Valid @RequestBody ClientDto clientDto) {
         try {
             String updatedClient = clientService.updateClient(id, clientDto);
             return ResponseEntity.ok(updatedClient);

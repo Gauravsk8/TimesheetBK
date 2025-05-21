@@ -5,10 +5,7 @@ import com.example.timesheet.dto.request.DailyTimesheetDto;
 import com.example.timesheet.dto.request.DailyTimesheetRequestDto;
 import com.example.timesheet.dto.request.ManagerApprovalRequestDto;
 import com.example.timesheet.dto.request.TimesheetSummaryDto;
-import com.example.timesheet.dto.response.DailyTimeSheetResponseDto;
-import com.example.timesheet.dto.response.EmployeeWeeklyTimesheetDto;
-import com.example.timesheet.dto.response.ManagerDashboardResponseDto;
-import com.example.timesheet.dto.response.TimesheetSummaryResponseDto;
+import com.example.timesheet.dto.response.*;
 import com.example.timesheet.enums.TimeSheetStatus;
 
 import java.sql.Date;
@@ -25,7 +22,7 @@ public interface TimesheetService {
     List<EmployeeWeeklyTimesheetDto> getWeeklyTimesheetsForProject(String projectCode, Integer year, Integer month);
     void saveTimesheetSummary(TimesheetSummaryDto dto);
     String approveAllUnderManagerForWeek(ManagerApprovalRequestDto approvalRequest) throws TimeSheetException;
-
+    List<TimesheetMatrixRowResponseDto> getEmployeeTimesheetMatrix(String employeeCode, Integer year, Integer month);
     List<ManagerDashboardResponseDto> getEmployeesTimesheetUnderManager(String managerCode, int year, int month) throws TimeSheetException;
 
     TimeSheetStatus getWeeklyStatus(String employeeCode, Date weekStart);

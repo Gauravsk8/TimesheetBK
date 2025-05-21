@@ -1,7 +1,7 @@
 package com.example.common.security;
 
-import com.example.common.constants.errorCode;
-import com.example.common.constants.errorMessage;
+import com.example.common.constants.ErrorCode;
+import com.example.common.constants.ErrorMessage;
 import com.example.common.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +24,15 @@ public class CustomEntryPoint implements AuthenticationEntryPoint {
         String message;
 
         if (authHeader == null || authHeader.isBlank()) {
-            message = errorMessage.MISSING_BEARER_TOKEN;
+            message = ErrorMessage.MISSING_BEARER_TOKEN;
         } else if (!authHeader.startsWith("Bearer ") || authHeader.length() <= 7) {
-            message = errorMessage.MALFORMED_BEARER_TOKEN; // <-- Add this constant
+            message = ErrorMessage.MALFORMED_BEARER_TOKEN; // <-- Add this constant
         } else {
-            message = errorMessage.MALFORMED_BEARER_TOKEN;
+            message = ErrorMessage.MALFORMED_BEARER_TOKEN;
         }
 
         ErrorResponse error = ErrorResponse.builder()
-                .error_code(errorCode.UNAUTHORIZED_ERROR)
+                .error_code(ErrorCode.UNAUTHORIZED_ERROR)
                 .message(message)
                 .property("")
                 .build();

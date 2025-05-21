@@ -1,5 +1,6 @@
 package com.example.timesheet.models;
 
+import com.example.common.audit.Audit;
 import com.example.timesheet.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Clients {
+public class Clients extends Audit {
 
     @Id
     @Column(name = "client_id")

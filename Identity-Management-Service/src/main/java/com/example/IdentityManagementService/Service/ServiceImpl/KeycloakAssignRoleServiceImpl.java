@@ -1,11 +1,10 @@
 package com.example.IdentityManagementService.Service.ServiceImpl;
 
+import com.example.IdentityManagementService.Repository.EmployeeRepository;
 import com.example.IdentityManagementService.exceptions.TimesheetException;
 import com.example.IdentityManagementService.Service.KeycloakAssignRoleService;
-import com.example.common.audit.AuditEvent;
-import com.example.common.audit.AuditKafkaProducer;
-import com.example.common.constants.errorCode;
-import com.example.common.constants.errorMessage;
+import com.example.IdentityManagementService.model.Employee;
+import com.example.common.constants.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
@@ -14,17 +13,15 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.example.common.constants.errorCode.*;
-import static com.example.common.constants.errorCode.INTERNAL_SERVER_ERROR;
-import static com.example.common.constants.errorMessage.*;
+import static com.example.common.constants.ErrorCode.*;
+import static com.example.common.constants.ErrorCode.INTERNAL_SERVER_ERROR;
+import static com.example.common.constants.ErrorMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +29,7 @@ import static com.example.common.constants.errorMessage.*;
 public class KeycloakAssignRoleServiceImpl implements KeycloakAssignRoleService {
 
     private final Keycloak keycloakAdmin;
-    private final AuditKafkaProducer auditKafkaProducer;
+    private final EmployeeRepository employeeRepository;
 
     @Value("${keycloak.realm}")
     private String realm;
@@ -78,28 +75,7 @@ public class KeycloakAssignRoleServiceImpl implements KeycloakAssignRoleService 
         } catch (Exception e) {
             throw new TimesheetException(NOT_FOUND_ERROR, ROLE_ASSIGNMENT_FAILED + employeeCode);
         }
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String actor = authentication != null ? authentication.getName() : "unknown";
 
-            Map<String, Object> details = new HashMap<>();
-            details.put("assignedRoles", roles);
-            details.put("userId", userId);
-            details.put("employeeCode", employeeCode);
-            details.put("assignedBy", actor);
-
-            AuditEvent event = new AuditEvent(
-                    "Role-Assign-service",
-                    actor,
-                    "AssignRealmRoles",
-                    Instant.now(),
-                    details
-            );
-            auditKafkaProducer.sendAudit(event);
-
-        } catch (Exception ex) {
-            log.error("Audit Kafka send failed", ex);
-        }
     }
 
     public List<String> getAssignedRealmRoles(String employeeCode) {
@@ -169,51 +145,44 @@ public class KeycloakAssignRoleServiceImpl implements KeycloakAssignRoleService 
             userResource.roles().realmLevel().remove(rolesToUnassign);
             log.info("Unassigned roles {} from user {}", roles, employeeCode);
         } catch (Exception e) {
-            throw new TimesheetException(errorCode.NOT_FOUND_ERROR, ROLE_NOT_FOUND + employeeCode);
+            throw new TimesheetException(ErrorCode.NOT_FOUND_ERROR, ROLE_NOT_FOUND + employeeCode);
         }
 
-        // Audit log
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String actor = authentication != null ? authentication.getName() : "unknown";
 
-            Map<String, Object> details = new HashMap<>();
-            details.put("unassignedRoles", roles);
-            details.put("userId", userId);
-            details.put("employeeCode", employeeCode);
-            details.put("unassignedBy", actor);
-
-            AuditEvent event = new AuditEvent(
-                    "Role-Unassign-service",
-                    actor,
-                    "UnassignRealmRoles",
-                    Instant.now(),
-                    details
-            );
-            auditKafkaProducer.sendAudit(event);
-
-        } catch (Exception ex) {
-            log.error("Audit Kafka send failed", ex);
-        }
     }
 
 
     public Map<String, String> getUsersByRoles(List<String> roleNames) {
+
         try {
             RealmResource realmResource = keycloakAdmin.realm(realm);
             List<UserRepresentation> allUsers = realmResource.users().list();
+
+
+            Map<String, Employee> activeEmployees =
+                    employeeRepository.findAllByIsActiveTrue()
+                            .stream()
+                            .filter(e -> e.getKeycloakUserId() != null)
+                            .collect(Collectors.toMap(Employee::getKeycloakUserId,
+                                    Function.identity()));
+
             Map<String, String> matchedUsers = new HashMap<>();
 
             for (UserRepresentation user : allUsers) {
-                List<String> userRoleNames = realmResource
-                        .users()
+
+                // Skip if the user is not active in the DB
+                if (!activeEmployees.containsKey(user.getId())) {
+                    continue;
+                }
+
+                List<String> userRoleNames = realmResource.users()
                         .get(user.getId())
                         .roles()
                         .realmLevel()
                         .listEffective()
                         .stream()
                         .map(RoleRepresentation::getName)
-                        .collect(Collectors.toList());
+                        .toList();
 
                 boolean hasAllRoles = roleNames.stream()
                         .allMatch(userRoleNames::contains);
@@ -224,16 +193,17 @@ public class KeycloakAssignRoleServiceImpl implements KeycloakAssignRoleService 
             }
 
             if (matchedUsers.isEmpty()) {
-                throw new TimesheetException(NOT_FOUND_ERROR, USER_NOT_FOUND + " With role(s): " + roleNames);
+                throw new TimesheetException(NOT_FOUND_ERROR,
+                        USER_NOT_FOUND + " with role(s): " + roleNames);
             }
-
             return matchedUsers;
 
         } catch (TimesheetException ex) {
-            throw ex;
+            throw ex;               // preserve the original code-path
         } catch (Exception ex) {
             log.error("Error while fetching users by roles", ex);
-            throw new TimesheetException(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR);
+            throw new TimesheetException(INTERNAL_SERVER_ERROR,
+                    INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -276,30 +246,7 @@ public class KeycloakAssignRoleServiceImpl implements KeycloakAssignRoleService 
             throw new TimesheetException(NOT_FOUND_ERROR, "Role update failed for user " + employeeCode);
         }
 
-        //send Audit Kafka
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String actor = authentication != null ? authentication.getName() : "unknown";
 
-            Map<String, Object> details = new HashMap<>();
-            details.put("assignedRoles", rolesToAssign);
-            details.put("removedRoles", rolesToRemove);
-            details.put("userId", userId);
-            details.put("employeeCode", employeeCode);
-            details.put("updatedBy", actor);
-
-            AuditEvent event = new AuditEvent(
-                    "Role-Update-service",
-                    actor,
-                    "UpdateUserRoles",
-                    Instant.now(),
-                    details
-            );
-            auditKafkaProducer.sendAudit(event);
-
-        } catch (Exception ex) {
-            log.error("Audit Kafka send failed", ex);
-        }
     }
 
 
