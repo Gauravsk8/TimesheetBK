@@ -3,5 +3,5 @@ postgres-data
 .idea/
 app
 timesheet-reports/
-
+logs/
 

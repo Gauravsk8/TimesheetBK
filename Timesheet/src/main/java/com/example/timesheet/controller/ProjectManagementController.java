@@ -92,7 +92,7 @@ public class ProjectManagementController {
         return ResponseEntity.ok(projectManagementService.getEmployeesByProject(projectCode));
     }
 
-  /*  @DeleteMapping("/project/{projectCode}/employee/{employeeCode}")
+  /*@DeleteMapping("/project/{projectCode}/employee/{employeeCode}")
     public ResponseEntity<String> removeEmployeeFromProject(
             @PathVariable String projectCode,
             @PathVariable String employeeCode) {

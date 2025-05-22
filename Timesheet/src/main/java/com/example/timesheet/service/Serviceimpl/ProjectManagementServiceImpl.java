@@ -93,6 +93,11 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         Specification<Project> spec = new FilterSpecificationBuilder<Project>()
                 .build(pageRequestDto.getFilter());
 
+        Specification<Project> isActiveSpec = (root, query, cb) ->
+                cb.isTrue(root.get("isActive"));
+
+        Specification<Project> finalSpec = Specification.where(isActiveSpec).and(spec);
+
         // Fetch paginated + filtered result from DB
         Page<Project> projectPage = projectRepository.findAll(spec, pageable);
 

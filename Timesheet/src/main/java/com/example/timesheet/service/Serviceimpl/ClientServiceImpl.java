@@ -52,6 +52,11 @@ public class ClientServiceImpl implements ClientService {
         Specification<Clients> spec = new FilterSpecificationBuilder<Clients>()
                 .build(pageRequestDto.getFilter());
 
+        Specification<Clients> isActiveSpec = (root, query, cb) ->
+                cb.isTrue(root.get("isActive"));
+
+        Specification<Clients> finalSpec = Specification.where(isActiveSpec).and(spec);
+
         Page<Clients> clientPage = clientsRepository.findAll(spec, pageable);
 
         if (clientPage.isEmpty()) {

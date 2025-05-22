@@ -4,6 +4,7 @@ import com.example.IdentityManagementService.Repository.EmployeeRepository;
 import com.example.IdentityManagementService.Service.ReportingManagerService;
 import com.example.IdentityManagementService.exceptions.TimesheetException;
 import com.example.IdentityManagementService.model.Employee;
+import com.example.common.constants.MessageConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class ReportingManagerServiceImpl implements ReportingManagerService {
         String managerCode = employee.getManagerCode();
 
         if (managerCode == null || managerCode.isEmpty()) {
-            throw new TimesheetException(NOT_FOUND_ERROR, RM_NOT_ASSIGNED + employeeCode);
+            return MessageConstants.MANAGER_NOT_ASSIGNED;
         }
 
         Employee manager = employeeRepository.findByEmployeeCodeAndIsActiveTrue(managerCode)

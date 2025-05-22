@@ -21,6 +21,7 @@ public final class MessageConstants {
     public static final String EMPLOYEE_ALREADY_ASSIGNED = "No new employees assigned (all were already assigned)";
     public static final String EMPLOYEE_ASSIGNED = " employee(s) assigned successfully.";
     public static final String EMPLOYEE_UPDATED_SUCCESSFULLY = "Employee Updated Successfully";
+    public static final String MANAGER_NOT_ASSIGNED = "Manager Not Assigned";
 
     // === Role Messages ===
     public static final String ROLES_UPDATED_SUCCESSFULLY = "Roles Updated successfully";

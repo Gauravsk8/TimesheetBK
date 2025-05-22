@@ -15,6 +15,7 @@ import com.example.timesheet.client.IdentityServiceClient;
 import com.example.timesheet.dto.request.CostCenterDto;
 import com.example.timesheet.dto.response.CostCenterResponseDto;
 import com.example.timesheet.dto.response.ProjectResponseDto;
+import com.example.timesheet.models.Clients;
 import com.example.timesheet.models.CostCenter;
 import com.example.timesheet.models.Project;
 import com.example.timesheet.service.CostCenterService;
@@ -59,6 +60,11 @@ public class CostCenterServiceImpl implements CostCenterService {
 
         Specification<CostCenter> spec = new FilterSpecificationBuilder<CostCenter>()
                 .build(pageRequestDto.getFilter());
+
+        Specification<CostCenter> isActiveSpec = (root, query, cb) ->
+                cb.isTrue(root.get("isActive"));
+
+        Specification<CostCenter> finalSpec = Specification.where(isActiveSpec).and(spec);
 
         Page<CostCenter> costCenterPage = costCenterRepository.findAll(spec, pageable);
 

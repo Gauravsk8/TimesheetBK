@@ -17,7 +17,8 @@ public class TimesheetReminder {
     private final ReminderEmailService emailService;
 
     // Runs every Friday at 10:00 AM
-    @Scheduled(cron = "0 0 10 ? * FRI")
+
+    @Scheduled(cron = "0 45 19 ? * WED")
     public void sendWeeklyTimesheetReminder() {
         try {
             System.out.println("Running weekly timesheet reminder job...");

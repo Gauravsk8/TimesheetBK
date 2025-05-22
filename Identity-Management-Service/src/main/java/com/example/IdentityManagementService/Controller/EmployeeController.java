@@ -78,9 +78,9 @@ public class EmployeeController {
     @GetMapping("/users/{employee_code}/manager")
     @RequiresKeycloakAuthorization(resource = "tms:com", scope = "tms:com:get")
     public ResponseEntity<String> getManagerNameByEmployeeCode(
-            @PathVariable String employeeCode
+            @PathVariable String employee_code
     ) {
-        String managerName = employeeRmService.getManagerNameByEmployeeCode(employeeCode);
+        String managerName = employeeRmService.getManagerNameByEmployeeCode(employee_code);
         return ResponseEntity.ok(managerName);
     }
 
