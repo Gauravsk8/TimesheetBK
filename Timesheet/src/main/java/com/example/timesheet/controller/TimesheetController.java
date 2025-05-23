@@ -89,7 +89,7 @@ public class TimesheetController {
 
     //Employee Dashboard
     @GetMapping("/employee-dashboard/{employeeCode}")
-    @RequiresKeycloakAuthorization(resource = "tms:rmemp", scope = "tms:timesheet:get")
+    @RequiresKeycloakAuthorization(resource = "tms:employee", scope = "tms:dashboard:get")
     public ResponseEntity<EmployeeDashboardDto> getEmployeeDashboard(
             @PathVariable String employeeCode,
             @RequestParam int year,
@@ -98,6 +98,7 @@ public class TimesheetController {
     }
 
     @GetMapping("/project-manager-dashboard/{projectManagerCode}")
+    @RequiresKeycloakAuthorization(resource = "tms:pm", scope = "tms:dashboard:get")
     public ProjectManagerDashboardDTO getDashboard(@PathVariable String projectManagerCode) {
         return timesheetService.getPmDashboard(projectManagerCode);
     }

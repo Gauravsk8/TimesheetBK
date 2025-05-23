@@ -17,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.*;
@@ -32,83 +34,78 @@ public class TimesheetReportServiceImpl implements TimesheetReportService {
     private final IdentityServiceClient identityServiceClient;
 
     @Override
-    public ResponseEntity<String> generateReport(Integer year, Integer month, String projectCode, Date startDate, Date endDate) {
-        try {
-            String label;
-            List<DailyTimeSheet> timesheetEntries;
+    public ResponseEntity<String> generateReport(Integer year, Integer month, String projectCode, LocalDate startDate, LocalDate endDate) {
+        if (startDate != null && endDate != null) {
+            Date start = Date.valueOf(startDate);
+            Date end = Date.valueOf(endDate);
 
-            if (startDate != null && endDate != null) {
-                // Report by date range
-                label = new SimpleDateFormat("dd-MM-yyyy").format(startDate) + "_to_" +
-                        new SimpleDateFormat("dd-MM-yyyy").format(endDate);
-                timesheetEntries = (projectCode != null)
-                        ? dailyTimeSheetRepository.findByWorkDateBetweenAndProjectCode(startDate, endDate, projectCode)
-                        : dailyTimeSheetRepository.findByWorkDateBetween(startDate, endDate);
-            } else if (year != null && month != null) {
-                // Delegate to monthly logic
-                return generateReport(year, month, projectCode);
-            } else {
-                return ResponseEntity.badRequest().body("Provide either (year & month) or (startDate & endDate)");
-            }
+            try {
+                String label = new SimpleDateFormat("dd-MM-yyyy").format(start) + "_to_" +
+                        new SimpleDateFormat("dd-MM-yyyy").format(end);
 
-            if (timesheetEntries.isEmpty()) {
-                return ResponseEntity.ok("No data found for provided criteria.");
-            }
+                List<DailyTimeSheet> timesheetEntries = (projectCode != null)
+                        ? dailyTimeSheetRepository.findByWorkDateBetweenAndProjectCode(start, end, projectCode)
+                        : dailyTimeSheetRepository.findByWorkDateBetween(start, end);
 
-            // Prepare report
-            String baseDir = "timesheet-reports";
+                if (timesheetEntries.isEmpty()) {
+                    return ResponseEntity.ok("No data found for provided criteria.");
+                }
 
-            // Grouping: project → employee → entries
-            Map<String, Map<String, List<DailyTimeSheet>>> projectEmpMap = timesheetEntries.stream()
-                    .filter(e -> e.getProjectCode() != null)
-                    .collect(Collectors.groupingBy(
-                            DailyTimeSheet::getProjectCode,
-                            Collectors.groupingBy(DailyTimeSheet::getEmployeeCode)
-                    ));
+                String baseDir = "timesheet-reports";
 
-            // Get LEAVE/HOLIDAY entries for those employees
-            Set<String> employeeCodes = timesheetEntries.stream()
-                    .map(DailyTimeSheet::getEmployeeCode)
-                    .collect(Collectors.toSet());
+                Map<String, Map<String, List<DailyTimeSheet>>> projectEmpMap = timesheetEntries.stream()
+                        .filter(e -> e.getProjectCode() != null)
+                        .collect(Collectors.groupingBy(
+                                DailyTimeSheet::getProjectCode,
+                                Collectors.groupingBy(DailyTimeSheet::getEmployeeCode)
+                        ));
 
-            List<EntryType> leaveTypes = List.of(EntryType.LEAVE, EntryType.HOLIDAY);
-            List<DailyTimeSheet> leaveEntries = dailyTimeSheetRepository
-                    .findByWorkDateBetweenAndEmployeeCodeInAndEntryTypeIn(startDate, endDate, new ArrayList<>(employeeCodes), leaveTypes);
+                Set<String> employeeCodes = timesheetEntries.stream()
+                        .map(DailyTimeSheet::getEmployeeCode)
+                        .collect(Collectors.toSet());
 
-            Map<String, List<DailyTimeSheet>> leaveByEmp = leaveEntries.stream()
-                    .collect(Collectors.groupingBy(DailyTimeSheet::getEmployeeCode));
+                List<EntryType> leaveTypes = List.of(EntryType.LEAVE, EntryType.HOLIDAY);
+                List<DailyTimeSheet> leaveEntries = dailyTimeSheetRepository
+                        .findByWorkDateBetweenAndEmployeeCodeInAndEntryTypeIn(start, end, new ArrayList<>(employeeCodes), leaveTypes);
 
-            // Merge leave entries into map
-            for (Map.Entry<String, Map<String, List<DailyTimeSheet>>> projEntry : projectEmpMap.entrySet()) {
-                for (Map.Entry<String, List<DailyTimeSheet>> empEntry : projEntry.getValue().entrySet()) {
-                    List<DailyTimeSheet> leaves = leaveByEmp.get(empEntry.getKey());
-                    if (leaves != null) {
-                        empEntry.getValue().addAll(leaves);
-                        empEntry.getValue().sort(Comparator.comparing(DailyTimeSheet::getWorkDate));
+                Map<String, List<DailyTimeSheet>> leaveByEmp = leaveEntries.stream()
+                        .collect(Collectors.groupingBy(DailyTimeSheet::getEmployeeCode));
+
+                for (Map.Entry<String, Map<String, List<DailyTimeSheet>>> projEntry : projectEmpMap.entrySet()) {
+                    for (Map.Entry<String, List<DailyTimeSheet>> empEntry : projEntry.getValue().entrySet()) {
+                        List<DailyTimeSheet> leaves = leaveByEmp.get(empEntry.getKey());
+                        if (leaves != null) {
+                            empEntry.getValue().addAll(leaves);
+                            empEntry.getValue().sort(Comparator.comparing(DailyTimeSheet::getWorkDate));
+                        }
                     }
                 }
-            }
 
-            // Generate Excel reports
-            for (String projCode : projectEmpMap.keySet()) {
-                Project project = projectRepository.findById(projCode).orElse(null);
-                if (project == null) continue;
+                for (String projCode : projectEmpMap.keySet()) {
+                    Project project = projectRepository.findById(projCode).orElse(null);
+                    if (project == null) continue;
 
-                String projectName = project.getTitle();
-                String managerName = getUserName(project.getProjectManagerCode());
+                    String projectName = project.getTitle();
+                    String managerName = getUserName(project.getProjectManagerCode());
 
-                Map<String, List<DailyTimeSheet>> empEntries = projectEmpMap.get(projCode);
-                for (Map.Entry<String, List<DailyTimeSheet>> entry : empEntries.entrySet()) {
-                    String empName = getUserName(entry.getKey());
-                    ExcelReportGenerator.generateExcel(baseDir, label, projectName, managerName, empName, entry.getValue());
+                    Map<String, List<DailyTimeSheet>> empEntries = projectEmpMap.get(projCode);
+                    for (Map.Entry<String, List<DailyTimeSheet>> entry : empEntries.entrySet()) {
+                        String empName = getUserName(entry.getKey());
+                        ExcelReportGenerator.generateExcel(baseDir, label, projectName, managerName, empName, entry.getValue());
+                    }
                 }
+
+                return ResponseEntity.ok("Report generated for: " + label);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.internalServerError().body("Error generating report: " + e.getMessage());
             }
 
-            return ResponseEntity.ok("Report generated for: " + label);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Error generating report: " + e.getMessage());
+        } else if (year != null && month != null) {
+            return generateReport(year, month, projectCode);
+        } else {
+            return ResponseEntity.badRequest().body("Provide either (year & month) or (startDate & endDate)");
         }
     }
 
@@ -187,12 +184,12 @@ public class TimesheetReportServiceImpl implements TimesheetReportService {
     private String getUserName(String userCode) {
         try {
             ResponseEntity<UserIdentityDto> response = identityServiceClient.getUserByemployeeCode(userCode);
-            if (response.getStatusCode().is2xxSuccessful()) {
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 UserIdentityDto user = response.getBody();
                 return user.getFirstName() + " " + user.getLastName();
             }
         } catch (Exception e) {
-            throw new TimeSheetException(ErrorCode.NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND + e);
+            throw new TimeSheetException(ErrorCode.NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND + ": " + e.getMessage());
         }
         return "User-" + userCode;
     }
