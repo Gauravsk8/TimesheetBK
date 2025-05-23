@@ -9,7 +9,7 @@ public final class ErrorMessage {
     public static final String USERID_EXTRACTION_FAILED = "Failed to extract user ID";
 
     // === Keycloak Errors ===
-    public static final String KEYCLOAK_USER_ALREADY_EXISTS = "Keycloak user already exists: %s";
+    public static final String KEYCLOAK_USER_ALREADY_EXISTS = "Keycloak user already exists: ";
     public static final String KEYCLOAK_ADMIN_CONNECTION_FAILED = "Keycloak admin connection failed";
     public static final String USER_UPDATE_FAILED = "User update failed";
     public static final String PASSWORD_UPDATE_FAILED = "Password update failed";

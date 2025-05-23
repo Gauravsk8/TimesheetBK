@@ -4,7 +4,8 @@ package com.example.timesheet.service.Serviceimpl;
 import com.example.common.constants.MessageConstants;
 import com.example.common.constants.ErrorCode;
 import com.example.common.constants.ErrorMessage;
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.common.utils.FilterSpecificationBuilder;
@@ -15,7 +16,6 @@ import com.example.timesheet.client.IdentityServiceClient;
 import com.example.timesheet.dto.request.CostCenterDto;
 import com.example.timesheet.dto.response.CostCenterResponseDto;
 import com.example.timesheet.dto.response.ProjectResponseDto;
-import com.example.timesheet.models.Clients;
 import com.example.timesheet.models.CostCenter;
 import com.example.timesheet.models.Project;
 import com.example.timesheet.service.CostCenterService;
@@ -51,22 +51,24 @@ public class CostCenterServiceImpl implements CostCenterService {
     }
 
     @Override
-    public PagedResponse<CostCenterResponseDto> getAllCostCenters(PageRequestDto pageRequestDto) {
-        Pageable pageable = PageRequest.of(
-                pageRequestDto.getPage(),
-                pageRequestDto.getSize(),
-                SortUtil.getSort(pageRequestDto.getSort())
-        );
+    public PagedResponse<CostCenterResponseDto> getAllCostCenters(
+            Integer offset,
+            Integer limit,
+            List<FilterRequest> filters,
+            List<SortRequest> sorts) {
 
-        Specification<CostCenter> spec = new FilterSpecificationBuilder<CostCenter>()
-                .build(pageRequestDto.getFilter());
+        int safeOffset = (offset == null) ? 0 : offset;
+        int safeLimit = (limit == null || limit <= 0) ? 10 : limit;
+        int page = safeOffset / safeLimit;
 
-        Specification<CostCenter> isActiveSpec = (root, query, cb) ->
-                cb.isTrue(root.get("isActive"));
+        Pageable pageable = PageRequest.of(page, safeLimit, SortUtil.getSort(sorts));
 
-        Specification<CostCenter> finalSpec = Specification.where(isActiveSpec).and(spec);
+        Specification<CostCenter> dynamicSpec = new FilterSpecificationBuilder<CostCenter>().build(filters);
+        Specification<CostCenter> isActiveSpec = (root, query, cb) -> cb.isTrue(root.get("isActive"));
 
-        Page<CostCenter> costCenterPage = costCenterRepository.findAll(spec, pageable);
+        Specification<CostCenter> finalSpec = Specification.where(isActiveSpec).and(dynamicSpec);
+
+        Page<CostCenter> costCenterPage = costCenterRepository.findAll(finalSpec, pageable);
 
         if (costCenterPage.isEmpty()) {
             throw new TimeSheetException(

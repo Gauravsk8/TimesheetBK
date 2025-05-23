@@ -232,12 +232,22 @@ public class TimesheetServiceImpl implements TimesheetService{
                     if (dateMatch && typeMatch && projectMatch) {
                         matched = true;
 
-                        if (!sheet.getHoursSpent().equals(requestDto.getHoursSpent())) {
-                            sheet.setHoursSpent(requestDto.getHoursSpent());
+                        boolean hoursChanged = !sheet.getHoursSpent().equals(requestDto.getHoursSpent());
+                        boolean descriptionChanged = requestDto.getDescription() != null &&
+                                !requestDto.getDescription().trim().equalsIgnoreCase(
+                                        sheet.getDescription() != null ? sheet.getDescription().trim() : "");
+
+                        if (hoursChanged || descriptionChanged) {
+                            if (hoursChanged) {
+                                sheet.setHoursSpent(requestDto.getHoursSpent());
+                            }
+                            if (descriptionChanged) {
+                                sheet.setDescription(requestDto.getDescription());
+                            }
                             sheet.setModifiedByManager(true);
                             dailyTimeSheetRepository.save(sheet);
-
                         }
+
                         break;
                     }
                 }

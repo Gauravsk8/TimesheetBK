@@ -1,6 +1,7 @@
 package com.example.timesheet.service;
 
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.dto.request.ClientDto;
@@ -11,7 +12,11 @@ import java.util.Optional;
 
 public interface ClientService {
     String createClient(ClientDto dto);
-    PagedResponse<ClientResponseDto> getAllClients(PageRequestDto pageRequestDto);
+    PagedResponse<ClientResponseDto> getAllClients(
+            Integer offset,
+            Integer limit,
+            List<FilterRequest> filters,
+            List<SortRequest> sorts);
     Optional<ClientResponseDto> getClientById(Long id);
     String updateClient(Long id, ClientDto dto) throws TimeSheetException;
     String updateClientStatus(Long id, boolean active) throws TimeSheetException;

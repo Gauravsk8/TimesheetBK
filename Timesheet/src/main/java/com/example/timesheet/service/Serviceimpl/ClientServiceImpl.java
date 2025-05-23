@@ -4,7 +4,8 @@ package com.example.timesheet.service.Serviceimpl;
 import com.example.common.constants.MessageConstants;
 import com.example.common.constants.ErrorCode;
 import com.example.common.constants.ErrorMessage;
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.common.utils.FilterSpecificationBuilder;
@@ -42,22 +43,29 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public PagedResponse<ClientResponseDto> getAllClients(PageRequestDto pageRequestDto) {
-        Pageable pageable = PageRequest.of(
-                pageRequestDto.getPage(),
-                pageRequestDto.getSize(),
-                SortUtil.getSort(pageRequestDto.getSort())
-        );
+    public PagedResponse<ClientResponseDto> getAllClients(
+            Integer offset,
+            Integer limit,
+            List<FilterRequest> filters,
+            List<SortRequest> sorts) {
+
+        // Apply defaults if null
+        int safeOffset = (offset == null) ? 0 : offset;
+        int safeLimit = (limit == null || limit <= 0) ? 10 : limit;
+
+        int page = safeOffset / safeLimit;
+
+        Pageable pageable = PageRequest.of(page, safeLimit, SortUtil.getSort(sorts));
 
         Specification<Clients> spec = new FilterSpecificationBuilder<Clients>()
-                .build(pageRequestDto.getFilter());
+                .build(filters);
 
         Specification<Clients> isActiveSpec = (root, query, cb) ->
                 cb.isTrue(root.get("isActive"));
 
         Specification<Clients> finalSpec = Specification.where(isActiveSpec).and(spec);
 
-        Page<Clients> clientPage = clientsRepository.findAll(spec, pageable);
+        Page<Clients> clientPage = clientsRepository.findAll(finalSpec, pageable);
 
         if (clientPage.isEmpty()) {
             throw new TimeSheetException(
@@ -83,7 +91,6 @@ public class ClientServiceImpl implements ClientService {
                 clientPage.getTotalElements()
         );
     }
-
 
 
 

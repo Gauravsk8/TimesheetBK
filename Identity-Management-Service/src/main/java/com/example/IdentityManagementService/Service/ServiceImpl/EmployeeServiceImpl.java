@@ -8,7 +8,8 @@ import com.example.IdentityManagementService.exceptions.TimesheetException;
 import com.example.IdentityManagementService.model.Employee;
 import com.example.common.constants.ErrorCode;
 import com.example.common.constants.ErrorMessage;
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.common.utils.FilterSpecificationBuilder;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -76,15 +78,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
-    public PagedResponse<UserResponseDto> getAllUsers(PageRequestDto pageRequestDto) {
-        Pageable pageable = PageRequest.of(
-                pageRequestDto.getPage(),
-                pageRequestDto.getSize(),
-                SortUtil.getSort(pageRequestDto.getSort())
-        );
+    public PagedResponse<UserResponseDto> getAllUsers(
+            int offset,
+            int limit,
+            List<FilterRequest> filters,
+            List<SortRequest> sorts) {
 
-        Specification<Employee> dynamicSpec = new FilterSpecificationBuilder<Employee>()
-                .build(pageRequestDto.getFilter());
+        if (offset < 0) offset = 0;
+        if (limit <= 0) limit = 10;
+
+        int page = offset / limit;
+
+        Sort sort = com.example.common.utils.SortUtil.getSort(sorts);
+
+        Pageable pageable = PageRequest.of(page, limit, sort);
+
+        Specification<Employee> dynamicSpec = new FilterSpecificationBuilder<Employee>().build(filters);
 
         Specification<Employee> isActiveSpec = (root, query, cb) ->
                 cb.isTrue(root.get("isActive"));
@@ -108,7 +117,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                         emp.getEmail(),
                         emp.getManagerCode(),
                         emp.getEmployeeType()
-                )).toList();
+                ))
+                .toList();
 
         return new PagedResponse<>(
                 content,
@@ -117,6 +127,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employeePage.getTotalElements()
         );
     }
+
+
     @Override
     public List<Map<String, String>> getAllUsersList() {
         List<Employee> employees = employeeRepository.findAllByIsActiveTrue();
@@ -135,7 +147,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return userList;
     }
-
 
 
 

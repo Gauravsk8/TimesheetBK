@@ -22,19 +22,22 @@ public class FilterSpecificationBuilder<T> {
 
                 switch (filter.getOperator()) {
                     case "eq":
-                        predicates.add(criteriaBuilder.equal(path, value));
+                        predicates.add(criteriaBuilder.equal(path, filter.getValue()));
                         break;
                     case "like":
-                        predicates.add(criteriaBuilder.like(path, "%" + value + "%"));
+                        predicates.add(criteriaBuilder.like(
+                                criteriaBuilder.lower(path),
+                                "%" + filter.getValue().toLowerCase() + "%"
+                        ));
                         break;
                     case "gt":
-                        predicates.add(criteriaBuilder.greaterThan(path, value));
+                        predicates.add(criteriaBuilder.greaterThan(path, filter.getValue()));
                         break;
                     case "lt":
-                        predicates.add(criteriaBuilder.lessThan(path, value));
+                        predicates.add(criteriaBuilder.lessThan(path, filter.getValue()));
                         break;
-                    // Extend more operators as needed
                 }
+
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

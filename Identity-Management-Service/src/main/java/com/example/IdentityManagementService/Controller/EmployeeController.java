@@ -2,15 +2,16 @@ package com.example.IdentityManagementService.Controller;
 
 import com.example.IdentityManagementService.Service.EmployeeService;
 import com.example.IdentityManagementService.Service.ReportingManagerService;
-import com.example.IdentityManagementService.Service.ServiceImpl.EmployeeServiceImpl;
-import com.example.IdentityManagementService.Service.ServiceImpl.ReportingManagerServiceImpl;
 import com.example.IdentityManagementService.dto.request.AssignRMRequest;
 import com.example.IdentityManagementService.dto.request.Response.UserResponseDto;
 import com.example.IdentityManagementService.dto.request.UserIdentityDto;
 import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.common.constants.MessageConstants;
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
+import com.example.common.utils.FilterUtil;
+import com.example.common.utils.SortUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -58,21 +59,31 @@ public class EmployeeController {
         return ResponseEntity.ok(MessageConstants.USER_STATUS_UPDATED);
     }
 
+
+
+
+    //get all employees
     @GetMapping("/users")
+    @RequiresKeycloakAuthorization(resource = "manager:com", scope = "com:manager:get")
+    public ResponseEntity<PagedResponse<UserResponseDto>> getAllUsers(
+            @RequestParam int offset,
+            @RequestParam int limit,
+            @RequestParam Map<String, String> allParams,
+            @RequestParam(required = false, name = "sort") String sortParam) {
+
+        List<FilterRequest> filters = FilterUtil.parseFilters(allParams);
+        List<SortRequest> sorts = SortUtil.parseSort(sortParam);
+
+        return ResponseEntity.ok(employeeService.getAllUsers(offset, limit, filters, sorts));
+    }
+
+    @GetMapping("/users/all")
     @RequiresKeycloakAuthorization(resource = "manager:com", scope = "com:manager:get")
     public ResponseEntity<List<Map<String, String>>> getAllUsers() {
         List<Map<String, String>> users = employeeService.getAllUsersList();
         return ResponseEntity.ok(users);
     }
 
-
-    //get all employees
-    @PostMapping("/users/Page")
-    @RequiresKeycloakAuthorization(resource = "manager:com", scope = "com:manager:get")
-    public ResponseEntity<PagedResponse<UserResponseDto>> getAllUsersPaged(
-            @RequestBody PageRequestDto pageRequestDto) {
-        return ResponseEntity.ok(employeeService.getAllUsers(pageRequestDto));
-    }
 
     //get managerName for employeeCode
     @GetMapping("/users/{employee_code}/manager")

@@ -1,9 +1,12 @@
 package com.example.timesheet.controller;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
+import com.example.common.utils.FilterUtil;
+import com.example.common.utils.SortUtil;
 import com.example.timesheet.dto.request.ClientDto;
 import com.example.timesheet.dto.response.ClientResponseDto;
 import com.example.timesheet.service.ClientService;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/timesheet")
@@ -28,12 +32,20 @@ public class ClientController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/clients/Page")
+    @GetMapping("/clients")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:client:get")
-    public ResponseEntity<PagedResponse<ClientResponseDto>> getAllClientsPaged(
-            @RequestBody PageRequestDto pageRequestDto) {
-        return ResponseEntity.ok(clientService.getAllClients(pageRequestDto));
+    public ResponseEntity<PagedResponse<ClientResponseDto>> getAllClients(
+            @RequestParam int offset,
+            @RequestParam int limit,
+            @RequestParam Map<String, String> allParams,
+            @RequestParam(required = false, name = "sort") String sortParam) {
+
+        List<FilterRequest> filters = FilterUtil.parseFilters(allParams);
+        List<SortRequest> sorts = SortUtil.parseSort(sortParam);
+
+        return ResponseEntity.ok(clientService.getAllClients(offset, limit, filters, sorts));
     }
+
 
     @GetMapping("/clients/{id}")
     @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:get")

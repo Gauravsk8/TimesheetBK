@@ -3,7 +3,8 @@ package com.example.timesheet.service.Serviceimpl;
 import com.example.common.constants.MessageConstants;
 import com.example.common.constants.ErrorCode;
 import com.example.common.constants.ErrorMessage;
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.common.utils.FilterSpecificationBuilder;
@@ -81,27 +82,24 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
     }
 
     @Override
-    public PagedResponse<ProjectResponseDto> getAllProjects(PageRequestDto pageRequestDto) {
-        // Create Pageable from page, size, and sort
-        Pageable pageable = PageRequest.of(
-                pageRequestDto.getPage(),
-                pageRequestDto.getSize(),
-                SortUtil.getSort(pageRequestDto.getSort())
-        );
+    public PagedResponse<ProjectResponseDto> getAllProjects(
+            Integer offset,
+            Integer limit,
+            List<FilterRequest> filters,
+            List<SortRequest> sorts) {
 
-        // Create filter spec from the provided filter criteria
-        Specification<Project> spec = new FilterSpecificationBuilder<Project>()
-                .build(pageRequestDto.getFilter());
+        int safeOffset = (offset == null || offset < 0) ? 0 : offset;
+        int safeLimit = (limit == null || limit <= 0) ? 10 : limit;
+        int page = safeOffset / safeLimit;
 
-        Specification<Project> isActiveSpec = (root, query, cb) ->
-                cb.isTrue(root.get("isActive"));
+        Pageable pageable = PageRequest.of(page, safeLimit, SortUtil.getSort(sorts));
 
-        Specification<Project> finalSpec = Specification.where(isActiveSpec).and(spec);
+        Specification<Project> filterSpec = new FilterSpecificationBuilder<Project>().build(filters);
+        Specification<Project> isActiveSpec = (root, query, cb) -> cb.isTrue(root.get("isActive"));
+        Specification<Project> finalSpec = Specification.where(isActiveSpec).and(filterSpec);
 
-        // Fetch paginated + filtered result from DB
-        Page<Project> projectPage = projectRepository.findAll(spec, pageable);
+        Page<Project> projectPage = projectRepository.findAll(finalSpec, pageable);
 
-        // Optional: throw exception if empty
         if (projectPage.isEmpty()) {
             throw new TimeSheetException(
                     ErrorCode.NOT_FOUND_ERROR,
@@ -109,12 +107,10 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
             );
         }
 
-        // Map to response DTO
         List<ProjectResponseDto> content = projectPage.getContent().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
 
-        // Return PagedResponse
         return new PagedResponse<>(
                 content,
                 projectPage.getNumber(),

@@ -1,9 +1,12 @@
 package com.example.timesheet.controller;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
+import com.example.common.utils.FilterUtil;
+import com.example.common.utils.SortUtil;
 import com.example.timesheet.dto.request.AssignEmployeesDto;
 import com.example.timesheet.dto.request.ProjectDto;
 import com.example.timesheet.dto.response.*;
@@ -53,11 +56,20 @@ public class ProjectManagementController {
         }
     }
 
-    @PostMapping("/projects/Page")
+    @GetMapping("/projects")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:project:get")
-    public ResponseEntity<PagedResponse<ProjectResponseDto>> getPagedProjects(@RequestBody PageRequestDto pageRequestDto) {
-        return ResponseEntity.ok(projectManagementService.getAllProjects(pageRequestDto));
+    public ResponseEntity<PagedResponse<ProjectResponseDto>> getAllProjects(
+            @RequestParam(required = false) Integer offset,
+            @RequestParam(required = false) Integer limit,
+            @RequestParam Map<String, String> allParams,
+            @RequestParam(required = false, name = "sort") String sortParam) {
+
+        List<FilterRequest> filters = FilterUtil.parseFilters(allParams);
+        List<SortRequest> sorts = SortUtil.parseSort(sortParam);
+
+        return ResponseEntity.ok(projectManagementService.getAllProjects(offset, limit, filters, sorts));
     }
+
 
     @PostMapping("projects/{projectCode}/employees")
     @RequiresKeycloakAuthorization(resource = "tms:adminpm", scope = "tms:project:employee:assign")

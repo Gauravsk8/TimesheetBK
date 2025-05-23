@@ -13,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class FeignClientConfig {
 
     private final FeignErrorDecoder errorDecoder;
+    private final KeycloakTokenProvider keycloakTokenProvider; // NEW: inject this
 
     @Bean
     public ErrorDecoder errorDecoder() {
@@ -22,13 +23,27 @@ public class FeignClientConfig {
     @Bean
     public RequestInterceptor requestInterceptor() {
         return requestTemplate -> {
+            String token = null;
+
+            // Try to get token from the current HTTP request
             ServletRequestAttributes attributes =
                     (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
             if (attributes != null) {
-                String token = attributes.getRequest().getHeader("Authorization");
-                if (token != null && !token.trim().isEmpty()) {
-                    requestTemplate.header("Authorization", token);
+                token = attributes.getRequest().getHeader("Authorization");
+            }
+
+            // If no token in request context, fallback to client_credentials token
+            if (token == null || token.trim().isEmpty()) {
+                String accessToken = keycloakTokenProvider.getAccessToken();
+                if (accessToken != null) {
+                    token = "Bearer " + accessToken;
                 }
+            }
+
+            // Set Authorization header if token is available
+            if (token != null && !token.trim().isEmpty()) {
+                requestTemplate.header("Authorization", token);
             }
         };
     }

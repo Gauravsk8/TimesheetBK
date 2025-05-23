@@ -1,6 +1,7 @@
 package com.example.timesheet.service;
 
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.dto.request.CostCenterDto;
@@ -11,7 +12,12 @@ import java.util.List;
 
 public interface CostCenterService {
     String createCostCenter(CostCenterDto dto) throws TimeSheetException;
-    PagedResponse<CostCenterResponseDto> getAllCostCenters(PageRequestDto pageRequestDto);
+    PagedResponse<CostCenterResponseDto> getAllCostCenters(
+            Integer offset,
+            Integer limit,
+            List<FilterRequest> filters,
+            List<SortRequest> sorts);
+
     CostCenterResponseDto getCostCenterByCode(String costCenterCode) throws TimeSheetException;
     String updateCostCenter(String costCenterCode, CostCenterDto dto) throws TimeSheetException;
     String updateCostCenterStatus(String costCenterCode, boolean newStatus) throws TimeSheetException;

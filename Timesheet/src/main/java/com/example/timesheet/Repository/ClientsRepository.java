@@ -12,5 +12,6 @@ public interface ClientsRepository extends JpaRepository<Clients, Long>, JpaSpec
     // ✅ Corrected method
     List<Clients> findByIsActiveTrue();
 
+
     Optional<Clients> findByIdAndIsActiveTrue(Long id);
 }

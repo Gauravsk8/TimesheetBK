@@ -1,9 +1,12 @@
 package com.example.timesheet.controller;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
-import com.example.common.dto.PageRequestDto;
+import com.example.common.dto.FilterRequest;
+import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
+import com.example.common.utils.FilterUtil;
+import com.example.common.utils.SortUtil;
 import com.example.timesheet.dto.request.CostCenterDto;
 import com.example.timesheet.dto.response.CostCenterResponseDto;
 import com.example.timesheet.dto.response.ProjectResponseDto;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/timesheet")
@@ -28,12 +32,20 @@ public class CostCenterController {
         return ResponseEntity.ok(costCenterService.createCostCenter(dto));
     }
 
-    @PostMapping("/cost_centers/Page")
+    @GetMapping("/cost_centers")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:costcenter:get")
-    public ResponseEntity<PagedResponse<CostCenterResponseDto>> getAllCostCentersPaged(
-            @RequestBody PageRequestDto pageRequestDto) {
-        return ResponseEntity.ok(costCenterService.getAllCostCenters(pageRequestDto));
+    public ResponseEntity<PagedResponse<CostCenterResponseDto>> getAllCostCenters(
+            @RequestParam(required = false, defaultValue = "0") int offset,
+            @RequestParam(required = false, defaultValue = "10") int limit,
+            @RequestParam Map<String, String> allParams,
+            @RequestParam(required = false, name = "sort") String sortParam) {
+
+        List<FilterRequest> filters = FilterUtil.parseFilters(allParams);
+        List<SortRequest> sorts = SortUtil.parseSort(sortParam);
+
+        return ResponseEntity.ok(costCenterService.getAllCostCenters(offset, limit, filters, sorts));
     }
+
 
     @GetMapping("/cost_centers/manager/{costCenterManagerCode}")
     @RequiresKeycloakAuthorization(resource = "tms:ccm", scope = "tms:costcenter:get")

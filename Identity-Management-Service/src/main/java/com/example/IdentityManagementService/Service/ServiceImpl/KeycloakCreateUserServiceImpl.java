@@ -1,7 +1,6 @@
 package com.example.IdentityManagementService.Service.ServiceImpl;
 
 
-import com.example.IdentityManagementService.Service.EmailService;
 import com.example.IdentityManagementService.Service.KeycloakCreateUserService;
 import com.example.IdentityManagementService.Repository.EmployeeRepository;
 import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
@@ -9,6 +8,7 @@ import com.example.IdentityManagementService.exceptions.TimesheetException;
 import com.example.IdentityManagementService.model.Employee;
 import com.example.common.constants.ErrorCode;
 import com.example.common.constants.ErrorMessage;
+import com.example.common.email.Service.EmailService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -41,6 +41,8 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
     private final Keycloak keycloakAdmin;
     private final EmailService emailService;
     private final EmployeeRepository employeeRepository;
+
+
 
     @Value("${keycloak.realm}")
     private String realm;
@@ -115,7 +117,7 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             variables.put("password", randomPassword);
 
             String emailSubject = "Welcome to the Company Portal";
-            String emailBody = emailService.loadTemplate("EmailTemplate.txt", variables);
+            String emailBody = emailService.loadTemplate("UserCreationTemplate.txt", variables);
             emailService.sendEmail(employee.getEmail(), emailSubject, emailBody);
 
             // Audit logging
