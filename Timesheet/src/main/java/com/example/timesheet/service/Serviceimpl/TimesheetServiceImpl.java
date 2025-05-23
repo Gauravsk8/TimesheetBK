@@ -7,6 +7,12 @@ import com.example.common.constants.ErrorMessage;
 import com.example.timesheet.client.IdentityServiceClient;
 import com.example.timesheet.dto.request.*;
 import com.example.timesheet.dto.response.*;
+import com.example.timesheet.dto.response.EmployeeDashboard.EmployeeDashboardDto;
+import com.example.timesheet.dto.response.EmployeeDashboard.EmployeeStatusSummaryDto;
+import com.example.timesheet.dto.response.ManagerDashboard.ManagerDashboardDto;
+import com.example.timesheet.dto.response.ManagerDashboard.ManagerDashboardResponseDto;
+import com.example.timesheet.dto.response.ManagerDashboard.ManagerDashboardSummaryDto;
+import com.example.timesheet.dto.response.ProjectManagerDashboard.ProjectManagerDashboardDTO;
 import com.example.timesheet.enums.EntryType;
 import com.example.timesheet.enums.TimeSheetStatus;
 import com.example.timesheet.keys.ProjectEmployeeId;
@@ -22,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -106,47 +113,7 @@ public class TimesheetServiceImpl implements TimesheetService{
         return MessageConstants.DAILY_TIMESHEET_SAVED;
     }
 
-    @Transactional
-    public String UpdateDailyEntry(List<DailyTimesheetRequestDto> dtos) {
 
-        for (DailyTimesheetRequestDto dto : dtos) {
-            Project project = null;
-            if (dto.getProjectCode() != null) {
-                ProjectEmployeeId peid = new ProjectEmployeeId(dto.getProjectCode(), dto.getEmployeeCode());
-                if (!projectEmployeeRepository.existsById(peid)) {
-                    throw new TimeSheetException(
-                            ErrorCode.NOT_FOUND_ERROR,
-                            String.format(ErrorMessage.ASSIGNMENT_NOT_FOUND, dto.getProjectCode(), dto.getEmployeeCode())
-                    );
-                }
-                project = projectRepository.findById(dto.getProjectCode())
-                        .orElseThrow(() -> new TimeSheetException(ErrorCode.NOT_FOUND_ERROR,
-                                String.format(ErrorMessage.PROJECT_NOT_FOUND, dto.getProjectCode())));
-            }
-
-            DailyTimeSheet daily = dailyTimeSheetRepository
-                    .findByEmployeeCodeAndTimesheetYearAndTimesheetMonthAndWorkDateAndEntryTypeAndProjectCode(
-                            dto.getEmployeeCode(),
-                            dto.getTimesheetYear(),
-                            dto.getTimesheetMonth(),
-                            dto.getWorkDate(),
-                            dto.getEntryType(),
-                            dto.getProjectCode()
-                    )
-                    .orElseThrow(() -> new TimeSheetException(ErrorCode.NOT_FOUND_ERROR,
-                            ErrorMessage.DAILY_TIME_SHEET_NOT_FOUND_FOR_EMPLOYEE_WITHIN_DATES));
-
-            daily.setHoursSpent(dto.getHoursSpent());
-            daily.setDescription(dto.getDescription());
-            daily.setProjectCode(dto.getProjectCode());
-            daily.setProject(project);
-            daily.setModifiedByManager(false);
-
-            dailyTimeSheetRepository.save(daily);
-        }
-
-        return MessageConstants.DAILY_TIMESHEET_SAVED;
-    }
 
 
     //  Submit weekly timesheet
@@ -271,7 +238,7 @@ public class TimesheetServiceImpl implements TimesheetService{
                 }
             }
         }
-        // ✅ Recalculate totalHours from request DTOs
+        //  Recalculate totalHours from request DTOs
         double totalHours = dto.getDailyTimeSheetRequests().stream()
                 .mapToDouble(req -> req.getHoursSpent() != null ? req.getHoursSpent() : 0.0)
                 .sum();
@@ -292,12 +259,13 @@ public class TimesheetServiceImpl implements TimesheetService{
 
 
 
-    // 4. Get summaries for an employee
-    public List<TimesheetSummaryResponseDto> getEmployeeTimesheetSummaries(String employeeCode, Integer year, Integer month) {
-        return timesheetSummaryRepository
-                .findByIdEmployeeCodeAndIdTimesheetYearAndIdTimesheetMonth(employeeCode, year, month)
-                .stream()
-                .map(summary -> {
+    //Employee Dashboard
+    @Override
+    public EmployeeDashboardDto getEmployeeDashboard(String employeeCode, int year, int month) {
+        List<TimesheetSummary> summaries = timesheetSummaryRepository
+                .findByIdEmployeeCodeAndIdTimesheetYearAndIdTimesheetMonth(employeeCode, year, month);
+
+        List<TimesheetSummaryResponseDto> weeklySummaries = summaries.stream().map(summary -> {
                     TimesheetSummaryResponseDto dto = new TimesheetSummaryResponseDto();
                     dto.setEmployeeCode(summary.getId().getEmployeeCode());
                     dto.setTimesheetYear(summary.getId().getTimesheetYear());
@@ -309,12 +277,96 @@ public class TimesheetServiceImpl implements TimesheetService{
                     dto.setManagerComment(summary.getManagerComment());
                     dto.setApprovedBy(summary.getApprovedBy());
                     return dto;
-                })
+                }).sorted(Comparator.comparing(TimesheetSummaryResponseDto::getWeekStart))
                 .collect(Collectors.toList());
+
+        Map<TimeSheetStatus, Long> statusCountMap = summaries.stream()
+                .collect(Collectors.groupingBy(TimesheetSummary::getStatus, Collectors.counting()));
+
+        Map<TimeSheetStatus, Double> statusHourMap = summaries.stream()
+                .collect(Collectors.groupingBy(TimesheetSummary::getStatus,
+                        Collectors.summingDouble(ts -> ts.getTotalHours() == null ? 0.0 : ts.getTotalHours())));
+
+        List<EmployeeStatusSummaryDto> statusSummary = statusCountMap.entrySet().stream()
+                .map(entry -> new EmployeeStatusSummaryDto(
+                        entry.getKey(),
+                        entry.getValue(),
+                        statusHourMap.getOrDefault(entry.getKey(), 0.0)
+                )).toList();
+
+        return new EmployeeDashboardDto(employeeCode, year, month, weeklySummaries, statusSummary);
     }
 
-    // 5. Get daily entries for employee for a given week
-    public List<DailyTimeSheetResponseDto> getDailyEntries(String employeeCode, Date weekStart) {
+    public ProjectManagerDashboardDTO getPmDashboard(String managerCode) {
+
+        List<Project> projects = projectRepository.findByProjectManagerCodeAndIsActiveTrue(managerCode);
+
+        // Total Active Projects
+        int totalProjects = projects.size();
+
+        // Hours per project
+        List<ProjectManagerDashboardDTO.ProjectHoursDTO> projectHours = dailyTimeSheetRepository.findByProjectCodeIn(
+                        projects.stream().map(Project::getProjectCode).collect(Collectors.toList()))
+                .stream()
+                .collect(Collectors.groupingBy(DailyTimeSheet::getProjectCode,
+                        Collectors.summingDouble(DailyTimeSheet::getHoursSpent)))
+                .entrySet().stream()
+                .map(e -> new ProjectManagerDashboardDTO.ProjectHoursDTO(
+                        e.getKey(),
+                        projects.stream().filter(p -> p.getProjectCode().equals(e.getKey()))
+                                .findFirst().map(Project::getTitle).orElse("N/A"),
+                        e.getValue()))
+                .collect(Collectors.toList());
+
+        // Employee distribution
+        List<ProjectManagerDashboardDTO.ProjectEmployeeCountDTO> employeeDist = projects.stream()
+                .map(p -> new ProjectManagerDashboardDTO.ProjectEmployeeCountDTO(
+                        p.getProjectCode(),
+                        Optional.ofNullable(projectEmployeeRepository.countByProject(p)).orElse(0L).intValue()
+                ))
+                .collect(Collectors.toList());
+
+
+        // Timesheet status summary
+        List<Object[]> rawStatusSummary =
+                timesheetSummaryRepository.countStatusByProjectCode(projects.stream()
+                        .map(Project::getProjectCode)
+                        .toList());
+
+        List<ProjectManagerDashboardDTO.ProjectStatusSummaryDTO> statusSummary =
+                rawStatusSummary.stream()
+                        .map(row -> new ProjectManagerDashboardDTO.ProjectStatusSummaryDTO(
+                                (String) row[0],             // projectCode
+                                (String) row[1],             // status
+                                ((Number) row[2]).longValue() // count
+                        ))
+                        .toList();
+
+        // Monthly hours trend
+        List<DailyTimeSheet> allSheets = dailyTimeSheetRepository.findByProjectCodeIn(
+                projects.stream().map(Project::getProjectCode).collect(Collectors.toList()));
+
+        Map<String, Double> monthlyTrend = allSheets.stream()
+                .collect(Collectors.groupingBy(
+                        sheet -> new SimpleDateFormat("yyyy-MM").format(sheet.getWorkDate()),
+                        Collectors.summingDouble(DailyTimeSheet::getHoursSpent)));
+
+        List<ProjectManagerDashboardDTO.MonthlyHoursDTO> monthlyHours = monthlyTrend.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(e -> new ProjectManagerDashboardDTO.MonthlyHoursDTO(e.getKey(), e.getValue()))
+                .toList();
+
+        return ProjectManagerDashboardDTO.builder()
+                .totalActiveProjects(totalProjects)
+                .projectHours(projectHours)
+                .employeeDistribution(employeeDist)
+                .timesheetStatusSummary(statusSummary)
+                .monthlyHoursTrend(monthlyHours)
+                .build();
+    }
+
+    // Get daily entries for employee for a given week
+    public DailyTimesheetResponseWithStatus getDailyEntries(String employeeCode, Date weekStart) {
         Date weekEnd = Date.valueOf(weekStart.toLocalDate().plusDays(6));
 
         TimesheetSummary summary = timesheetSummaryRepository
@@ -324,7 +376,7 @@ public class TimesheetServiceImpl implements TimesheetService{
                         String.format(ErrorMessage.TIMESHEET_SUMMARY_NOT_FOUND, employeeCode, weekStart)
                 ));
 
-        return dailyTimeSheetRepository
+        List<DailyTimeSheetResponseDto> dailyTimeSheetResponseDtos= dailyTimeSheetRepository
                 .findByEmployeeCodeAndWorkDateBetween(employeeCode, weekStart, weekEnd)
                 .stream()
                 .map(d -> {
@@ -342,42 +394,15 @@ public class TimesheetServiceImpl implements TimesheetService{
                     return dto;
                 })
                 .collect(Collectors.toList());
+
+        DailyTimesheetResponseWithStatus dailyTimeSheetResponseWithStatus = new DailyTimesheetResponseWithStatus();
+        dailyTimeSheetResponseWithStatus.setDailyTimeSheetResponseDtos(dailyTimeSheetResponseDtos);
+        dailyTimeSheetResponseWithStatus.setStatus(summary.getStatus());
+        dailyTimeSheetResponseWithStatus.setManagerComment(summary.getManagerComment());
+        return dailyTimeSheetResponseWithStatus;
     }
 
-    // 6. Generate monthly report for a project
-    public List<EmployeeWeeklyTimesheetDto> getWeeklyTimesheetsForProject(String projectCode, Integer year, Integer month) {
-        List<ProjectEmployee> projectEmployees = projectEmployeeRepository.findByIdProjectCode(projectCode);
-        List<EmployeeWeeklyTimesheetDto> result = new ArrayList<>();
 
-        for (ProjectEmployee pe : projectEmployees) {
-            String employeeCode = pe.getId().getEmployeeCode();
-
-            List<TimesheetSummary> timesheets = timesheetSummaryRepository
-                    .findByIdEmployeeCodeAndIdTimesheetYearAndIdTimesheetMonth(employeeCode, year, month);
-
-            for (TimesheetSummary ts : timesheets) {
-                EmployeeWeeklyTimesheetDto dto = new EmployeeWeeklyTimesheetDto();
-                dto.setEmployeeCode(employeeCode);
-                dto.setWeekStart(ts.getId().getWeekStart());
-                dto.setStatus(ts.getStatus());
-
-                // Calculate week end date from week start
-                Date weekStart = ts.getId().getWeekStart();
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(weekStart);
-                cal.add(Calendar.DATE, 6);
-                Date weekEnd = new Date(cal.getTimeInMillis());
-
-                // Get total hours spent by employee on this project for this week
-                Double totalHours = dailyTimeSheetRepository.sumHoursSpentByEmployeeProjectAndWeek(employeeCode, projectCode, weekStart, weekEnd);
-
-                dto.setHoursSpent(totalHours == null ? 0.0 : totalHours);
-
-                result.add(dto);
-            }
-        }
-        return result;
-    }
 
 
     @Transactional
@@ -449,33 +474,71 @@ public class TimesheetServiceImpl implements TimesheetService{
 
     @Override
     @Transactional
-    public List<ManagerDashboardResponseDto> getEmployeesTimesheetUnderManager(String managerCode, int year, int month) {
+    public ManagerDashboardDto getEmployeesTimesheetUnderManager(String managerCode, int year, int month) {
         ResponseEntity<List<UserIdentityDto>> response = identityServiceClient.getEmployeesUnderManager(managerCode);
-        List<String> employeeCodes = Optional.ofNullable(response.getBody())
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(UserIdentityDto::getEmployeeCode)
-                .collect(Collectors.toList());
+        List<UserIdentityDto> employees = Optional.ofNullable(response.getBody()).orElse(List.of());
 
+        if (employees.isEmpty()) return new ManagerDashboardDto(List.of(), List.of());
 
-        if (employeeCodes.isEmpty()) return List.of();
+        Map<String, UserIdentityDto> empMap = employees.stream()
+                .collect(Collectors.toMap(UserIdentityDto::getEmployeeCode, e -> e));
+
+        List<String> employeeCodes = new ArrayList<>(empMap.keySet());
 
         List<TimesheetSummary> summaries = timesheetSummaryRepository
                 .findByIdEmployeeCodeInAndIdTimesheetYearAndIdTimesheetMonth(employeeCodes, year, month);
 
-        Map<String, List<WeeklyTimeSheetEntryDto>> grouped = new HashMap<>();
+        Map<TimeSheetStatus, Long> statusCountMap = summaries.stream()
+                .collect(Collectors.groupingBy(TimesheetSummary::getStatus, Collectors.counting()));
 
-        for (TimesheetSummary summary : summaries) {
-            String empCode = summary.getId().getEmployeeCode();
-            grouped.computeIfAbsent(empCode, k -> new ArrayList<>())
-                    .add(toWeeklyEntryDto(summary));
-        }
+        Map<TimeSheetStatus, Double> statusHourMap = summaries.stream()
+                .collect(Collectors.groupingBy(TimesheetSummary::getStatus, Collectors.summingDouble(ts -> ts.getTotalHours() == null ? 0 : ts.getTotalHours())));
 
-        return grouped.entrySet()
-                .stream()
-                .map(entry -> new ManagerDashboardResponseDto(entry.getKey(), entry.getValue()))
+        List<ManagerDashboardSummaryDto> statusSummary = statusCountMap.entrySet().stream()
+                .map(entry -> new ManagerDashboardSummaryDto(
+                        entry.getKey(),
+                        entry.getValue(),
+                        statusHourMap.getOrDefault(entry.getKey(), 0.0)
+                ))
+                .toList();
+
+        Map<String, List<TimesheetSummary>> groupedByEmp = summaries.stream()
+                .collect(Collectors.groupingBy(ts -> ts.getId().getEmployeeCode()));
+
+        List<ManagerDashboardResponseDto> employeeDetails = groupedByEmp.entrySet().stream()
+                .map(entry -> {
+                    String empCode = entry.getKey();
+                    UserIdentityDto user = empMap.get(empCode);
+
+                    List<WeeklyTimeSheetEntryDto> weeklyEntries = entry.getValue().stream()
+                            .map(ts -> {
+                                Calendar cal = Calendar.getInstance();
+                                Date weekStart = ts.getId().getWeekStart();
+                                cal.setTime(weekStart);
+                                cal.add(Calendar.DATE, 6);
+                                Date weekEnd = new Date(cal.getTimeInMillis());
+
+                                return new WeeklyTimeSheetEntryDto(
+                                        weekStart.toString(),
+                                        weekEnd.toString(),
+                                        ts.getTotalHours() == null ? 0.0 : ts.getTotalHours(),
+                                        ts.getStatus().name()
+                                );
+                            })
+                            .sorted(Comparator.comparing(WeeklyTimeSheetEntryDto::getWeekStartDate))
+                            .toList();
+
+                    return new ManagerDashboardResponseDto(
+                            empCode,
+                            user.getFirstName() + " " + user.getLastName(),
+                            user.getEmail(),
+                            weeklyEntries
+                    );
+                })
                 .sorted(Comparator.comparing(ManagerDashboardResponseDto::getEmployeeCode))
                 .toList();
+
+        return new ManagerDashboardDto(employeeDetails, statusSummary);
     }
 
     private WeeklyTimeSheetEntryDto toWeeklyEntryDto(TimesheetSummary s) {
@@ -504,7 +567,7 @@ public class TimesheetServiceImpl implements TimesheetService{
     }
 
     @Override
-    public List<TimesheetMatrixRowResponseDto> getEmployeeTimesheetMatrix(String employeeCode, Integer year, Integer month) {
+    public List<TimesheetMatrixRowResponseDto> getEmployeeTimesheet(String employeeCode, Integer year, Integer month) {
         List<DailyTimeSheet> entries = dailyTimeSheetRepository
                 .findByEmployeeCodeAndTimesheetYearAndTimesheetMonth(employeeCode, year, month);
 

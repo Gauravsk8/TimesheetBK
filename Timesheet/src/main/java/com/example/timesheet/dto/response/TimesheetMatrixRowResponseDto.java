@@ -6,7 +6,7 @@ import java.util.Map;
 
 @Data
 public class TimesheetMatrixRowResponseDto {
-    private String rowKey; // Either projectCode or entryType
+    private String rowKey;
     private Map<String, Double> weeklyHours; // Key: weekLabel, Value: hours
 
     // Constructors

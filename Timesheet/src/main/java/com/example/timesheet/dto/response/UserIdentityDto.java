@@ -1,4 +1,4 @@
-package com.example.timesheet.dto.request;
+package com.example.timesheet.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

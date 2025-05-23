@@ -1,9 +1,7 @@
 package com.example.timesheet.client;
 
-import com.example.common.annotations.RequiresKeycloakAuthorization;
 import com.example.timesheet.config.FeignClientConfig;
-import com.example.timesheet.dto.request.UserIdentityDto;
-import com.example.timesheet.dto.response.UserAssignedRoleResponse;
+import com.example.timesheet.dto.response.UserIdentityDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

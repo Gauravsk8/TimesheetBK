@@ -14,7 +14,7 @@ import com.example.timesheet.client.IdentityServiceClient;
 import com.example.timesheet.dto.request.AssignEmployeesDto;
 import com.example.timesheet.dto.request.ProjectRolesRequestDto;
 import com.example.timesheet.dto.request.ProjectDto;
-import com.example.timesheet.dto.request.UserIdentityDto;
+import com.example.timesheet.dto.response.UserIdentityDto;
 import com.example.timesheet.dto.response.ProjectEmployeeDto;
 import com.example.timesheet.dto.response.ProjectResponseDto;
 import com.example.timesheet.dto.response.ProjectWithEmployeesDto;

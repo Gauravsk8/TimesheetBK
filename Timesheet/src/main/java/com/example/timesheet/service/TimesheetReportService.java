@@ -4,11 +4,14 @@ package com.example.timesheet.service;
 import com.example.timesheet.models.DailyTimeSheet;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 public interface TimesheetReportService {
-
+    ResponseEntity<String> generateReport(Integer year, Integer month, String projectCode, Date startDate, Date endDate);
+    ResponseEntity<String> generateReport(int year, int month, String projectCode);
     Map<String, Map<String, List<DailyTimeSheet>>> getMonthlyTimesheetData(int year, int month, String projectCode);
 
-    ResponseEntity<String> generateReport(int year, int month, String projectCode);}
+
+}

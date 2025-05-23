@@ -2,6 +2,7 @@ package com.example.timesheet.Repository;
 
 
 import com.example.timesheet.keys.ProjectEmployeeId;
+import com.example.timesheet.models.Project;
 import com.example.timesheet.models.ProjectEmployee;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,6 +15,7 @@ public interface ProjectEmployeeRepository extends JpaRepository<ProjectEmployee
     List<ProjectEmployee> findByIdEmployeeCodeIgnoreCaseAndIsActiveTrue(String employeeCode);
 
     List<ProjectEmployee> findByIdProjectCode(String projectCode);
+    Long countByProject(Project project);
 
     List<ProjectEmployee> findByProject_ProjectCodeIgnoreCaseAndIsActiveTrue(String projectCode);
 

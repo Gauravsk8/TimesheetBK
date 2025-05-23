@@ -14,8 +14,10 @@ public interface ProjectRepository extends JpaRepository<Project, String>, JpaSp
 
     List<Project> findByCostCenter_CostCenterCodeIgnoreCaseAndIsActiveTrue(String costCenterCode);
 
-    // ✅ Fixed method
+    // Fixed method
     List<Project> findByIsActiveTrue();
+    List<Project> findByProjectManagerCodeAndIsActiveTrue(String managerCode);
+
 
     Optional<Project> findByProjectCodeAndIsActiveTrue(String projectCode);
 }

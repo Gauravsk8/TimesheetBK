@@ -1,4 +1,4 @@
-package com.example.timesheet.dto.response;
+package com.example.timesheet.dto.response.ManagerDashboard;
 
 import com.example.timesheet.dto.request.WeeklyTimeSheetEntryDto;
 import lombok.AllArgsConstructor;
@@ -12,5 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ManagerDashboardResponseDto {
     private String employeeCode;
+    private String fullName;
+    private String email;
     private List<WeeklyTimeSheetEntryDto> weeklySummaries;
 }

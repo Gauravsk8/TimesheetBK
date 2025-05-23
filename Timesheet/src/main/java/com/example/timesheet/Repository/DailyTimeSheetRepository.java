@@ -7,13 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 public interface DailyTimeSheetRepository extends JpaRepository<DailyTimeSheet, Long> {
 
     List<DailyTimeSheet> findByEmployeeCodeAndWorkDateBetween(String employeeCode, Date start, Date end);
+    List<DailyTimeSheet> findByProjectCodeIn(List<String> projectCodes);
 
 
     List<DailyTimeSheet> findByEmployeeCodeAndTimesheetYearAndTimesheetMonth(String employeeCode, Integer year, Integer month);
@@ -50,7 +51,10 @@ public interface DailyTimeSheetRepository extends JpaRepository<DailyTimeSheet, 
             int month,
             List<String> employeeCodes,
             List<EntryType> entryTypes);
+    List<DailyTimeSheet> findByWorkDateBetweenAndProjectCode(Date startDate, Date endDate, String projectCode);
 
+    List<DailyTimeSheet> findByWorkDateBetween(Date startDate, Date endDate);
 
-
+    List<DailyTimeSheet> findByWorkDateBetweenAndEmployeeCodeInAndEntryTypeIn(
+            Date startDate, Date endDate, List<String> employeeCodes, List<EntryType> entryTypes);
 }

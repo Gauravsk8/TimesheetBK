@@ -2,8 +2,11 @@ package com.example.timesheet.controller;
 
 import com.example.timesheet.service.TimesheetReportService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.Date;
 
 @RestController
 @RequestMapping("/timesheet")
@@ -11,12 +14,16 @@ import org.springframework.web.bind.annotation.*;
 public class TimesheetReportController {
 
     private final TimesheetReportService timesheetReportService;
-
     @GetMapping("/report/download")
     public ResponseEntity<String> downloadReport(
-            @RequestParam int year,
-            @RequestParam int month,
-            @RequestParam(required = false) String projectCode) {
-        return timesheetReportService.generateReport(year, month, projectCode);
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) String projectCode,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
+
+        return timesheetReportService.generateReport(year, month, projectCode, startDate, endDate);
     }
+
+
 }

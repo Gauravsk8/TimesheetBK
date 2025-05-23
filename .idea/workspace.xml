@@ -6,25 +6,32 @@
   <component name="ChangeListManager">
     <list default="true" id="5ac3fdf0-da33-45fa-8617-a25f7d096e62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/EmployeeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/EmployeeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakAssignRoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakAssignRoleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/ServiceImpl/KeycloakCreateUserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/ServiceImpl/KeycloakCreateUserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/AssignRMRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/AssignRMRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/UserRoleUpdateRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/UserRoleUpdateRequestDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ClientController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/CostCenterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/CostCenterController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/AssignEmployeesDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/AssignEmployeesDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/ProjectDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/ProjectDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/ProjectManagementService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/ProjectManagementService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/DailyTimeSheetRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/DailyTimeSheetRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectEmployeeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectEmployeeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/TimesheetSummaryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/TimesheetSummaryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetReportController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetReportController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/DailyTimesheetDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/DailyTimesheetDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/DailyTimesheetRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/DailyTimesheetRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/ManagerApprovalRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/ManagerApprovalRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/TimesheetSummaryDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/TimesheetSummaryDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/UserIdentityDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/UserIdentityDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/EmployeeViewTimesheetResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/EmployeeWeeklyTimesheetDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/ManagerDashboardResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/ManagerDashboard/ManagerDashboardResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/MonthlyReportEntryDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/ProjectTimesheetEntryResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/ShiftDetailsResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/TimesheetMatrixRowResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/TimesheetMatrixRowResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/response/UserAssignedRoleResponse.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/ProjectManagementServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/ProjectManagementServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/MessageConstants.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/MessageConstants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/dto/PasswordUpdateRequestDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/dto/PasswordUpdateRequestDto.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/MessageConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/MessageConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/dto/PasswordUpdateRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/dto/PasswordUpdateRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetReportServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetReportServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/TimesheetReportService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/TimesheetReportService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/TimesheetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/TimesheetService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/utils/ExcelReportGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/utils/ExcelReportGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -331,22 +338,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>47</line>
+          <line>54</line>
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>197</line>
+          <line>164</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>348</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>496</line>
+          <line>559</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -384,16 +386,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>451</line>
-          <properties class="com.example.timesheet.service.Serviceimpl.TimesheetServiceImpl" method="getEmployeesTimesheetUnderManager">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>153</line>
+          <line>120</line>
           <properties class="com.example.timesheet.service.Serviceimpl.TimesheetServiceImpl" method="submitTimesheetSummary">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />

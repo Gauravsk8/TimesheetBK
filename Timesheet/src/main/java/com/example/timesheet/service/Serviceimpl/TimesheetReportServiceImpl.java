@@ -6,7 +6,7 @@ import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.Repository.DailyTimeSheetRepository;
 import com.example.timesheet.Repository.ProjectRepository;
 import com.example.timesheet.client.IdentityServiceClient;
-import com.example.timesheet.dto.request.UserIdentityDto;
+import com.example.timesheet.dto.response.UserIdentityDto;
 import com.example.timesheet.enums.EntryType;
 import com.example.timesheet.models.DailyTimeSheet;
 import com.example.timesheet.models.Project;
@@ -17,10 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.*;
-
 import java.util.stream.Collectors;
 
 @Service
@@ -32,57 +32,84 @@ public class TimesheetReportServiceImpl implements TimesheetReportService {
     private final IdentityServiceClient identityServiceClient;
 
     @Override
-    public Map<String, Map<String, List<DailyTimeSheet>>> getMonthlyTimesheetData(int year, int month, String projectCode) {
-        //  Fetch project-specific entries based on projectCode filter
-        List<DailyTimeSheet> projectEntries;
-        if (projectCode != null) {
-            projectEntries = dailyTimeSheetRepository.findByTimesheetYearAndTimesheetMonthAndProjectCode(year, month, projectCode);
-        } else {
-            projectEntries = dailyTimeSheetRepository.findByTimesheetYearAndTimesheetMonth(year, month);
-        }
+    public ResponseEntity<String> generateReport(Integer year, Integer month, String projectCode, Date startDate, Date endDate) {
+        try {
+            String label;
+            List<DailyTimeSheet> timesheetEntries;
 
-        // Group project entries by projectCode then employeeCode
-        Map<String, Map<String, List<DailyTimeSheet>>> projectEmpEntries = projectEntries.stream()
-                .filter(entry -> entry.getProjectCode() != null)
-                .collect(Collectors.groupingBy(
-                        DailyTimeSheet::getProjectCode,
-                        Collectors.groupingBy(DailyTimeSheet::getEmployeeCode)
-                ));
+            if (startDate != null && endDate != null) {
+                // Report by date range
+                label = new SimpleDateFormat("dd-MM-yyyy").format(startDate) + "_to_" +
+                        new SimpleDateFormat("dd-MM-yyyy").format(endDate);
+                timesheetEntries = (projectCode != null)
+                        ? dailyTimeSheetRepository.findByWorkDateBetweenAndProjectCode(startDate, endDate, projectCode)
+                        : dailyTimeSheetRepository.findByWorkDateBetween(startDate, endDate);
+            } else if (year != null && month != null) {
+                // Delegate to monthly logic
+                return generateReport(year, month, projectCode);
+            } else {
+                return ResponseEntity.badRequest().body("Provide either (year & month) or (startDate & endDate)");
+            }
 
+            if (timesheetEntries.isEmpty()) {
+                return ResponseEntity.ok("No data found for provided criteria.");
+            }
 
-        // Collect all unique employeeCodes from project entries
-        Set<String> employeeCodes = projectEntries.stream()
-                .map(DailyTimeSheet::getEmployeeCode)
-                .collect(Collectors.toSet());
+            // Prepare report
+            String baseDir = "timesheet-reports";
 
-        if (employeeCodes.isEmpty()) {
-            // no entries found
-            return Collections.emptyMap();
-        }
+            // Grouping: project → employee → entries
+            Map<String, Map<String, List<DailyTimeSheet>>> projectEmpMap = timesheetEntries.stream()
+                    .filter(e -> e.getProjectCode() != null)
+                    .collect(Collectors.groupingBy(
+                            DailyTimeSheet::getProjectCode,
+                            Collectors.groupingBy(DailyTimeSheet::getEmployeeCode)
+                    ));
 
-        // Fetch LEAVE and HOLIDAY entries for all employees (all projects)
-        List<EntryType> leaveTypes = List.of(EntryType.LEAVE, EntryType.HOLIDAY);
-        List<DailyTimeSheet> leaveEntries = dailyTimeSheetRepository.findByTimesheetYearAndTimesheetMonthAndEmployeeCodeInAndEntryTypeIn(year, month, new ArrayList<>(employeeCodes), leaveTypes);
+            // Get LEAVE/HOLIDAY entries for those employees
+            Set<String> employeeCodes = timesheetEntries.stream()
+                    .map(DailyTimeSheet::getEmployeeCode)
+                    .collect(Collectors.toSet());
 
-        // Group leave entries by employeeCode for quick lookup
-        Map<String, List<DailyTimeSheet>> leaveEntriesByEmployee = leaveEntries.stream()
-                .collect(Collectors.groupingBy(DailyTimeSheet::getEmployeeCode));
+            List<EntryType> leaveTypes = List.of(EntryType.LEAVE, EntryType.HOLIDAY);
+            List<DailyTimeSheet> leaveEntries = dailyTimeSheetRepository
+                    .findByWorkDateBetweenAndEmployeeCodeInAndEntryTypeIn(startDate, endDate, new ArrayList<>(employeeCodes), leaveTypes);
 
-        // For each project and employee, add leave entries for that employee into their list
-        for (Map.Entry<String, Map<String, List<DailyTimeSheet>>> projectEntry : projectEmpEntries.entrySet()) {
-            Map<String, List<DailyTimeSheet>> empMap = projectEntry.getValue();
+            Map<String, List<DailyTimeSheet>> leaveByEmp = leaveEntries.stream()
+                    .collect(Collectors.groupingBy(DailyTimeSheet::getEmployeeCode));
 
-            for (String empCode : empMap.keySet()) {
-                List<DailyTimeSheet> leaves = leaveEntriesByEmployee.get(empCode);
-                if (leaves != null) {
-                    empMap.get(empCode).addAll(leaves);
-                    // Optionally sort combined list by date
-                    empMap.get(empCode).sort(Comparator.comparing(DailyTimeSheet::getWorkDate));
+            // Merge leave entries into map
+            for (Map.Entry<String, Map<String, List<DailyTimeSheet>>> projEntry : projectEmpMap.entrySet()) {
+                for (Map.Entry<String, List<DailyTimeSheet>> empEntry : projEntry.getValue().entrySet()) {
+                    List<DailyTimeSheet> leaves = leaveByEmp.get(empEntry.getKey());
+                    if (leaves != null) {
+                        empEntry.getValue().addAll(leaves);
+                        empEntry.getValue().sort(Comparator.comparing(DailyTimeSheet::getWorkDate));
+                    }
                 }
             }
-        }
 
-        return projectEmpEntries;
+            // Generate Excel reports
+            for (String projCode : projectEmpMap.keySet()) {
+                Project project = projectRepository.findById(projCode).orElse(null);
+                if (project == null) continue;
+
+                String projectName = project.getTitle();
+                String managerName = getUserName(project.getProjectManagerCode());
+
+                Map<String, List<DailyTimeSheet>> empEntries = projectEmpMap.get(projCode);
+                for (Map.Entry<String, List<DailyTimeSheet>> entry : empEntries.entrySet()) {
+                    String empName = getUserName(entry.getKey());
+                    ExcelReportGenerator.generateExcel(baseDir, label, projectName, managerName, empName, entry.getValue());
+                }
+            }
+
+            return ResponseEntity.ok("Report generated for: " + label);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error generating report: " + e.getMessage());
+        }
     }
 
     @Override
@@ -91,7 +118,6 @@ public class TimesheetReportServiceImpl implements TimesheetReportService {
             String monthLabel = Month.of(month).getDisplayName(TextStyle.SHORT, Locale.ENGLISH) + "-" + year;
             String baseDir = "timesheet-reports";
 
-            // Get combined data with leave entries merged in project-wise employee maps
             Map<String, Map<String, List<DailyTimeSheet>>> data = getMonthlyTimesheetData(year, month, projectCode);
 
             for (String projCode : data.keySet()) {
@@ -99,48 +125,75 @@ public class TimesheetReportServiceImpl implements TimesheetReportService {
                 if (project == null) continue;
 
                 String projectName = project.getTitle();
-                String managerCode = project.getProjectManagerCode();
-                String managerName = getUserName(managerCode);
+                String managerName = getUserName(project.getProjectManagerCode());
 
                 Map<String, List<DailyTimeSheet>> empEntries = data.get(projCode);
                 for (Map.Entry<String, List<DailyTimeSheet>> entry : empEntries.entrySet()) {
-                    String empCode = entry.getKey();
-                    String empName = getUserName(empCode);
-                    List<DailyTimeSheet> timesheetEntries = entry.getValue();
-
-                    ExcelReportGenerator.generateExcel(
-                            baseDir,
-                            monthLabel,
-                            projectName,
-                            managerName,
-                            empName,
-                            timesheetEntries
-                    );
+                    String empName = getUserName(entry.getKey());
+                    ExcelReportGenerator.generateExcel(baseDir, monthLabel, projectName, managerName, empName, entry.getValue());
                 }
             }
 
             return ResponseEntity.ok("Reports generated at: " + baseDir + " for month: " + monthLabel);
+
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Failed to generate report: " + e.getMessage());
         }
     }
 
+    @Override
+    public Map<String, Map<String, List<DailyTimeSheet>>> getMonthlyTimesheetData(int year, int month, String projectCode) {
+        List<DailyTimeSheet> entries = (projectCode != null)
+                ? dailyTimeSheetRepository.findByTimesheetYearAndTimesheetMonthAndProjectCode(year, month, projectCode)
+                : dailyTimeSheetRepository.findByTimesheetYearAndTimesheetMonth(year, month);
+
+        Map<String, Map<String, List<DailyTimeSheet>>> projectEmpMap = entries.stream()
+                .filter(e -> e.getProjectCode() != null)
+                .collect(Collectors.groupingBy(
+                        DailyTimeSheet::getProjectCode,
+                        Collectors.groupingBy(DailyTimeSheet::getEmployeeCode)
+                ));
+
+        Set<String> employeeCodes = entries.stream()
+                .map(DailyTimeSheet::getEmployeeCode)
+                .collect(Collectors.toSet());
+
+        if (employeeCodes.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<DailyTimeSheet> leaveEntries = dailyTimeSheetRepository
+                .findByTimesheetYearAndTimesheetMonthAndEmployeeCodeInAndEntryTypeIn(
+                        year, month, new ArrayList<>(employeeCodes), List.of(EntryType.LEAVE, EntryType.HOLIDAY)
+                );
+
+        Map<String, List<DailyTimeSheet>> leaveMap = leaveEntries.stream()
+                .collect(Collectors.groupingBy(DailyTimeSheet::getEmployeeCode));
+
+        for (Map<String, List<DailyTimeSheet>> empMap : projectEmpMap.values()) {
+            for (Map.Entry<String, List<DailyTimeSheet>> empEntry : empMap.entrySet()) {
+                List<DailyTimeSheet> leaves = leaveMap.get(empEntry.getKey());
+                if (leaves != null) {
+                    empEntry.getValue().addAll(leaves);
+                    empEntry.getValue().sort(Comparator.comparing(DailyTimeSheet::getWorkDate));
+                }
+            }
+        }
+
+        return projectEmpMap;
+    }
 
     private String getUserName(String userCode) {
         try {
             ResponseEntity<UserIdentityDto> response = identityServiceClient.getUserByemployeeCode(userCode);
             if (response.getStatusCode().is2xxSuccessful()) {
                 UserIdentityDto user = response.getBody();
-                if (user != null) {
-                    String name = user.getFirstName() + " " + user.getLastName();
-                    return name;
-                }
+                return user.getFirstName() + " " + user.getLastName();
             }
         } catch (Exception e) {
-           throw new TimeSheetException(ErrorCode.NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND + e);
+            throw new TimeSheetException(ErrorCode.NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND + e);
         }
         return "User-" + userCode;
     }
-
 }
