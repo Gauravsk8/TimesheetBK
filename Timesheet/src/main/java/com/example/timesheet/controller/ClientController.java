@@ -19,12 +19,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/timesheet")
+@RequestMapping("/tms")
 @RequiredArgsConstructor
 public class ClientController {
 
     private final ClientService clientService;
 
+    //Create Client
     @PostMapping("/clients")
     @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:add")
     public ResponseEntity<String> createClient(@Valid @RequestBody ClientDto clientDto) {
@@ -32,6 +33,7 @@ public class ClientController {
         return ResponseEntity.ok(response);
     }
 
+    //Get All Client
     @GetMapping("/clients")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:client:get")
     public ResponseEntity<PagedResponse<ClientResponseDto>> getAllClients(
@@ -46,7 +48,7 @@ public class ClientController {
         return ResponseEntity.ok(clientService.getAllClients(offset, limit, filters, sorts));
     }
 
-
+    //Get Client By ID
     @GetMapping("/clients/{id}")
     @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:get")
     public ResponseEntity<ClientResponseDto> getClientById(@PathVariable Long id) {
@@ -55,6 +57,7 @@ public class ClientController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    //Update Client
     @PutMapping("/clients/{id}")
     @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:update")
     public ResponseEntity<String> updateClient(@PathVariable Long id,@Valid @RequestBody ClientDto clientDto) {
@@ -65,6 +68,8 @@ public class ClientController {
             throw new TimeSheetException(e.getErrorCode(), e.getMessage());
         }
     }
+    
+    //Delete Client
     @PutMapping("/clients/{id}/status")
     @RequiresKeycloakAuthorization(resource = "tms:admin", scope = "tms:client:update")
     public ResponseEntity<String> updateClientStatus(

@@ -5,6 +5,7 @@ import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.timesheet.dto.request.AssignEmployeesDto;
+import com.example.timesheet.dto.request.ProjectRolesRequestDto;
 import com.example.timesheet.dto.request.ProjectDto;
 import com.example.timesheet.dto.response.ProjectEmployeeDto;
 import com.example.timesheet.dto.response.ProjectResponseDto;
@@ -15,6 +16,11 @@ import java.util.Map;
 
 public interface ProjectManagementService {
     String createProject(ProjectDto dto) throws TimeSheetException;
+
+    String createRolesInProject(ProjectRolesRequestDto createRoleInProjectRequestDto);
+    List<String> getAllRoleNames();
+
+
     PagedResponse<ProjectResponseDto> getAllProjects(
             Integer offset,
             Integer limit,

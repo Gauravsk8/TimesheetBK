@@ -18,6 +18,7 @@ public final class MessageConstants {
     public static final String PROJECT_STATUS_UPDATED = "Updated Employee status of %s in project %s";
 
     // === Employee Assignment Messages ===
+    public static final String CREATION_EMAIL = "Timesheet Application Login Credentials";
     public static final String EMPLOYEE_ALREADY_ASSIGNED = "No new employees assigned (all were already assigned)";
     public static final String EMPLOYEE_ASSIGNED = " employee(s) assigned successfully.";
     public static final String EMPLOYEE_UPDATED_SUCCESSFULLY = "Employee Updated Successfully";

@@ -78,6 +78,8 @@ public class KeycloakController {
 
 
     //ROLES
+
+    //Assign Role
     @PostMapping("/users/roles")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:add")
     public ResponseEntity<String> assignRoles(
@@ -99,7 +101,7 @@ public class KeycloakController {
     @PutMapping("/users/roles")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:update")
     public ResponseEntity<String> updateUserRoles(
-            @RequestBody UserRoleUpdateRequestDto requestDto
+            @Valid @RequestBody UserRoleUpdateRequestDto requestDto
     ) {
         keycloakAssignRoleService.updateUserRoles(
                 requestDto.getEmployeeCode(),

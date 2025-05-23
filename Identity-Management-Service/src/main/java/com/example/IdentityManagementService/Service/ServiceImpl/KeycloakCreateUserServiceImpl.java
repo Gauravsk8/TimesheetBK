@@ -8,6 +8,7 @@ import com.example.IdentityManagementService.exceptions.TimesheetException;
 import com.example.IdentityManagementService.model.Employee;
 import com.example.common.constants.ErrorCode;
 import com.example.common.constants.ErrorMessage;
+import com.example.common.constants.MessageConstants;
 import com.example.common.email.Service.EmailService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -110,20 +111,17 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
             savedEmployee.setKeycloakUserId(userId);
             employeeRepository.save(savedEmployee);  // second DB update
 
-            // Send welcome email
+            // Send  email
             Map<String, String> variables = new HashMap<>();
             variables.put("firstName", employee.getFirstName());
             variables.put("username", employee.getEmployeeCode());
             variables.put("password", randomPassword);
 
-            String emailSubject = "Welcome to the Company Portal";
+            String emailSubject = MessageConstants.CREATION_EMAIL;
             String emailBody = emailService.loadTemplate("UserCreationTemplate.txt", variables);
             emailService.sendEmail(employee.getEmail(), emailSubject, emailBody);
 
-            // Audit logging
 
-
-            // Return result
             Map<String, String> result = new HashMap<>();
             result.put("userId", userId);
             result.put("temporaryPassword", randomPassword);
@@ -138,8 +136,6 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
                     log.error("Failed to rollback Keycloak user", ex);
                 }
             }
-
-            // Re-throw appropriate exception
             if (e instanceof TimesheetException) {
                 throw e;
             } else if (e instanceof IllegalArgumentException) {
@@ -244,6 +240,105 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
     }
 
     @Override
+    @Transactional
+    public void updateOwnProfile(String keycloakUserId, EmployeeRequestDto dto) {
+        // Update Keycloak
+        try {
+            RealmResource realmResource = keycloakAdmin.realm(realm);
+            UsersResource usersResource = realmResource.users();
+
+            UserResource userResource = usersResource.get(keycloakUserId);
+            UserRepresentation user = userResource.toRepresentation();
+
+            if (dto.getFirstName() != null) user.setFirstName(dto.getFirstName());
+            if (dto.getLastName() != null) user.setLastName(dto.getLastName());
+            if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+
+            Map<String, List<String>> attributes = user.getAttributes() != null ? user.getAttributes() : new HashMap<>();
+            if (dto.getEmployeeType() != null) {
+                attributes.put("employeeType", List.of(dto.getEmployeeType()));
+            }
+            user.setAttributes(attributes);
+
+            userResource.update(user); // If this fails, exception is thrown and DB update is skipped
+
+        } catch (ErrorResponseException e) {
+            String message = e.getMessage().toLowerCase();
+
+            if (message.contains("403")) {
+                throw new TimesheetException(ErrorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
+            } else if (message.contains("404")) {
+                throw new TimesheetException(ErrorCode.NOT_FOUND_ERROR, USER_NOT_FOUND, e);
+            } else {
+                throw new TimesheetException(ErrorCode.INTERNAL_SERVER_ERROR, USER_UPDATE_FAILED + ": " + message, e);
+            }
+        } catch (Exception e) {
+            throw new TimesheetException(ErrorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
+        }
+
+        //Update DB
+        Employee employee = employeeRepository.findByKeycloakUserIdAndIsActiveTrue(keycloakUserId)
+                .orElseThrow(() -> new TimesheetException(ErrorCode.NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND));
+
+        if (dto.getFirstName() != null) employee.setFirstName(dto.getFirstName());
+        if (dto.getLastName() != null) employee.setLastName(dto.getLastName());
+        if (dto.getEmail() != null) employee.setEmail(dto.getEmail());
+        if (dto.getEmployeeType() != null) employee.setEmployeeType(dto.getEmployeeType());
+
+        employeeRepository.save(employee);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserProfile(String employeeCode, EmployeeRequestDto dto) {
+        try {
+            // Step 1: Find user by employeeCode (to get Keycloak ID)
+            var user = getUserByemployeeCodekc(employeeCode);
+            if (user == null) {
+                throw new TimesheetException(NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND);
+            }
+
+            // Step 2: Update Keycloak
+            RealmResource realmResource = keycloakAdmin.realm(realm);
+            UsersResource usersResource = realmResource.users();
+            UserRepresentation userRep = usersResource.get(user.getId()).toRepresentation();
+
+            if (dto.getFirstName() != null) userRep.setFirstName(dto.getFirstName());
+            if (dto.getLastName() != null) userRep.setLastName(dto.getLastName());
+            if (dto.getEmail() != null) userRep.setEmail(dto.getEmail());
+
+            Map<String, List<String>> attributes = userRep.getAttributes();
+            if (attributes == null) attributes = new HashMap<>();
+            if (dto.getEmployeeType() != null) {
+                attributes.put("employeeType", List.of(dto.getEmployeeType()));
+            }
+            userRep.setAttributes(attributes);
+
+            usersResource.get(user.getId()).update(userRep); // If this fails, DB is untouched
+
+            // Step 3: Update DB
+            Employee employee = employeeRepository.findByEmployeeCodeAndIsActiveTrue(employeeCode)
+                    .orElseThrow(() -> new TimesheetException(NOT_FOUND_ERROR, USER_NOT_FOUND));
+
+            if (dto.getFirstName() != null) employee.setFirstName(dto.getFirstName());
+            if (dto.getLastName() != null) employee.setLastName(dto.getLastName());
+            if (dto.getEmail() != null) employee.setEmail(dto.getEmail());
+            if (dto.getEmployeeType() != null) employee.setEmployeeType(dto.getEmployeeType());
+
+            employeeRepository.save(employee); // This is within @Transactional
+
+        } catch (Exception e) {
+            log.error("Error updating user profile (Keycloak or DB)", e);
+            throw new TimesheetException(
+                    ErrorCode.FORBIDDEN_ERROR,
+                    UNAUTHORIZED_ACCESS + e.getMessage(),
+                    e
+            );
+        }
+    }
+
+
+    @Override
     public void updateUserPassword(String userId, String newPassword) {
         try {
             RealmResource realmResource = keycloakAdmin.realm(realm);
@@ -295,102 +390,6 @@ public class KeycloakCreateUserServiceImpl implements KeycloakCreateUserService 
     }
 
 
-    @Override
-    @Transactional
-    public void updateUserProfile(String employeeCode, EmployeeRequestDto dto) {
-        try {
-            // Step 1: Find user by employeeCode (to get Keycloak ID)
-            var user = getUserByemployeeCodekc(employeeCode);
-            if (user == null) {
-                throw new TimesheetException(NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND);
-            }
 
-            // Step 2: Update Keycloak
-            RealmResource realmResource = keycloakAdmin.realm(realm);
-            UsersResource usersResource = realmResource.users();
-            UserRepresentation userRep = usersResource.get(user.getId()).toRepresentation();
-
-            if (dto.getFirstName() != null) userRep.setFirstName(dto.getFirstName());
-            if (dto.getLastName() != null) userRep.setLastName(dto.getLastName());
-            if (dto.getEmail() != null) userRep.setEmail(dto.getEmail());
-
-            Map<String, List<String>> attributes = userRep.getAttributes();
-            if (attributes == null) attributes = new HashMap<>();
-            if (dto.getEmployeeType() != null) {
-                attributes.put("employeeType", List.of(dto.getEmployeeType()));
-            }
-            userRep.setAttributes(attributes);
-
-            usersResource.get(user.getId()).update(userRep); // If this fails, DB is untouched
-
-            // Step 3: Update DB
-            Employee employee = employeeRepository.findByEmployeeCodeAndIsActiveTrue(employeeCode)
-                    .orElseThrow(() -> new TimesheetException(NOT_FOUND_ERROR, USER_NOT_FOUND));
-
-            if (dto.getFirstName() != null) employee.setFirstName(dto.getFirstName());
-            if (dto.getLastName() != null) employee.setLastName(dto.getLastName());
-            if (dto.getEmail() != null) employee.setEmail(dto.getEmail());
-            if (dto.getEmployeeType() != null) employee.setEmployeeType(dto.getEmployeeType());
-
-            employeeRepository.save(employee); // This is within @Transactional
-
-        } catch (Exception e) {
-            log.error("Error updating user profile (Keycloak or DB)", e);
-            throw new TimesheetException(
-                    ErrorCode.FORBIDDEN_ERROR,
-                    UNAUTHORIZED_ACCESS + e.getMessage(),
-                    e
-            );
-        }
-    }
-
-    @Override
-    @Transactional
-    public void updateOwnProfile(String keycloakUserId, EmployeeRequestDto dto) {
-        // Update Keycloak
-        try {
-            RealmResource realmResource = keycloakAdmin.realm(realm);
-            UsersResource usersResource = realmResource.users();
-
-            UserResource userResource = usersResource.get(keycloakUserId);
-            UserRepresentation user = userResource.toRepresentation();
-
-            if (dto.getFirstName() != null) user.setFirstName(dto.getFirstName());
-            if (dto.getLastName() != null) user.setLastName(dto.getLastName());
-            if (dto.getEmail() != null) user.setEmail(dto.getEmail());
-
-            Map<String, List<String>> attributes = user.getAttributes() != null ? user.getAttributes() : new HashMap<>();
-            if (dto.getEmployeeType() != null) {
-                attributes.put("employeeType", List.of(dto.getEmployeeType()));
-            }
-            user.setAttributes(attributes);
-
-            userResource.update(user); // If this fails, exception is thrown and DB update is skipped
-
-        } catch (ErrorResponseException e) {
-            String message = e.getMessage().toLowerCase();
-
-            if (message.contains("403")) {
-                throw new TimesheetException(ErrorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
-            } else if (message.contains("404")) {
-                throw new TimesheetException(ErrorCode.NOT_FOUND_ERROR, USER_NOT_FOUND, e);
-            } else {
-                throw new TimesheetException(ErrorCode.INTERNAL_SERVER_ERROR, USER_UPDATE_FAILED + ": " + message, e);
-            }
-        } catch (Exception e) {
-            throw new TimesheetException(ErrorCode.FORBIDDEN_ERROR, UNAUTHORIZED_ACCESS, e);
-        }
-
-        //Update DB
-        Employee employee = employeeRepository.findByKeycloakUserIdAndIsActiveTrue(keycloakUserId)
-                .orElseThrow(() -> new TimesheetException(ErrorCode.NOT_FOUND_ERROR, ErrorMessage.USER_NOT_FOUND));
-
-        if (dto.getFirstName() != null) employee.setFirstName(dto.getFirstName());
-        if (dto.getLastName() != null) employee.setLastName(dto.getLastName());
-        if (dto.getEmail() != null) employee.setEmail(dto.getEmail());
-        if (dto.getEmployeeType() != null) employee.setEmployeeType(dto.getEmployeeType());
-
-        employeeRepository.save(employee);
-    }
 
 }

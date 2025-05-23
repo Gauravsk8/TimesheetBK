@@ -6,7 +6,7 @@ import java.util.Map;
 public interface KeycloakAssignRoleService {
 
     void assignRealmRoles(String employeeCode, List<String> roles);
-    void unassignRealmRoles(String employeeCode, List<String> roles); // <-- add this
+    void unassignRealmRoles(String employeeCode, List<String> roles);
 
 
     List<String> getAssignedRealmRoles(String employeeCode);

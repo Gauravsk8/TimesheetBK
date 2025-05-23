@@ -8,13 +8,23 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/EmployeeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/EmployeeController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/KeycloakController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/IdentityManagementServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/IdentityManagementServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/TimesheetApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/TimesheetApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/client/IdentityServiceClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/logging/MDCLoggingFilter.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/utils/SecurityUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/utils/SecurityUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakAssignRoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/KeycloakAssignRoleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/ServiceImpl/KeycloakCreateUserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/ServiceImpl/KeycloakCreateUserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/AssignRMRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/AssignRMRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/UserRoleUpdateRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/dto/request/UserRoleUpdateRequestDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ClientController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/CostCenterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/CostCenterController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/AssignEmployeesDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/AssignEmployeesDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/ProjectDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/dto/request/ProjectDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/ProjectManagementService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/ProjectManagementService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/ProjectManagementServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/ProjectManagementServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/MessageConstants.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/MessageConstants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/dto/PasswordUpdateRequestDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/dto/PasswordUpdateRequestDto.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/MessageConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/MessageConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/dto/PasswordUpdateRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/dto/PasswordUpdateRequestDto.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -345,9 +355,14 @@
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Controller/EmployeeController.java</url>
-          <line>63</line>
-          <option name="timeStamp" value="16" />
+          <url>file://$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/ServiceImpl/KeycloakCreateUserServiceImpl.java</url>
+          <line>293</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java</url>
+          <line>101</line>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/Service/ServiceImpl/KeycloakAssignRoleServiceImpl.java</url>

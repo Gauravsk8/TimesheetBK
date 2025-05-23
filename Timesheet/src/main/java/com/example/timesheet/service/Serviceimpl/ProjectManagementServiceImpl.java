@@ -9,22 +9,17 @@ import com.example.common.dto.response.PagedResponse;
 import com.example.common.exceptions.TimeSheetException;
 import com.example.common.utils.FilterSpecificationBuilder;
 import com.example.common.utils.SortUtil;
-import com.example.timesheet.Repository.ClientsRepository;
-import com.example.timesheet.Repository.CostCenterRepository;
-import com.example.timesheet.Repository.ProjectEmployeeRepository;
-import com.example.timesheet.Repository.ProjectRepository;
+import com.example.timesheet.Repository.*;
 import com.example.timesheet.client.IdentityServiceClient;
 import com.example.timesheet.dto.request.AssignEmployeesDto;
+import com.example.timesheet.dto.request.ProjectRolesRequestDto;
 import com.example.timesheet.dto.request.ProjectDto;
 import com.example.timesheet.dto.request.UserIdentityDto;
 import com.example.timesheet.dto.response.ProjectEmployeeDto;
 import com.example.timesheet.dto.response.ProjectResponseDto;
 import com.example.timesheet.dto.response.ProjectWithEmployeesDto;
 import com.example.timesheet.keys.ProjectEmployeeId;
-import com.example.timesheet.models.Clients;
-import com.example.timesheet.models.CostCenter;
-import com.example.timesheet.models.Project;
-import com.example.timesheet.models.ProjectEmployee;
+import com.example.timesheet.models.*;
 import com.example.timesheet.service.ProjectManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -48,6 +43,7 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
     private final ProjectRepository projectRepository;
     private final IdentityServiceClient identityServiceClient;
     private final ProjectEmployeeRepository projectEmployeeRepository;
+    private final ProjectRolesRepository rolesInProjectRepository;
 
     private final String PROJECT_MANAGER_ROLE = "ProjectManager";
     @Override
@@ -81,6 +77,20 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
         return MessageConstants.PROJECT_CREATED + dto.getTitle();
     }
 
+    @Override
+    public String createRolesInProject(ProjectRolesRequestDto dto) {
+        ProjectRoles newRole = new ProjectRoles();
+        newRole.setRoleName(dto.getRoleName());
+        rolesInProjectRepository.save(newRole);
+        return "Role created successfully";
+    }
+    @Override
+    public List<String> getAllRoleNames() {
+        return rolesInProjectRepository.findAll()
+                .stream()
+                .map(ProjectRoles::getRoleName)
+                .collect(Collectors.toList());
+    }
     @Override
     public PagedResponse<ProjectResponseDto> getAllProjects(
             Integer offset,
@@ -118,6 +128,9 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                 projectPage.getTotalElements()
         );
     }
+
+
+
 
     @Override
     public ProjectResponseDto getProjectByCode(String code) {

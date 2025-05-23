@@ -12,6 +12,7 @@ import com.example.common.dto.SortRequest;
 import com.example.common.dto.response.PagedResponse;
 import com.example.common.utils.FilterUtil;
 import com.example.common.utils.SortUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/identity")
+@RequestMapping("/ims")
 @RequiredArgsConstructor
 public class EmployeeController {
 
@@ -48,18 +49,6 @@ public class EmployeeController {
         UserIdentityDto userProfile = employeeService.getUserByKeycloakUserId(keycloakUserId);
         return ResponseEntity.ok(userProfile);
     }
-
-    @PutMapping("users/{employeeCode}/status")
-    @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:update")
-    public ResponseEntity<String> updateActiveStatus(
-            @PathVariable String employeeCode,
-            @RequestParam boolean active
-    ) {
-        employeeService.updateActiveStatus(employeeCode, active);
-        return ResponseEntity.ok(MessageConstants.USER_STATUS_UPDATED);
-    }
-
-
     //get all employees
     @GetMapping("/users")
     @RequiresKeycloakAuthorization(resource = "manager:com", scope = "com:manager:get")
@@ -83,6 +72,18 @@ public class EmployeeController {
     }
 
 
+    //Delete User
+    @PutMapping("users/{employeeCode}/status")
+    @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:update")
+    public ResponseEntity<String> updateActiveStatus(
+            @PathVariable String employeeCode,
+            @RequestParam boolean active
+    ) {
+        employeeService.updateActiveStatus(employeeCode, active);
+        return ResponseEntity.ok(MessageConstants.USER_STATUS_UPDATED);
+    }
+
+
     //get managerName for employeeCode
     @GetMapping("/users/{employeeCode}/manager")
     @RequiresKeycloakAuthorization(resource = "tms:com", scope = "tms:com:get")
@@ -93,10 +94,10 @@ public class EmployeeController {
         return ResponseEntity.ok(managerName);
     }
 
-    //assign reporting manager
+    //assign Reporting Manager
     @PostMapping("/users/manager")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:add")
-    public ResponseEntity<String> assignReportingManager(@RequestBody AssignRMRequest request) {
+    public ResponseEntity<String> assignReportingManager(@Valid @RequestBody AssignRMRequest request) {
         String response = employeeRmService.addReportingManagerToEmployee(
                 request.getEmployeeCode(),
                 request.getManagerCode()

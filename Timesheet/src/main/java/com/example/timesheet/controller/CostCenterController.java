@@ -11,6 +11,7 @@ import com.example.timesheet.dto.request.CostCenterDto;
 import com.example.timesheet.dto.response.CostCenterResponseDto;
 import com.example.timesheet.dto.response.ProjectResponseDto;
 import com.example.timesheet.service.CostCenterService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,20 +20,21 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/timesheet")
+@RequestMapping("/tms")
 @RequiredArgsConstructor
 public class CostCenterController {
 
     private final CostCenterService costCenterService;
 
-
-    @PostMapping("/cost_centers")
+    //Create cost-center
+    @PostMapping("/cost-centers")
     @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:costcenter:add")
-    public ResponseEntity<String> createCostCenter(@RequestBody CostCenterDto dto) {
+    public ResponseEntity<String> createCostCenter(@Valid @RequestBody CostCenterDto dto) {
         return ResponseEntity.ok(costCenterService.createCostCenter(dto));
     }
 
-    @GetMapping("/cost_centers")
+    //Get All cost-center
+    @GetMapping("/cost-centers")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:costcenter:get")
     public ResponseEntity<PagedResponse<CostCenterResponseDto>> getAllCostCenters(
             @RequestParam(required = false, defaultValue = "0") int offset,
@@ -46,14 +48,15 @@ public class CostCenterController {
         return ResponseEntity.ok(costCenterService.getAllCostCenters(offset, limit, filters, sorts));
     }
 
-
-    @GetMapping("/cost_centers/manager/{costCenterManagerCode}")
+    //Get cost-center under CCM
+    @GetMapping("/cost-centers/manager/{costCenterManagerCode}")
     @RequiresKeycloakAuthorization(resource = "tms:ccm", scope = "tms:costcenter:get")
     public ResponseEntity<List<CostCenterResponseDto>> getAllCostCentersUnderManager(@PathVariable String costCenterManagerCode) {
         return ResponseEntity.ok(costCenterService.getAllCostCentersUnderManager(costCenterManagerCode));
     }
 
-    @GetMapping("/cost_centers/{costCenterCode}")
+    //Get cost-center By Code
+    @GetMapping("/cost-centers/{costCenterCode}")
     @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:costcenter:get")
     public ResponseEntity<CostCenterResponseDto> getCostCenterByCode(@PathVariable String costCenterCode) {
         try {
@@ -63,9 +66,10 @@ public class CostCenterController {
         }
     }
 
-    @PutMapping("/cost_centers/{costCenterCode}")
+    //Update CC by code
+    @PutMapping("/cost-centers/{costCenterCode}")
     @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:costcenter:update")
-    public ResponseEntity<String> updateCostCenter(@PathVariable String costCenterCode, @RequestBody CostCenterDto dto) {
+    public ResponseEntity<String> updateCostCenter(@PathVariable String costCenterCode,@Valid @RequestBody CostCenterDto dto) {
         try {
             return ResponseEntity.ok(costCenterService.updateCostCenter(costCenterCode, dto));
         }  catch (TimeSheetException e) {
@@ -73,7 +77,8 @@ public class CostCenterController {
         }
     }
 
-    @PutMapping("/cost_centers/{costCenterCode}/status")
+    //Delete CostCenter
+    @PutMapping("/cost-centers/{costCenterCode}/status")
     @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:costcenter:update")
     public ResponseEntity<String> updatecostCenterStatus(
             @PathVariable String costCenterCode,
@@ -82,7 +87,9 @@ public class CostCenterController {
         String response = costCenterService.updateCostCenterStatus(costCenterCode, active);
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/cost_centers/{costCenterCode}/projects")
+
+    //Get Projects under CC
+    @GetMapping("/cost-centers/{costCenterCode}/projects")
     @RequiresKeycloakAuthorization(resource = "tms:adminccm", scope = "tms:project:get")
     public ResponseEntity<List<ProjectResponseDto>> getProjectsByCostCenter(@PathVariable String costCenterCode) {
         List<ProjectResponseDto> projects = costCenterService.getProjectsByCostCenterCode(costCenterCode);
