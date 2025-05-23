@@ -21,15 +21,14 @@ import com.example.IdentityManagementService.dto.request.EmployeeRequestDto;
 import java.util.*;
 
 @RestController
-@RequestMapping("/identity")
+@RequestMapping("/ims")
 @RequiredArgsConstructor
 public class KeycloakController {
 
     private final KeycloakCreateUserService keycloakAdminService;
     private final KeycloakAssignRoleService keycloakAssignRoleService;
 
-    //Create User Common for both keycloak and DB
-
+    //Create User - single function to save in both keycloak and DB
     @PostMapping("/users")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:add")
     public ResponseEntity<Map<String, String>> createUser(
@@ -42,7 +41,7 @@ public class KeycloakController {
         return ResponseEntity.ok().body(response);
     }
 
-
+    //Edit My Profile
     @PatchMapping("/users/my")
     @RequiresKeycloakAuthorization(resource = "idms:user", scope = "idms:user:update")
     public ResponseEntity<String> editOwnProfile(@Valid @RequestBody EmployeeRequestDto dto) {
@@ -53,10 +52,7 @@ public class KeycloakController {
         return ResponseEntity.ok(MessageConstants.EMPLOYEE_UPDATED_SUCCESSFULLY);
     }
 
-
-
-
-
+    //Edit User Profile
     @PatchMapping("/users/{employeeCode}")
     @RequiresKeycloakAuthorization(resource = "idms:admin", scope = "idms:user:update")
     public ResponseEntity<String> editEmployeeProfile(
@@ -68,7 +64,7 @@ public class KeycloakController {
     }
 
 
-    //update password
+    //Update Password
     @PostMapping("/users/my/password")
     @RequiresKeycloakAuthorization(resource = "idms:user", scope = "idms:user:update")
     public ResponseEntity<String> updateOwnPassword(@Valid @RequestBody PasswordUpdateRequestDto request) {
@@ -78,11 +74,6 @@ public class KeycloakController {
 
         return ResponseEntity.ok(MessageConstants.PASSWORD_UPDATED_SUCCESSFULLY);
     }
-
-
-
-
-
 
 
 
@@ -118,7 +109,8 @@ public class KeycloakController {
         return ResponseEntity.ok(MessageConstants.ROLES_UPDATED_SUCCESSFULLY);
     }
 
-    @GetMapping("/users/{employeeCode}/manager_role")
+    //Check Has ManagerRole
+    @GetMapping("/users/{employeeCode}/manager-roles")
     @RequiresKeycloakAuthorization(resource = "tms:com", scope = "tms:com:get")
     public ResponseEntity<Boolean> hasManagerRole(@PathVariable String employeeCode, @RequestParam String roleName) {
         boolean hasRole = keycloakAssignRoleService.hasManagerRole(employeeCode, roleName);

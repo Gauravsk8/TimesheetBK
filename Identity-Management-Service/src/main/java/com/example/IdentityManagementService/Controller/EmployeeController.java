@@ -60,8 +60,6 @@ public class EmployeeController {
     }
 
 
-
-
     //get all employees
     @GetMapping("/users")
     @RequiresKeycloakAuthorization(resource = "manager:com", scope = "com:manager:get")
@@ -86,12 +84,12 @@ public class EmployeeController {
 
 
     //get managerName for employeeCode
-    @GetMapping("/users/{employee_code}/manager")
+    @GetMapping("/users/{employeeCode}/manager")
     @RequiresKeycloakAuthorization(resource = "tms:com", scope = "tms:com:get")
     public ResponseEntity<String> getManagerNameByEmployeeCode(
-            @PathVariable String employee_code
+            @PathVariable String employeeCode
     ) {
-        String managerName = employeeRmService.getManagerNameByEmployeeCode(employee_code);
+        String managerName = employeeRmService.getManagerNameByEmployeeCode(employeeCode);
         return ResponseEntity.ok(managerName);
     }
 
@@ -106,6 +104,7 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
+    //Get Employees under RM
     @GetMapping("users/manager/{managerCode}")
     @RequiresKeycloakAuthorization(resource = "idms:adminrm", scope = "idms:user:get")
     public ResponseEntity<List<UserIdentityDto>> getEmployeesUnderManager(

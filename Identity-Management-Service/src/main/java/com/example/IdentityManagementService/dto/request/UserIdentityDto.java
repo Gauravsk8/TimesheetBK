@@ -18,5 +18,4 @@ public class UserIdentityDto {
     private String employeeType;
     private String managerCode;
 
-
 }
