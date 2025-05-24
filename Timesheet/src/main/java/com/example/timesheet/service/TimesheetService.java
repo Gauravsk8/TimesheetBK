@@ -17,12 +17,10 @@ public interface TimesheetService {
     String saveDailyEntry(DailyTimesheetDto dtos) throws TimeSheetException;
     String submitTimesheetSummary(TimesheetSummaryDto dto) throws TimeSheetException;
     String approveOrRejectWeekly(ManagerApprovalRequestDto dto) throws TimeSheetException;
-    EmployeeDashboardDto getEmployeeDashboard(String employeeCode, int year, int month);
-    ProjectManagerDashboardDTO getPmDashboard(String managerCode);
+
     DailyTimesheetResponseWithStatus getDailyEntries(String employeeCode, Date weekStart) throws TimeSheetException;
     void saveTimesheetSummary(TimesheetSummaryDto dto);
     String approveAllUnderManagerForWeek(ManagerApprovalRequestDto approvalRequest) throws TimeSheetException;
     List<TimesheetMatrixRowResponseDto> getEmployeeTimesheet(String employeeCode, Integer year, Integer month);
-    ManagerDashboardDto getEmployeesTimesheetUnderManager(String managerCode, int year, int month);
     TimeSheetStatus getWeeklyStatus(String employeeCode, Date weekStart);
 }

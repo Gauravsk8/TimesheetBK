@@ -11,6 +11,7 @@ import com.example.timesheet.dto.request.AssignEmployeesDto;
 import com.example.timesheet.dto.request.ProjectRolesRequestDto;
 import com.example.timesheet.dto.request.ProjectDto;
 import com.example.timesheet.dto.response.*;
+import com.example.timesheet.service.ProjectManagementService;
 import com.example.timesheet.service.Serviceimpl.ProjectManagementServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProjectManagementController {
 
-    private final ProjectManagementServiceImpl projectManagementService;
+    private final ProjectManagementService projectManagementService;
 
 
     //Create Project

@@ -74,35 +74,6 @@ public class TimesheetController {
 
 
 
-    //ManagerDashBoard
-    @GetMapping("/manager-dashboard/{managerCode}")
-    @RequiresKeycloakAuthorization(resource = "tms:rm", scope = "tms:dashboard:get")
-    public ResponseEntity<ManagerDashboardDto> getManagerDashboard(
-            @PathVariable String managerCode,
-            @RequestParam int year,
-            @RequestParam int month) {
-
-        ManagerDashboardDto dashboard = timesheetService.getEmployeesTimesheetUnderManager(managerCode, year, month);
-        return ResponseEntity.ok(dashboard);
-    }
-
-
-    //Employee Dashboard
-    @GetMapping("/employee-dashboard/{employeeCode}")
-    @RequiresKeycloakAuthorization(resource = "tms:employee", scope = "tms:dashboard:get")
-    public ResponseEntity<EmployeeDashboardDto> getEmployeeDashboard(
-            @PathVariable String employeeCode,
-            @RequestParam int year,
-            @RequestParam int month) {
-        return ResponseEntity.ok(timesheetService.getEmployeeDashboard(employeeCode, year, month));
-    }
-
-    @GetMapping("/project-manager-dashboard/{projectManagerCode}")
-    @RequiresKeycloakAuthorization(resource = "tms:pm", scope = "tms:dashboard:get")
-    public ProjectManagerDashboardDTO getDashboard(@PathVariable String projectManagerCode) {
-        return timesheetService.getPmDashboard(projectManagerCode);
-    }
-
 
 
 
