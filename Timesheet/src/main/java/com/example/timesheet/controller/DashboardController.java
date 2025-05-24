@@ -47,7 +47,7 @@ public class DashboardController {
         return dashboardService.getPmDashboard(projectManagerCode);
     }
 
-    @GetMapping("/cost-center-manager/{managerCode}")
+    @GetMapping("/ccm-dashboard/{managerCode}")
     @RequiresKeycloakAuthorization(resource = "tms:ccm", scope = "tms:dashboard:get")
     public ResponseEntity<CCManagerDashboardDto> getDashboard(
             @PathVariable String managerCode,
