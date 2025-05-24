@@ -11,12 +11,12 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/timesheet")
+@RequestMapping("/tms")
 @RequiredArgsConstructor
 public class TimesheetReportController {
 
     private final TimesheetReportService timesheetReportService;
-    @GetMapping("/report/download")
+    @GetMapping("/timesheets/report")
     @RequiresKeycloakAuthorization(resource = "manager:com", scope = "com:manager:get")
     public ResponseEntity<String> downloadReport(
             @RequestParam(required = false) Integer year,

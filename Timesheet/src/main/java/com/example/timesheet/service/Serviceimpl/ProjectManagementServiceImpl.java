@@ -79,6 +79,10 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
 
     @Override
     public String createRolesInProject(ProjectRolesRequestDto dto) {
+        boolean exists = rolesInProjectRepository.existsByRoleName(dto.getRoleName());
+        if(exists){
+            throw new TimeSheetException(ErrorCode.CONFLICT_ERROR, ErrorMessage.PROJECT_ROLE_ALREADY_CREATED);
+        }
         ProjectRoles newRole = new ProjectRoles();
         newRole.setRoleName(dto.getRoleName());
         rolesInProjectRepository.save(newRole);

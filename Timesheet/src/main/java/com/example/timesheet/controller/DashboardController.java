@@ -1,6 +1,7 @@
 package com.example.timesheet.controller;
 
 import com.example.common.annotations.RequiresKeycloakAuthorization;
+import com.example.timesheet.dto.response.CCManagerDashboard.CCManagerDashboardDto;
 import com.example.timesheet.dto.response.EmployeeDashboard.EmployeeDashboardDto;
 import com.example.timesheet.dto.response.ManagerDashboard.ManagerDashboardDto;
 import com.example.timesheet.dto.response.ProjectManagerDashboard.ProjectManagerDashboardDTO;
@@ -44,6 +45,17 @@ public class DashboardController {
     @RequiresKeycloakAuthorization(resource = "tms:pm", scope = "tms:dashboard:get")
     public ProjectManagerDashboardDTO getDashboard(@PathVariable String projectManagerCode) {
         return dashboardService.getPmDashboard(projectManagerCode);
+    }
+
+    @GetMapping("/cost-center-manager/{managerCode}")
+    @RequiresKeycloakAuthorization(resource = "tms:ccm", scope = "tms:dashboard:get")
+    public ResponseEntity<CCManagerDashboardDto> getDashboard(
+            @PathVariable String managerCode,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month) {
+
+        CCManagerDashboardDto dashboard = dashboardService.getCCManagerDashboard(managerCode, year, month);
+        return ResponseEntity.ok(dashboard);
     }
 
 

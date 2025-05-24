@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.sql.Date;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface TimesheetSummaryRepository extends JpaRepository<TimesheetSummary, TimesheetSummaryId> {
@@ -35,6 +36,15 @@ public interface TimesheetSummaryRepository extends JpaRepository<TimesheetSumma
     GROUP BY dts.project_code, ts.status
     """, nativeQuery = true)
     List<Object[]> countStatusByProjectCode(@Param("projectCodes") List<String> projectCodes);
+
+
+    @Query("SELECT ts.status, COUNT(ts.id) FROM TimesheetSummary ts " +
+            "WHERE ts.approvedBy = :managerCode " +
+            "AND (:year IS NULL OR ts.id.timesheetYear = :year) " +
+            "AND (:month IS NULL OR ts.id.timesheetMonth = :month) " +
+            "GROUP BY ts.status")
+    List<Object[]> countTimesheetStatusByManager(String managerCode, Integer year, Integer month);
+
 
 
 }

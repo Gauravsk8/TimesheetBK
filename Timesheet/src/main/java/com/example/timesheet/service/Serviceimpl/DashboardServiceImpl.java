@@ -6,6 +6,7 @@ import com.example.timesheet.Repository.ProjectRepository;
 import com.example.timesheet.Repository.TimesheetSummaryRepository;
 import com.example.timesheet.client.IdentityServiceClient;
 import com.example.timesheet.dto.request.WeeklyTimeSheetEntryDto;
+import com.example.timesheet.dto.response.CCManagerDashboard.CCManagerDashboardDto;
 import com.example.timesheet.dto.response.EmployeeDashboard.EmployeeDashboardDto;
 import com.example.timesheet.dto.response.EmployeeDashboard.EmployeeStatusSummaryDto;
 import com.example.timesheet.dto.response.ManagerDashboard.ManagerDashboardDto;
@@ -213,6 +214,50 @@ public class DashboardServiceImpl implements DashboardService {
                 .toList();
 
         return new ManagerDashboardDto(employeeDetails, statusSummary);
+    }
+
+    @Override
+    public CCManagerDashboardDto getCCManagerDashboard(String managerCode, Integer year, Integer month) {
+        // Fetch all projects for the cost center manager
+        List<Project> projects = projectRepository.findAllByCostCenter_CostCenterManagerCode(managerCode);
+
+        // Collect project codes
+        Set<String> projectCodes = projects.stream()
+                .map(Project::getProjectCode)
+                .collect(Collectors.toSet());
+
+        // Count of active projects
+        int activeProjectCount = (int) projects.stream().filter(Project::isActive).count();
+
+        // Fetch total hours per project
+        List<Object[]> rawTotalHours = dailyTimeSheetRepository.findTotalHoursPerProject(projectCodes, year, month);
+        Map<String, Double> totalHoursPerProject = rawTotalHours.stream()
+                .collect(Collectors.toMap(
+                        row -> (String) row[0],
+                        row -> ((Number) row[1]).doubleValue()
+                ));
+
+        List<Object[]> rawEmployeeCounts = projectEmployeeRepository.countEmployeesPerProject(projectCodes);
+        Map<String, Long> employeeCountPerProject = rawEmployeeCounts.stream()
+                .collect(Collectors.toMap(
+                        row -> (String) row[0],
+                        row -> ((Number) row[1]).longValue()
+                ));
+
+        List<Object[]> rawTimesheetStatus = timesheetSummaryRepository.countTimesheetStatusByManager(managerCode, year, month);
+        Map<String, Long> timesheetStatusSummary = rawTimesheetStatus.stream()
+                .collect(Collectors.toMap(
+                        row -> (String) row[0],   // status
+                        row -> ((Number) row[1]).longValue()
+                ));
+
+        // Build and return the dashboard DTO
+        return CCManagerDashboardDto.builder()
+                .activeProjectCount(activeProjectCount)
+                .totalHoursPerProject(totalHoursPerProject)
+                .employeeCountPerProject(employeeCountPerProject)
+                .timesheetStatusSummary(timesheetStatusSummary)
+                .build();
     }
 
 

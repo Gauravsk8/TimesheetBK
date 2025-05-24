@@ -25,7 +25,7 @@ public class TimesheetController {
     private final TimesheetService timesheetService;
 
     //Save or update daily entry
-    @PostMapping("/timesheet/daily")
+    @PostMapping("/timesheets/daily")
     @RequiresKeycloakAuthorization(resource = "tms:employee", scope = "tms:timesheet:add")
     public ResponseEntity<String> saveDailyEntry(@RequestBody DailyTimesheetDto dto) {
         String response = timesheetService.saveDailyEntry(dto);
@@ -33,7 +33,7 @@ public class TimesheetController {
     }
 
     //Submit weekly timesheet
-    @PostMapping("/timesheet/weekly")
+    @PostMapping("/timesheets/weekly")
     @RequiresKeycloakAuthorization(resource = "tms:employee", scope = "tms:timesheet:add")
     public ResponseEntity<String> submitWeeklyTimesheet(@RequestBody TimesheetSummaryDto dto) {
         String response = timesheetService.submitTimesheetSummary(dto);
@@ -41,7 +41,7 @@ public class TimesheetController {
     }
 
     //Manager approve or reject weekly timesheet
-    @PostMapping("/timesheet/manager")
+    @PostMapping("/timesheets")
     @RequiresKeycloakAuthorization(resource = "tms:rm", scope = "tms:approve:add")
     public ResponseEntity<List<String>> managerApproval(@RequestBody List<ManagerApprovalRequestDto> dtoList) {
         List<String> responses = dtoList.stream()
@@ -52,7 +52,7 @@ public class TimesheetController {
 
 
     //view timesheet
-    @GetMapping("/timesheet/{employeeCode}")
+    @GetMapping("/timesheets/{employeeCode}")
     //  @RequiresKeycloakAuthorization(resource = "tms:rmemp", scope = "tms:timesheet:get")
     public ResponseEntity<List<TimesheetMatrixRowResponseDto>> getTimesheet(@PathVariable String employeeCode,
                                                                                      @RequestParam Integer year, @RequestParam Integer month) {
@@ -62,7 +62,7 @@ public class TimesheetController {
 
 
     //Get daily entries for week from startdate(weekStart date format yyyy-MM-dd)
-    @GetMapping("/timesheet/{employeeCode}/{weekStart}")
+    @GetMapping("/timesheets/{employeeCode}/{weekStart}")
     @RequiresKeycloakAuthorization(resource = "tms:rmemp", scope = "tms:timesheet:get")
     public ResponseEntity<DailyTimesheetResponseWithStatus> getDailyEntries(
             @PathVariable String employeeCode,

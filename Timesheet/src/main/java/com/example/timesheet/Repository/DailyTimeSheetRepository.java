@@ -7,9 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public interface DailyTimeSheetRepository extends JpaRepository<DailyTimeSheet, Long> {
 
@@ -57,4 +55,18 @@ public interface DailyTimeSheetRepository extends JpaRepository<DailyTimeSheet, 
 
     List<DailyTimeSheet> findByWorkDateBetweenAndEmployeeCodeInAndEntryTypeIn(
             Date startDate, Date endDate, List<String> employeeCodes, List<EntryType> entryTypes);
+
+    @Query("""
+    SELECT d.projectCode, SUM(d.hoursSpent)
+    FROM DailyTimeSheet d
+    WHERE d.projectCode IN :projectCodes
+      AND (:year IS NULL OR d.timesheetYear = :year)
+      AND (:month IS NULL OR d.timesheetMonth = :month)
+    GROUP BY d.projectCode
+""")
+    List<Object[]> findTotalHoursPerProject(@Param("projectCodes") Set<String> projectCodes,
+                                            @Param("year") Integer year,
+                                            @Param("month") Integer month);
+
+
 }

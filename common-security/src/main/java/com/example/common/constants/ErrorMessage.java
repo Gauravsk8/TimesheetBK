@@ -62,6 +62,7 @@ public final class ErrorMessage {
     // === Generic / Fallback Errors ===
     public static final String STATUS_NOT_FOUND = "Status not found";
     public static final String NO_ACTIVE_USERS_FOUND = "No active users found";
+    public static final String PROJECT_ROLE_ALREADY_CREATED = "Project Role already Created";
 
     private ErrorMessage() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");

@@ -45,13 +45,13 @@ public class ProjectManagementController {
     //Create Project roles
     @PostMapping("/projects/roles")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:project:add")
-    public ResponseEntity<String> createRolesInProject(@RequestBody ProjectRolesRequestDto createRoleInProjectRequestDto){
-        String response=projectManagementService.createRolesInProject(createRoleInProjectRequestDto);
+    public ResponseEntity<String> createRolesInProject(@Valid @RequestBody ProjectRolesRequestDto dto){
+        String response=projectManagementService.createRolesInProject(dto);
         return ResponseEntity.ok(response);
     }
 
     //Get all ProjectRoles
-    @GetMapping("/projects/roles/names")
+    @GetMapping("/projects/roles")
     @RequiresKeycloakAuthorization(resource = "tms:adminccmpm", scope = "tms:project:get")
     public ResponseEntity<List<String>> getAllRoleNames() {
         List<String> roleNames = projectManagementService.getAllRoleNames();
