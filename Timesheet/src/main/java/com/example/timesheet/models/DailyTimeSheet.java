@@ -1,5 +1,6 @@
 package com.example.timesheet.models;
 
+
 import com.example.common.audit.Audit;
 import com.example.timesheet.enums.EntryType;
 import jakarta.persistence.*;
@@ -67,3 +68,4 @@ public class DailyTimeSheet extends Audit {
     @Column
     private Boolean modifiedByManager = false;
 }
+

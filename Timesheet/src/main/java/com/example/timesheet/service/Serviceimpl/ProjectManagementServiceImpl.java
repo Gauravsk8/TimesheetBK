@@ -378,7 +378,8 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
                         String.format(ErrorMessage.PROJECT_NOT_FOUND, projectCode)
                 ));
 
-        Set<String> assignedEmployeeCodes = projectEmployeeRepository.findByProject_ProjectCode(projectCode).stream()
+        Set<String> assignedEmployeeCodes = projectEmployeeRepository
+                .findByProject_ProjectCodeAndIsActiveTrue(projectCode).stream()
                 .map(pe -> pe.getId().getEmployeeCode())
                 .collect(Collectors.toSet());
 

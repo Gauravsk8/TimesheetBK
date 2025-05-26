@@ -6,20 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="5ac3fdf0-da33-45fa-8617-a25f7d096e62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/DailyTimeSheetRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/DailyTimeSheetRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectEmployeeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectEmployeeRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectRolesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/ProjectRolesRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/TimesheetSummaryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/Repository/TimesheetSummaryRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/DashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/DashboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/ProjectManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetReportController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/controller/TimesheetReportController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/DashboardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/DashboardService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/DashboardServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/DashboardServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/models/DailyTimeSheet.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/ProjectManagementServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/ProjectManagementServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/ErrorMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/classes/java/main/com/example/common/constants/ErrorMessage.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/ErrorMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/constants/ErrorMessage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/libs/common-security-0.0.1-SNAPSHOT-plain.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/email/Service/EmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/email/service/EmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/email/Service/ServiceImpl/AwsSesEmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/email/service/serviceImpl/AwsSesEmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/email/Service/ServiceImpl/DynamicEmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/email/service/serviceImpl/DynamicEmailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/email/Service/ServiceImpl/JavaMailEmailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/common-security/src/main/java/com/example/common/email/service/serviceImpl/JavaMailEmailService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,30 +53,6 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="TimesheetBK" type="f1a62948:ProjectNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="TimesheetBK" type="f1a62948:ProjectNode" />
-                <item name="Timesheet" type="2d1252cf:ModuleNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="TimesheetBK" type="f1a62948:ProjectNode" />
-                <item name="Timesheet" type="2d1252cf:ModuleNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="TimesheetBK" type="f1a62948:ProjectNode" />
-                <item name="Timesheet" type="2d1252cf:ModuleNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="help" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="TimesheetBK" type="f1a62948:ProjectNode" />
-                <item name="Timesheet" type="2d1252cf:ModuleNode" />
-                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
               </path>
             </expand>
             <select />
@@ -194,7 +165,7 @@
       <command value="gradle build" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.TimesheetApplication">
+  <component name="RunManager" selected="Application.IdentityManagementServiceApplication">
     <configuration name="IdentityManagementServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.IdentityManagementService.IdentityManagementServiceApplication" />
       <module name="TimesheetBK.Identity-Management-Service.main" />
@@ -325,21 +296,6 @@
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>54</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>164</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>387</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Identity-Management-Service/src/main/java/com/example/IdentityManagementService/model/Employee.java</url>
           <line>30</line>
           <option name="timeStamp" value="14" />
@@ -371,15 +327,6 @@
             <option name="WATCH_EXIT" value="false" />
           </properties>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/Timesheet/src/main/java/com/example/timesheet/service/Serviceimpl/TimesheetServiceImpl.java</url>
-          <line>120</line>
-          <properties class="com.example.timesheet.service.Serviceimpl.TimesheetServiceImpl" method="submitTimesheetSummary">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

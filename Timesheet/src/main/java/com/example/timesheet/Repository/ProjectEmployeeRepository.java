@@ -33,6 +33,6 @@ public interface ProjectEmployeeRepository extends JpaRepository<ProjectEmployee
 
     Optional<ProjectEmployee> findByIdAndIsActiveTrue(ProjectEmployeeId id); // FIXED HERE
 
-    List<ProjectEmployee> findByProject_ProjectCode(String projectCode);
+    List<ProjectEmployee> findByProject_ProjectCodeAndIsActiveTrue(String projectCode);
 }
 
